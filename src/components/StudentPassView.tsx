@@ -21,10 +21,13 @@ import {
   FileText,
   Check,
   XCircle,
-  ExternalLink,
-  PhoneCall
+  AlertTriangle,
+  HeartPulse,
+  Settings,
+  ShieldAlert,
+  Edit2
 } from 'lucide-react';
-import { MealType } from '../types/mess';
+import { MealType, STANDARD_ALLERGENS } from '../types/mess';
 import { getActiveMealStatus, formatTimeAmPm } from '../utils/time';
 
 interface StudentPassViewProps {
@@ -43,13 +46,16 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
     attendanceRecords,
     todayCounts,
     todayDateStr,
-    isMealTakenToday
+    isMealTakenToday,
+    updateStudentAllergies
   } = useMess();
 
   const mealStatus = getActiveMealStatus();
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showRebateModal, setShowRebateModal] = useState<MealType | null>(null);
   const [rebateReason, setRebateReason] = useState<string>('Outstation / Home Visit');
+  const [showAllergyEditor, setShowAllergyEditor] = useState<boolean>(false);
+  const [selectedAllergens, setSelectedAllergens] = useState<string[]>(currentStudent.allergies || []);
 
   const mealTypes: { type: MealType; label: string; timing: string; icon: typeof Coffee }[] = [
     { type: 'breakfast', label: 'Breakfast', timing: '07:30 - 09:30 AM', icon: Coffee },
@@ -81,6 +87,24 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
     }, 4500);
   };
 
+  const handleToggleAllergen = (allergen: string) => {
+    if (selectedAllergens.includes(allergen)) {
+      setSelectedAllergens(selectedAllergens.filter(a => a !== allergen));
+    } else {
+      setSelectedAllergens([...selectedAllergens, allergen]);
+    }
+  };
+
+  const handleSaveAllergies = () => {
+    updateStudentAllergies(currentStudent.id, selectedAllergens);
+    setShowAllergyEditor(false);
+    setFeedbackMsg({
+      type: 'success',
+      text: `Allergy profile updated with ${selectedAllergens.length} allergen(s). Menu advisories are active.`
+    });
+    setTimeout(() => setFeedbackMsg(null), 4000);
+  };
+
   // Student specific records
   const studentAttendance = attendanceRecords.filter(r => r.studentId === currentStudent.id);
   const mealsRemaining = Math.max(0, currentStudent.totalMealsOpted - currentStudent.mealsConsumedMonth);
@@ -108,7 +132,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
           </div>
           <button
             onClick={() => setFeedbackMsg(null)}
-            className="text-xs text-white/80 hover:text-white font-bold ml-3"
+            className="text-xs text-white/80 hover:text-white font-bold ml-3 cursor-pointer"
           >
             Dismiss
           </button>
@@ -148,7 +172,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
 
             <button
               onClick={onOpenSwitchStudent}
-              className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors shrink-0"
+              className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors shrink-0 cursor-pointer"
               title="Switch to another student pass"
             >
               Switch ID
@@ -182,9 +206,34 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                 </div>
               </div>
 
-              <div className="mt-2.5 pt-2 border-t border-slate-800 flex flex-wrap items-center justify-center sm:justify-between gap-2 text-[11px]">
-                <span className="text-amber-300 font-semibold">{currentStudent.planName}</span>
-                <span className="text-slate-400 font-mono">{currentStudent.phone}</span>
+              {/* Allergies Chip Summary on Pass */}
+              <div className="mt-2.5 pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                <div className="flex items-center space-x-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="text-slate-400">Dietary Allergies:</span>
+                  {currentStudent.allergies && currentStudent.allergies.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {currentStudent.allergies.map(alg => (
+                        <span key={alg} className="px-1.5 py-0.2 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold text-[10px]">
+                          {alg}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-emerald-400 font-semibold">None Registered</span>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => {
+                    setSelectedAllergens(currentStudent.allergies || []);
+                    setShowAllergyEditor(true);
+                  }}
+                  className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 text-[10px] font-bold border border-slate-700 transition flex items-center gap-1 cursor-pointer"
+                >
+                  <Edit2 className="w-3 h-3" />
+                  <span>Edit</span>
+                </button>
               </div>
             </div>
           </div>
@@ -209,7 +258,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               <button
                 id="open-camera-scanner-btn"
                 onClick={onOpenScanner}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center space-x-1.5 transition-all active:scale-95"
+                className="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
               >
                 <Zap className="w-4 h-4 text-amber-300" />
                 <span>Open QR Scanner</span>
@@ -217,7 +266,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
 
               <button
                 onClick={() => handleMarkMeal(mealStatus.currentMeal)}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5 transition-all active:scale-95"
+                className="flex-1 sm:flex-none px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
                 title={`Mark ${mealStatus.currentMeal.toUpperCase()} for current student`}
               >
                 <Check className="w-4 h-4" />
@@ -279,17 +328,38 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               </div>
             </div>
 
-            {/* Campus Headcount Indicator */}
-            <div className="mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-              <div className="text-xs font-bold text-slate-200 flex items-center justify-between">
-                <span>Today's Total Headcount Eaten:</span>
-                <span className="text-amber-400 font-mono font-bold">
-                  {todayCounts.breakfast + todayCounts.lunch + todayCounts.snacks + todayCounts.dinner} meals
-                </span>
+            {/* Registered Allergies Banner */}
+            <div className="mt-4 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-200">
+                <div className="flex items-center space-x-1.5 text-amber-300">
+                  <HeartPulse className="w-4 h-4 text-amber-400" />
+                  <span>Your Allergy Guard:</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedAllergens(currentStudent.allergies || []);
+                    setShowAllergyEditor(true);
+                  }}
+                  className="text-[11px] text-amber-400 hover:underline font-semibold cursor-pointer"
+                >
+                  Manage Tags
+                </button>
               </div>
-              <p className="text-[11px] text-slate-400">
-                Live attendance across all 4 dining halls synced with hostel turnstiles.
-              </p>
+
+              <div className="flex flex-wrap gap-1.5">
+                {currentStudent.allergies && currentStudent.allergies.length > 0 ? (
+                  currentStudent.allergies.map(alg => (
+                    <span
+                      key={alg}
+                      className="px-2 py-0.5 rounded-md bg-red-950/60 text-red-300 border border-red-800/60 text-xs font-bold"
+                    >
+                      ⚠️ {alg}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-slate-400 italic">No allergens declared. Tap 'Manage Tags' to add.</span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -299,7 +369,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
             <div className="space-y-0.5">
               <div className="font-bold text-blue-100">Automated Mess Rebate System</div>
               <p className="text-[11px] text-blue-300">
-                Planning outstation trip? Tap "Skip / Rebate" on any upcoming meal to credit ₹65/meal back into your account.
+                Planning outstation trip? Tap "Skip / Rebate" on any upcoming meal to credit ₹45/meal back on monthly mess adjustments.
               </p>
             </div>
           </div>
@@ -400,7 +470,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                     <>
                       <button
                         onClick={() => handleMarkMeal(m.type)}
-                        className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-lg transition-all ${
+                        className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
                           isOngoing
                             ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md shadow-amber-500/20'
                             : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
@@ -410,7 +480,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                       </button>
                       <button
                         onClick={() => setShowRebateModal(m.type)}
-                        className="py-1.5 px-2 text-[11px] font-semibold text-slate-300 hover:text-blue-300 hover:bg-blue-950/60 rounded-lg border border-slate-700 transition-colors"
+                        className="py-1.5 px-2 text-[11px] font-semibold text-slate-300 hover:text-blue-300 hover:bg-blue-950/60 rounded-lg border border-slate-700 transition-colors cursor-pointer"
                         title="Skip meal for rebate credit"
                       >
                         Skip
@@ -487,6 +557,83 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
         </div>
       </div>
 
+      {/* Allergy Setup Modal */}
+      {showAllergyEditor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 p-6 space-y-4 text-slate-100">
+            <div className="flex items-center space-x-2.5">
+              <div className="p-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <HeartPulse className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-100">Configure Student Allergens</h3>
+                <p className="text-xs text-slate-400">
+                  Select your known food allergies for automatic menu warnings
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              When any selected allergen is present in hostel recipes, you will receive highlighted alert badges on the daily menu and pre-order confirmation steps.
+            </p>
+
+            {/* Allergen Checkboxes */}
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              {STANDARD_ALLERGENS.map((alg) => {
+                const isChecked = selectedAllergens.includes(alg);
+                return (
+                  <button
+                    key={alg}
+                    type="button"
+                    onClick={() => handleToggleAllergen(alg)}
+                    className={`p-2.5 rounded-xl text-left text-xs font-semibold border transition-all flex items-center justify-between cursor-pointer ${
+                      isChecked
+                        ? 'bg-amber-500/20 border-amber-500 text-amber-200'
+                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
+                    }`}
+                  >
+                    <span>{alg}</span>
+                    <span className={`w-4 h-4 rounded flex items-center justify-center text-[10px] ${isChecked ? 'bg-amber-500 text-slate-950 font-bold' : 'border border-slate-700'}`}>
+                      {isChecked ? '✓' : ''}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {selectedAllergens.length > 0 && (
+              <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
+                <span>{selectedAllergens.length} active allergens selected</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedAllergens([])}
+                  className="text-red-400 hover:underline cursor-pointer"
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end space-x-2 pt-4 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowAllergyEditor(false)}
+                className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveAllergies}
+                className="px-5 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg transition shadow-md shadow-amber-500/20 cursor-pointer"
+              >
+                Save Dietary Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Rebate Confirmation Modal */}
       {showRebateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
@@ -525,14 +672,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowRebateModal(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
+                className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => handleApplyRebate(showRebateModal)}
-                className="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors shadow-sm"
+                className="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors shadow-sm cursor-pointer"
               >
                 Confirm Skip & Credit Rebate
               </button>

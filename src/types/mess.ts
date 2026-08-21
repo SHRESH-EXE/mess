@@ -1,5 +1,18 @@
 export type UserRole = 'student' | 'admin';
 
+export const STANDARD_ALLERGENS = [
+  'Peanuts',
+  'Tree Nuts',
+  'Dairy',
+  'Eggs',
+  'Gluten',
+  'Soy',
+  'Shellfish',
+  'Fish'
+] as const;
+
+export type StandardAllergen = typeof STANDARD_ALLERGENS[number];
+
 export interface UserSession {
   role: UserRole;
   name: string;
@@ -10,6 +23,7 @@ export interface UserSession {
   roomNo?: string;
   avatarUrl?: string;
   designation?: string;
+  allergies?: string[];
   loginTime: string;
 }
 
@@ -26,6 +40,7 @@ export interface DishItem {
   protein?: string;
   description?: string;
   allergens?: string[];
+  ingredients?: string[];
   isChefSpecial?: boolean;
 }
 
@@ -71,6 +86,7 @@ export interface StudentProfile {
   active: boolean;
   department: string;
   semester: string;
+  allergies: string[];
 }
 
 export interface MealAttendanceRecord {
@@ -131,3 +147,19 @@ export interface DishRating {
   comment?: string;
   date: string;
 }
+
+/**
+ * Anonymous Feedback Structure
+ * Structurally strictly lacks studentId, studentName, rollNo, or session token
+ * to guarantee anonymity at the data layer.
+ */
+export interface AnonymousFeedback {
+  id: string;
+  mealSlot: MealType;
+  dishName: string;
+  rating: number; // 1 to 5
+  comment?: string;
+  timestamp: string;
+  date: string;
+}
+

@@ -1,4 +1,4 @@
-import { DayMenu, StudentProfile, MessAnnouncement, AcademicBlockOrder } from '../types/mess';
+import { DayMenu, StudentProfile, MessAnnouncement, AcademicBlockOrder, AnonymousFeedback } from '../types/mess';
 
 export const INITIAL_ANNOUNCEMENTS: MessAnnouncement[] = [
   {
@@ -11,19 +11,19 @@ export const INITIAL_ANNOUNCEMENTS: MessAnnouncement[] = [
   },
   {
     id: 'ann-2',
+    title: 'Allergen Information & Kitchen Transparency',
+    date: 'Active Policy',
+    priority: 'normal',
+    message: 'All kitchen ingredients and potential allergens (Dairy, Gluten, Nuts, Eggs) are now tracked. Check dish tags before dining.',
+    tag: 'Safety'
+  },
+  {
+    id: 'ann-3',
     title: 'Academic Block Lunch Parcel Timings',
     date: 'Active Daily',
     priority: 'normal',
     message: 'Place parcel orders before 12:15 PM for 1:00 PM batch delivery to CS Block, Library, and Tech Shed.',
     tag: 'Delivery Update'
-  },
-  {
-    id: 'ann-3',
-    title: 'Monthly Mess Rebate Cutoff Date',
-    date: '25th of every month',
-    priority: 'normal',
-    message: 'Submit weekend outstation leave on portal at least 12 hours in advance for daily rebate credit.',
-    tag: 'Rebate Info'
   }
 ];
 
@@ -44,7 +44,8 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     barcode: 'CMH-22CS0142-2026',
     active: true,
     department: 'Computer Science & Engg',
-    semester: '6th Semester'
+    semester: '6th Semester',
+    allergies: ['Dairy', 'Tree Nuts']
   },
   {
     id: 'stu-2',
@@ -62,7 +63,8 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     barcode: 'CMH-23EE0089-2026',
     active: true,
     department: 'Electrical Engineering',
-    semester: '4th Semester'
+    semester: '4th Semester',
+    allergies: ['Gluten']
   },
   {
     id: 'stu-3',
@@ -80,7 +82,46 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     barcode: 'CMH-21ME0310-2026',
     active: true,
     department: 'Mechanical Engineering',
-    semester: '8th Semester'
+    semester: '8th Semester',
+    allergies: ['Peanuts', 'Eggs']
+  },
+  {
+    id: 'stu-4',
+    name: 'Ananya Deshmukh',
+    rollNo: '23BT0045',
+    hostel: 'Sarojini Hostel (Block-D)',
+    roomNo: 'D-118',
+    email: 'ananya.d@campus.edu',
+    phone: '+91 98220 54321',
+    planName: 'Full Mess Pass (4 Meals/Day)',
+    planType: 'full',
+    totalMealsOpted: 120,
+    mealsConsumedMonth: 65,
+    photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
+    barcode: 'CMH-23BT0045-2026',
+    active: true,
+    department: 'Bio-Technology',
+    semester: '4th Semester',
+    allergies: ['Soy', 'Dairy']
+  },
+  {
+    id: 'stu-5',
+    name: 'Vikramaditya Rao',
+    rollNo: '22CE0199',
+    hostel: 'Aryabhatta Hostel (Block-B)',
+    roomNo: 'B-105',
+    email: 'vikram.rao@campus.edu',
+    phone: '+91 99001 88776',
+    planName: 'Full Mess Pass (4 Meals/Day)',
+    planType: 'full',
+    totalMealsOpted: 120,
+    mealsConsumedMonth: 90,
+    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
+    barcode: 'CMH-22CE0199-2026',
+    active: true,
+    department: 'Civil Engineering',
+    semester: '6th Semester',
+    allergies: ['Shellfish', 'Fish']
   }
 ];
 
@@ -116,10 +157,49 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingsCount: 142,
         specialNote: 'Fresh filter coffee and warm sprouts available at the live counter.',
         dishes: [
-          { id: 'm-bf-1', name: 'Steamed Idli & Medu Vada (2 pcs)', category: 'main', tags: ['veg', 'high-protein'], calories: 240, protein: '9g', description: 'Fluffy fermented rice-lentil steamed cakes with crisp lentil fritters.' },
-          { id: 'm-bf-2', name: 'Madras Sambar & Fresh Coconut Chutney', category: 'side', tags: ['veg'], calories: 120, protein: '4g', description: 'Aromatic drumstick tamarind stew and freshly ground coconut-chilli chutney.' },
-          { id: 'm-bf-3', name: 'Boiled Eggs (2 pcs) / Peanut Poha', category: 'main', tags: ['egg', 'high-protein'], calories: 155, protein: '12g', description: 'Protein option: farm fresh boiled eggs or flattened rice tempered with mustard and peanuts.' },
-          { id: 'm-bf-4', name: 'Masala Chai / Filter Coffee / Bournvita Milk', category: 'beverage', tags: ['veg'], calories: 85, description: 'Fresh hot beverage served with whole milk or black.' }
+          {
+            id: 'm-bf-1',
+            name: 'Steamed Idli & Medu Vada (2 pcs)',
+            category: 'main',
+            tags: ['veg', 'high-protein'],
+            calories: 240,
+            protein: '9g',
+            description: 'Fluffy fermented rice-lentil steamed cakes with crisp lentil fritters.',
+            allergens: [],
+            ingredients: ['Idli Rice', 'Urad Dal (Black Gram)', 'Fenugreek Seeds', 'Curry Leaves', 'Black Pepper', 'Refined Sunflower Oil', 'Rock Salt']
+          },
+          {
+            id: 'm-bf-2',
+            name: 'Madras Sambar & Fresh Coconut Chutney',
+            category: 'side',
+            tags: ['veg'],
+            calories: 120,
+            protein: '4g',
+            description: 'Aromatic drumstick tamarind stew and freshly ground coconut-chilli chutney.',
+            allergens: [],
+            ingredients: ['Toor Dal', 'Fresh Grated Coconut', 'Drumstick', 'Shallots', 'Tamarind Pulp', 'Mustard Seeds', 'Green Chillies', 'Curry Leaves', 'Hing (Asafoetida)']
+          },
+          {
+            id: 'm-bf-3',
+            name: 'Boiled Eggs (2 pcs) / Peanut Poha',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 155,
+            protein: '12g',
+            description: 'Protein option: farm fresh boiled eggs or flattened rice tempered with mustard and peanuts.',
+            allergens: ['Eggs', 'Peanuts'],
+            ingredients: ['Farm Fresh Eggs', 'Flattened Rice (Poha)', 'Roasted Peanuts', 'Mustard Seeds', 'Turmeric Powder', 'Green Chillies', 'Fresh Coriander', 'Lemon Juice']
+          },
+          {
+            id: 'm-bf-4',
+            name: 'Masala Chai / Filter Coffee / Bournvita Milk',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 85,
+            description: 'Fresh hot beverage served with whole milk or black.',
+            allergens: ['Dairy'],
+            ingredients: ['Full Cream Cow Milk', 'Assam Black Tea Leaves', 'Roasted Coffee Chicory Blend', 'Crushed Fresh Ginger', 'Cardamom Pods', 'Sugar']
+          }
         ]
       },
       lunch: {
@@ -136,12 +216,72 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingsCount: 198,
         specialNote: 'Chef Special: Shahi Paneer with Fresh Butter Tandoori Roti.',
         dishes: [
-          { id: 'm-lu-1', name: 'Shahi Paneer Butter Masala', category: 'main', tags: ['veg', 'high-protein', 'special'], calories: 280, protein: '14g', description: 'Cottage cheese simmered in rich cashew-tomato velvet gravy.', isChefSpecial: true },
-          { id: 'm-lu-2', name: 'Dal Tadka (Arhar/Toor Dal)', category: 'side', tags: ['veg', 'high-protein'], calories: 160, protein: '8g', description: 'Slow-cooked yellow lentils tempered with cumin, garlic, and desi ghee.' },
-          { id: 'm-lu-3', name: 'Steamed Basmati Rice & Jeera Pulao', category: 'main', tags: ['veg'], calories: 200, protein: '4g', description: 'Fragrant long-grain basmati rice tempered with roasted cumin.' },
-          { id: 'm-lu-4', name: 'Phulka / Butter Tawa Roti (Unlimited)', category: 'bread', tags: ['veg'], calories: 140, protein: '5g', description: 'Whole wheat flatbreads brushed with fresh butter.' },
-          { id: 'm-lu-5', name: 'Boondi Raita & Fresh Green Salad', category: 'side', tags: ['veg'], calories: 75, protein: '3g', description: 'Spiced chilled curd with crispy chickpea pearls and seasonal cucumber-carrot slices.' },
-          { id: 'm-lu-6', name: 'Hot Gulab Jamun (1 pc)', category: 'dessert', tags: ['sweet', 'special'], calories: 150, description: 'Traditional milk-solid dumplings soaked in rose cardamom sugar syrup.' }
+          {
+            id: 'm-lu-1',
+            name: 'Shahi Paneer Butter Masala',
+            category: 'main',
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 280,
+            protein: '14g',
+            description: 'Cottage cheese simmered in rich cashew-tomato velvet gravy.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Fresh Paneer (Cottage Cheese)', 'Amul Table Butter', 'Fresh Milk Cream', 'Cashew Nut Paste', 'Tomato Puree', 'Kashmiri Red Chilli', 'Kasuri Methi', 'Garam Masala'],
+            isChefSpecial: true
+          },
+          {
+            id: 'm-lu-2',
+            name: 'Dal Tadka (Arhar/Toor Dal)',
+            category: 'side',
+            tags: ['veg', 'high-protein'],
+            calories: 160,
+            protein: '8g',
+            description: 'Slow-cooked yellow lentils tempered with cumin, garlic, and desi ghee.',
+            allergens: ['Dairy'],
+            ingredients: ['Toor Dal (Yellow Pigeon Peas)', 'Desi Ghee (Clarified Butter)', 'Cumin Seeds', 'Chopped Garlic', 'Ripe Tomatoes', 'Green Chillies', 'Coriander']
+          },
+          {
+            id: 'm-lu-3',
+            name: 'Steamed Basmati Rice & Jeera Pulao',
+            category: 'main',
+            tags: ['veg'],
+            calories: 200,
+            protein: '4g',
+            description: 'Fragrant long-grain basmati rice tempered with roasted cumin.',
+            allergens: [],
+            ingredients: ['Aged Basmati Rice', 'Roasted Cumin Seeds', 'Refined Sunflower Oil', 'Bay Leaf', 'Cloves', 'Pinch of Salt']
+          },
+          {
+            id: 'm-lu-4',
+            name: 'Phulka / Butter Tawa Roti (Unlimited)',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 140,
+            protein: '5g',
+            description: 'Whole wheat flatbreads brushed with fresh butter.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Table Butter', 'Water', 'Salt']
+          },
+          {
+            id: 'm-lu-5',
+            name: 'Boondi Raita & Fresh Green Salad',
+            category: 'side',
+            tags: ['veg'],
+            calories: 75,
+            protein: '3g',
+            description: 'Spiced chilled curd with crispy chickpea pearls and seasonal cucumber-carrot slices.',
+            allergens: ['Dairy'],
+            ingredients: ['Fresh Pasteurized Dahi (Curd)', 'Chickpea Flour (Besan Boondi)', 'Roasted Cumin Powder', 'Black Salt', 'Cucumber', 'Carrot', 'Mint']
+          },
+          {
+            id: 'm-lu-6',
+            name: 'Hot Gulab Jamun (1 pc)',
+            category: 'dessert',
+            tags: ['sweet', 'special'],
+            calories: 150,
+            description: 'Traditional milk-solid dumplings soaked in rose cardamom sugar syrup.',
+            allergens: ['Dairy', 'Gluten'],
+            ingredients: ['Mawa / Khoya (Concentrated Milk Solids)', 'Refined Wheat Flour (Maida)', 'Pure Desi Ghee', 'Cardamom Sugar Syrup', 'Rose Water']
+          }
         ]
       },
       snacks: {
@@ -157,8 +297,26 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.8,
         ratingsCount: 165,
         dishes: [
-          { id: 'm-sn-1', name: 'Crispy Veg Samosa with Mint & Imli Chutney', category: 'snack', tags: ['veg', 'special'], calories: 220, description: 'Golden flaky pastry stuffed with spiced potato and peas.' },
-          { id: 'm-sn-2', name: 'Adrak Elaichi Special Chai / Cold Coffee', category: 'beverage', tags: ['veg'], calories: 95, description: 'Fresh crushed ginger and cardamom brewed tea.' }
+          {
+            id: 'm-sn-1',
+            name: 'Crispy Veg Samosa with Mint & Imli Chutney',
+            category: 'snack',
+            tags: ['veg', 'special'],
+            calories: 220,
+            description: 'Golden flaky pastry stuffed with spiced potato and peas.',
+            allergens: ['Gluten', 'Peanuts'],
+            ingredients: ['Refined Wheat Flour (Maida)', 'Mashed Potatoes', 'Green Peas', 'Crushed Peanuts', 'Coriander Seeds', 'Garam Masala', 'Tamarind Pulp', 'Mint Leaves', 'Vegetable Oil']
+          },
+          {
+            id: 'm-sn-2',
+            name: 'Adrak Elaichi Special Chai / Cold Coffee',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 95,
+            description: 'Fresh crushed ginger and cardamom brewed tea.',
+            allergens: ['Dairy'],
+            ingredients: ['Whole Milk', 'Assam CTC Tea', 'Crushed Ginger Root', 'Green Cardamom', 'Instant Coffee Powder', 'Sugar']
+          }
         ]
       },
       dinner: {
@@ -174,11 +332,60 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.5,
         ratingsCount: 180,
         dishes: [
-          { id: 'm-di-1', name: 'Aloo Gobi Matar Masala', category: 'main', tags: ['veg'], calories: 190, protein: '5g', description: 'Homestyle cauliflower, potato and green peas in light onion-tomato masala.' },
-          { id: 'm-di-2', name: 'Egg Curry (2 Eggs) / Kadai Paneer', category: 'main', tags: ['egg', 'high-protein', 'special'], calories: 260, protein: '16g', description: 'Rich spiced onion-tomato curry with boiled eggs or cottage cheese cubes.' },
-          { id: 'm-di-3', name: 'Dal Palak (Spinach Lentils)', category: 'side', tags: ['veg', 'high-protein'], calories: 140, protein: '7g', description: 'Nutritious yellow dal infused with fresh chopped spinach leaves.' },
-          { id: 'm-di-4', name: 'Hot Rotis & Steamed Rice', category: 'bread', tags: ['veg'], calories: 220, protein: '6g', description: 'Freshly puffed whole wheat rotis.' },
-          { id: 'm-di-5', name: 'Rice Kheer with Pistachios', category: 'dessert', tags: ['sweet'], calories: 160, description: 'Slow-simmered basmati rice pudding in thickened cardamom milk.' }
+          {
+            id: 'm-di-1',
+            name: 'Aloo Gobi Matar Masala',
+            category: 'main',
+            tags: ['veg'],
+            calories: 190,
+            protein: '5g',
+            description: 'Homestyle cauliflower, potato and green peas in light onion-tomato masala.',
+            allergens: [],
+            ingredients: ['Fresh Cauliflower Florets', 'Potatoes', 'Green Peas', 'Onion', 'Tomato Gravy', 'Turmeric', 'Coriander Powder', 'Cumin']
+          },
+          {
+            id: 'm-di-2',
+            name: 'Egg Curry (2 Eggs) / Kadai Paneer',
+            category: 'main',
+            tags: ['egg', 'high-protein', 'special'],
+            calories: 260,
+            protein: '16g',
+            description: 'Rich spiced onion-tomato curry with boiled eggs or cottage cheese cubes.',
+            allergens: ['Eggs', 'Dairy'],
+            ingredients: ['Boiled Eggs', 'Paneer (Cottage Cheese)', 'Bell Peppers (Capsicum)', 'Butter', 'Onions', 'Tomatoes', 'Kadai Masala Spices']
+          },
+          {
+            id: 'm-di-3',
+            name: 'Dal Palak (Spinach Lentils)',
+            category: 'side',
+            tags: ['veg', 'high-protein'],
+            calories: 140,
+            protein: '7g',
+            description: 'Nutritious yellow dal infused with fresh chopped spinach leaves.',
+            allergens: [],
+            ingredients: ['Yellow Moong Dal', 'Fresh Farm Spinach (Palak)', 'Garlic', 'Cumin Seeds', 'Mustard Oil', 'Green Chillies']
+          },
+          {
+            id: 'm-di-4',
+            name: 'Hot Rotis & Steamed Rice',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 220,
+            protein: '6g',
+            description: 'Freshly puffed whole wheat rotis.',
+            allergens: ['Gluten'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Basmati Steamed Rice', 'Water']
+          },
+          {
+            id: 'm-di-5',
+            name: 'Rice Kheer with Pistachios',
+            category: 'dessert',
+            tags: ['sweet'],
+            calories: 160,
+            description: 'Slow-simmered basmati rice pudding in thickened cardamom milk.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Full Cream Milk', 'Basmati Rice', 'Pistachio Slivers', 'Almonds', 'Cardamom', 'Sugar']
+          }
         ]
       }
     }
@@ -200,9 +407,38 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.7,
         ratingsCount: 155,
         dishes: [
-          { id: 't-bf-1', name: 'Punjabi Aloo Paratha with Amul Butter & Curd', category: 'main', tags: ['veg', 'high-protein'], calories: 340, protein: '8g', description: 'Whole wheat griddle bread stuffed with spiced mashed potatoes.' },
-          { id: 't-bf-2', name: 'Sprouts Salad & Lemon Wedges', category: 'side', tags: ['veg', 'high-protein'], calories: 90, protein: '6g', description: 'Moong and chickpea sprouts with onions, tomatoes and coriander.' },
-          { id: 't-bf-3', name: 'Hot Masala Tea / Hot Milk', category: 'beverage', tags: ['veg'], calories: 80, description: 'Freshly brewed campus morning tea.' }
+          {
+            id: 't-bf-1',
+            name: 'Punjabi Aloo Paratha with Amul Butter & Curd',
+            category: 'main',
+            tags: ['veg', 'high-protein'],
+            calories: 340,
+            protein: '8g',
+            description: 'Whole wheat griddle bread stuffed with spiced mashed potatoes.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Boiled Potatoes', 'Table Butter', 'Fresh Dahi (Curd)', 'Ajwain (Carom Seeds)', 'Green Chillies', 'Amchur']
+          },
+          {
+            id: 't-bf-2',
+            name: 'Sprouts Salad & Lemon Wedges',
+            category: 'side',
+            tags: ['veg', 'high-protein'],
+            calories: 90,
+            protein: '6g',
+            description: 'Moong and chickpea sprouts with onions, tomatoes and coriander.',
+            allergens: [],
+            ingredients: ['Sprouted Green Moong', 'Sprouted Kala Chana', 'Finely Diced Onion', 'Tomatoes', 'Chaat Masala', 'Lemon Juice']
+          },
+          {
+            id: 't-bf-3',
+            name: 'Hot Masala Tea / Hot Milk',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 80,
+            description: 'Freshly brewed campus morning tea.',
+            allergens: ['Dairy'],
+            ingredients: ['Cow Milk', 'Black Tea Leaves', 'Spices (Ginger, Cardamom, Clove)', 'Sugar']
+          }
         ]
       },
       lunch: {
@@ -218,10 +454,49 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.6,
         ratingsCount: 210,
         dishes: [
-          { id: 't-lu-1', name: 'Amritsari Chole Kulche / Bhature', category: 'main', tags: ['veg', 'high-protein', 'special'], calories: 360, protein: '12g', description: 'Robust spiced dark chickpeas with fluffy fermented bread.' },
-          { id: 't-lu-2', name: 'Jeera Rice & Boondi Raita', category: 'side', tags: ['veg'], calories: 190, protein: '4g', description: 'Cumin flavored rice with cool spiced curd.' },
-          { id: 't-lu-3', name: 'Tawa Roti & Pickled Onions', category: 'bread', tags: ['veg'], calories: 140, protein: '4g', description: 'Hot wheat rotis with vinegar onion rings.' },
-          { id: 't-lu-4', name: 'Pineapple Halwa', category: 'dessert', tags: ['sweet'], calories: 180, description: 'Rich semolina pudding cooked with real pineapple chunks and ghee.' }
+          {
+            id: 't-lu-1',
+            name: 'Amritsari Chole Kulche / Bhature',
+            category: 'main',
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 360,
+            protein: '12g',
+            description: 'Robust spiced dark chickpeas with fluffy fermented bread.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Kabuli Chana (Chickpeas)', 'Refined Wheat Flour (Maida)', 'Butter', 'Anardana (Dried Pomegranate)', 'Amchur', 'Black Tea Bag (for color)', 'Ginger Juliennes']
+          },
+          {
+            id: 't-lu-2',
+            name: 'Jeera Rice & Boondi Raita',
+            category: 'side',
+            tags: ['veg'],
+            calories: 190,
+            protein: '4g',
+            description: 'Cumin flavored rice with cool spiced curd.',
+            allergens: ['Dairy'],
+            ingredients: ['Basmati Rice', 'Cumin Seeds', 'Dahi (Yogurt)', 'Besan Boondi', 'Black Salt', 'Mint']
+          },
+          {
+            id: 't-lu-3',
+            name: 'Tawa Roti & Pickled Onions',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 140,
+            protein: '4g',
+            description: 'Hot wheat rotis with vinegar onion rings.',
+            allergens: ['Gluten'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Shallots / Baby Onions', 'Beetroot Juice Vinegar', 'Salt']
+          },
+          {
+            id: 't-lu-4',
+            name: 'Pineapple Halwa',
+            category: 'dessert',
+            tags: ['sweet'],
+            calories: 180,
+            description: 'Rich semolina pudding cooked with real pineapple chunks and ghee.',
+            allergens: ['Gluten', 'Dairy', 'Tree Nuts'],
+            ingredients: ['Semolina (Sooji)', 'Fresh Pineapple Chunks', 'Pure Desi Ghee', 'Cashews', 'Cardamom', 'Sugar']
+          }
         ]
       },
       snacks: {
@@ -237,8 +512,26 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.5,
         ratingsCount: 140,
         dishes: [
-          { id: 't-sn-1', name: 'Mumbai Style Bhel Puri / Sev Puri', category: 'snack', tags: ['veg'], calories: 210, description: 'Crisp puffed rice, papdi, veggies and sweet-tangy chutneys.' },
-          { id: 't-sn-2', name: 'Special Cutting Chai', category: 'beverage', tags: ['veg'], calories: 85, description: 'Cardamom strong tea.' }
+          {
+            id: 't-sn-1',
+            name: 'Mumbai Style Bhel Puri / Sev Puri',
+            category: 'snack',
+            tags: ['veg'],
+            calories: 210,
+            description: 'Crisp puffed rice, papdi, veggies and sweet-tangy chutneys.',
+            allergens: ['Gluten', 'Peanuts'],
+            ingredients: ['Puffed Rice (Kurmura)', 'Crispy Wheat Papdi', 'Roasted Peanuts', 'Sev (Gram Flour Vermicelli)', 'Tamarind Dates Chutney', 'Spicy Green Chutney', 'Raw Mango Pieces']
+          },
+          {
+            id: 't-sn-2',
+            name: 'Special Cutting Chai',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 85,
+            description: 'Cardamom strong tea.',
+            allergens: ['Dairy'],
+            ingredients: ['Milk', 'Assam Tea', 'Crushed Cardamom Pods', 'Sugar']
+          }
         ]
       },
       dinner: {
@@ -254,11 +547,60 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.8,
         ratingsCount: 175,
         dishes: [
-          { id: 't-di-1', name: 'Matar Paneer', category: 'main', tags: ['veg', 'high-protein'], calories: 240, protein: '12g', description: 'Tender cottage cheese and sweet green peas in spiced onion gravy.' },
-          { id: 't-di-2', name: 'Chicken Curry / Soya Chaap Masala', category: 'main', tags: ['non-veg', 'high-protein', 'special'], calories: 290, protein: '22g', description: 'Desi style chicken curry or protein-packed soya chaap chunks.' },
-          { id: 't-di-3', name: 'Dal Makhani', category: 'side', tags: ['veg', 'high-protein'], calories: 190, protein: '8g', description: 'Black lentils slow cooked overnight with butter and cream.' },
-          { id: 't-di-4', name: 'Butter Phulka & Steamed Rice', category: 'bread', tags: ['veg'], calories: 210, protein: '5g', description: 'Unlimited hot flatbreads.' },
-          { id: 't-di-5', name: 'Ice Cream Cup (Vanilla / Butterscotch)', category: 'dessert', tags: ['sweet'], calories: 130, description: 'Chilled dessert cup.' }
+          {
+            id: 't-di-1',
+            name: 'Matar Paneer',
+            category: 'main',
+            tags: ['veg', 'high-protein'],
+            calories: 240,
+            protein: '12g',
+            description: 'Tender cottage cheese and sweet green peas in spiced onion gravy.',
+            allergens: ['Dairy'],
+            ingredients: ['Paneer (Cottage Cheese)', 'Green Peas (Matar)', 'Onion Tomato Gravy', 'Ghee', 'Garam Masala', 'Fresh Cream']
+          },
+          {
+            id: 't-di-2',
+            name: 'Chicken Curry / Soya Chaap Masala',
+            category: 'main',
+            tags: ['non-veg', 'high-protein', 'special'],
+            calories: 290,
+            protein: '22g',
+            description: 'Desi style chicken curry or protein-packed soya chaap chunks.',
+            allergens: ['Soy', 'Gluten'],
+            ingredients: ['Fresh Poultry Chicken / Soya Flour Sticks', 'Wheat Gluten', 'Whole Spices', 'Fried Onion Gravy', 'Ginger Garlic Paste', 'Mustard Oil']
+          },
+          {
+            id: 't-di-3',
+            name: 'Dal Makhani',
+            category: 'side',
+            tags: ['veg', 'high-protein'],
+            calories: 190,
+            protein: '8g',
+            description: 'Black lentils slow cooked overnight with butter and cream.',
+            allergens: ['Dairy'],
+            ingredients: ['Black Urad Dal', 'Rajma (Kidney Beans)', 'White Butter (Makhan)', 'Heavy Cream', 'Kashmiri Red Chilli', 'Tomato Puree', 'Kasuri Methi']
+          },
+          {
+            id: 't-di-4',
+            name: 'Butter Phulka & Steamed Rice',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 210,
+            protein: '5g',
+            description: 'Unlimited hot flatbreads.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Butter', 'Basmati Steamed Rice']
+          },
+          {
+            id: 't-di-5',
+            name: 'Ice Cream Cup (Vanilla / Butterscotch)',
+            category: 'dessert',
+            tags: ['sweet'],
+            calories: 130,
+            description: 'Chilled dessert cup.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Milk Solids', 'Sugar', 'Butterscotch Crunch (Cashew/Sugar)', 'Natural Vanilla Flavor']
+          }
         ]
       }
     }
@@ -280,10 +622,48 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.9,
         ratingsCount: 220,
         dishes: [
-          { id: 'w-bf-1', name: 'Crispy Masala Dosa with Potato Roast Filling', category: 'main', tags: ['veg', 'special'], calories: 280, protein: '7g', description: 'Crisp golden rice crepe with savory spiced mashed potatoes.' },
-          { id: 'w-bf-2', name: 'Tomato Chutney & Coconut Chutney', category: 'side', tags: ['veg'], calories: 95, description: 'Dual south-Indian chutney combo.' },
-          { id: 'w-bf-3', name: 'Boiled Eggs / Vegetable Upma', category: 'main', tags: ['egg', 'high-protein'], calories: 140, protein: '10g', description: 'Protein boost for morning workouts and lectures.' },
-          { id: 'w-bf-4', name: 'Filter Coffee / Tea', category: 'beverage', tags: ['veg'], calories: 80, description: 'Authentic south style frothy filter coffee.' }
+          {
+            id: 'w-bf-1',
+            name: 'Crispy Masala Dosa with Potato Roast Filling',
+            category: 'main',
+            tags: ['veg', 'special'],
+            calories: 280,
+            protein: '7g',
+            description: 'Crisp golden rice crepe with savory spiced mashed potatoes.',
+            allergens: ['Dairy'],
+            ingredients: ['Fermented Rice & Lentil Batter', 'Potatoes', 'Mustard Seeds', 'Butter / Ghee', 'Curry Leaves', 'Turmeric', 'Onions']
+          },
+          {
+            id: 'w-bf-2',
+            name: 'Tomato Chutney & Coconut Chutney',
+            category: 'side',
+            tags: ['veg'],
+            calories: 95,
+            description: 'Dual south-Indian chutney combo.',
+            allergens: [],
+            ingredients: ['Roasted Tomatoes', 'Fresh Grated Coconut', 'Urad Dal', 'Red Chillies', 'Curry Leaves', 'Asafoetida']
+          },
+          {
+            id: 'w-bf-3',
+            name: 'Boiled Eggs / Vegetable Upma',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 140,
+            protein: '10g',
+            description: 'Protein boost for morning workouts and lectures.',
+            allergens: ['Eggs', 'Gluten'],
+            ingredients: ['Farm Boiled Eggs', 'Roasted Semolina (Rava)', 'Carrots', 'Beans', 'Ginger', 'Curry Leaves', 'Mustard Seeds']
+          },
+          {
+            id: 'w-bf-4',
+            name: 'Filter Coffee / Tea',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 80,
+            description: 'Authentic south style frothy filter coffee.',
+            allergens: ['Dairy'],
+            ingredients: ['Brewed Coffee Decoction', 'Whole Milk', 'Sugar']
+          }
         ]
       },
       lunch: {
@@ -299,11 +679,59 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.6,
         ratingsCount: 185,
         dishes: [
-          { id: 'w-lu-1', name: 'Rajma Masala (Kashmiri Kidney Beans)', category: 'main', tags: ['veg', 'high-protein'], calories: 260, protein: '13g', description: 'Plump kidney beans slow simmered with whole spices.' },
-          { id: 'w-lu-2', name: 'Mix Veg Korma (Carrots, Beans, Corn)', category: 'side', tags: ['veg'], calories: 170, protein: '4g', description: 'Garden vegetables in mildly spiced coconut gravy.' },
-          { id: 'w-lu-3', name: 'Steamed Rice & Phulka', category: 'main', tags: ['veg'], calories: 210, protein: '5g', description: 'Hot comforting rice and flatbread.' },
-          { id: 'w-lu-4', name: 'Curd / Buttermilk & Roasted Papad', category: 'side', tags: ['veg'], calories: 70, description: 'Probiotic plain yogurt and crisp lentil papad.' },
-          { id: 'w-lu-5', name: 'Moong Dal Halwa', category: 'dessert', tags: ['sweet', 'special'], calories: 190, description: 'Rich roasted yellow lentil pudding with saffron.' }
+          {
+            id: 'w-lu-1',
+            name: 'Rajma Masala (Kashmiri Kidney Beans)',
+            category: 'main',
+            tags: ['veg', 'high-protein'],
+            calories: 260,
+            protein: '13g',
+            description: 'Plump kidney beans slow simmered with whole spices.',
+            allergens: [],
+            ingredients: ['Red Kashmiri Kidney Beans (Rajma)', 'Onion Tomato Masala', 'Ginger Garlic', 'Cumin', 'Coriander', 'Bay Leaves']
+          },
+          {
+            id: 'w-lu-2',
+            name: 'Mix Veg Korma (Carrots, Beans, Corn)',
+            category: 'side',
+            tags: ['veg'],
+            calories: 170,
+            protein: '4g',
+            description: 'Garden vegetables in mildly spiced coconut gravy.',
+            allergens: ['Tree Nuts'],
+            ingredients: ['Carrots', 'French Beans', 'Sweet Corn', 'Coconut Paste', 'Cashew Paste', 'Green Chillies', 'Fennel Seeds']
+          },
+          {
+            id: 'w-lu-3',
+            name: 'Steamed Rice & Phulka',
+            category: 'main',
+            tags: ['veg'],
+            calories: 210,
+            protein: '5g',
+            description: 'Hot comforting rice and flatbread.',
+            allergens: ['Gluten'],
+            ingredients: ['Aged Steamed Basmati Rice', 'Whole Wheat Flour (Atta)']
+          },
+          {
+            id: 'w-lu-4',
+            name: 'Curd / Buttermilk & Roasted Papad',
+            category: 'side',
+            tags: ['veg'],
+            calories: 70,
+            description: 'Probiotic plain yogurt and crisp lentil papad.',
+            allergens: ['Dairy'],
+            ingredients: ['Fresh Dahi (Curd)', 'Lentil Papad (Urad/Moong)', 'Roasted Cumin', 'Mint']
+          },
+          {
+            id: 'w-lu-5',
+            name: 'Moong Dal Halwa',
+            category: 'dessert',
+            tags: ['sweet', 'special'],
+            calories: 190,
+            description: 'Rich roasted yellow lentil pudding with saffron.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Yellow Moong Dal (Lentil Paste)', 'Desi Ghee', 'Saffron Strands (Kesar)', 'Cardamom', 'Cashews', 'Almonds', 'Sugar']
+          }
         ]
       },
       snacks: {
@@ -319,8 +747,26 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.6,
         ratingsCount: 150,
         dishes: [
-          { id: 'w-sn-1', name: 'Mumbai Pav Bhaji with Butter Toasted Pav', category: 'snack', tags: ['veg', 'special'], calories: 260, description: 'Mashed spicy vegetables topped with melted butter and lemon.' },
-          { id: 'w-sn-2', name: 'Masala Chai', category: 'beverage', tags: ['veg'], calories: 80, description: 'Fresh boiled tea.' }
+          {
+            id: 'w-sn-1',
+            name: 'Mumbai Pav Bhaji with Butter Toasted Pav',
+            category: 'snack',
+            tags: ['veg', 'special'],
+            calories: 260,
+            description: 'Mashed spicy vegetables topped with melted butter and lemon.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Potatoes', 'Green Peas', 'Cauliflower', 'Tomatoes', 'Capsicum', 'Pav Bhaji Masala', 'Butter', 'Bakery Wheat Pav (Buns)', 'Onions', 'Lemon']
+          },
+          {
+            id: 'w-sn-2',
+            name: 'Masala Chai',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 80,
+            description: 'Fresh boiled tea.',
+            allergens: ['Dairy'],
+            ingredients: ['Cow Milk', 'CTC Tea Leaves', 'Ginger', 'Cardamom', 'Sugar']
+          }
         ]
       },
       dinner: {
@@ -336,11 +782,60 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.7,
         ratingsCount: 190,
         dishes: [
-          { id: 'w-di-1', name: 'Paneer Do Pyaza', category: 'main', tags: ['veg', 'high-protein'], calories: 250, protein: '13g', description: 'Cottage cheese chunks cooked with two textures of onions.' },
-          { id: 'w-di-2', name: 'Egg Bhurji / Veg Kolhapuri', category: 'main', tags: ['egg', 'high-protein'], calories: 220, protein: '14g', description: 'Spiced scrambled eggs with green chillies or fiery mixed vegetables.' },
-          { id: 'w-di-3', name: 'Yellow Moong Dal Fry', category: 'side', tags: ['veg', 'high-protein'], calories: 130, protein: '7g', description: 'Light comforting yellow dal.' },
-          { id: 'w-di-4', name: 'Tandoori Roti & Veg Pulao', category: 'bread', tags: ['veg'], calories: 220, protein: '6g', description: 'Freshly baked tandoori bread and aromatic spiced rice.' },
-          { id: 'w-di-5', name: 'Sweet Rasgulla (2 pcs)', category: 'dessert', tags: ['sweet'], calories: 140, description: 'Spongy cottage cheese balls soaked in light sugar syrup.' }
+          {
+            id: 'w-di-1',
+            name: 'Paneer Do Pyaza',
+            category: 'main',
+            tags: ['veg', 'high-protein'],
+            calories: 250,
+            protein: '13g',
+            description: 'Cottage cheese chunks cooked with two textures of onions.',
+            allergens: ['Dairy'],
+            ingredients: ['Paneer (Cottage Cheese)', 'Caramelized Onion Gravy', 'Crunchy Diced Onions', 'Desi Ghee', 'Tomatoes', 'Whole Spices']
+          },
+          {
+            id: 'w-di-2',
+            name: 'Egg Bhurji / Veg Kolhapuri',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 220,
+            protein: '14g',
+            description: 'Spiced scrambled eggs with green chillies or fiery mixed vegetables.',
+            allergens: ['Eggs', 'Tree Nuts'],
+            ingredients: ['Farm Eggs', 'Onions', 'Tomatoes', 'Green Chillies', 'White Butter', 'Kolhapuri Spices (Sesame, Poppy Seeds, Coconut, Red Chillies)']
+          },
+          {
+            id: 'w-di-3',
+            name: 'Yellow Moong Dal Fry',
+            category: 'side',
+            tags: ['veg', 'high-protein'],
+            calories: 130,
+            protein: '7g',
+            description: 'Light comforting yellow dal.',
+            allergens: ['Dairy'],
+            ingredients: ['Yellow Moong Dal', 'Desi Ghee', 'Cumin Seeds', 'Garlic', 'Turmeric', 'Coriander']
+          },
+          {
+            id: 'w-di-4',
+            name: 'Tandoori Roti & Veg Pulao',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 220,
+            protein: '6g',
+            description: 'Freshly baked tandoori bread and aromatic spiced rice.',
+            allergens: ['Gluten'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Basmati Rice', 'Carrots', 'Green Beans', 'Cardamom', 'Cumin']
+          },
+          {
+            id: 'w-di-5',
+            name: 'Sweet Rasgulla (2 pcs)',
+            category: 'dessert',
+            tags: ['sweet'],
+            calories: 140,
+            description: 'Spongy cottage cheese balls soaked in light sugar syrup.',
+            allergens: ['Dairy'],
+            ingredients: ['Chenna (Fresh Curd Cheese)', 'Semolina Pinch', 'Sugar Syrup', 'Rose Water']
+          }
         ]
       }
     }
@@ -362,9 +857,38 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.5,
         ratingsCount: 130,
         dishes: [
-          { id: 'th-bf-1', name: 'Indori Poha with Sev & Jeeravan Masala', category: 'main', tags: ['veg'], calories: 220, protein: '5g', description: 'Steamed flattened rice with peanuts, crunchy sev, pomegranate and special spices.' },
-          { id: 'th-bf-2', name: 'Warm Boiled Eggs / Bread Toast with Jam & Butter', category: 'main', tags: ['egg', 'high-protein'], calories: 170, protein: '12g', description: 'High protein morning essentials.' },
-          { id: 'th-bf-3', name: 'Hot Bournvita Milk / Masala Chai', category: 'beverage', tags: ['veg'], calories: 90, description: 'Energizing malt beverage or tea.' }
+          {
+            id: 'th-bf-1',
+            name: 'Indori Poha with Sev & Jeeravan Masala',
+            category: 'main',
+            tags: ['veg'],
+            calories: 220,
+            protein: '5g',
+            description: 'Steamed flattened rice with peanuts, crunchy sev, pomegranate and special spices.',
+            allergens: ['Peanuts'],
+            ingredients: ['Flattened Rice (Poha)', 'Roasted Peanuts', 'Mustard Seeds', 'Fennel Seeds (Saunf)', 'Jeeravan Masala', 'Ratlami Sev (Besan)', 'Pomegranate Pearls', 'Lemon']
+          },
+          {
+            id: 'th-bf-2',
+            name: 'Warm Boiled Eggs / Bread Toast with Jam & Butter',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 170,
+            protein: '12g',
+            description: 'High protein morning essentials.',
+            allergens: ['Eggs', 'Gluten', 'Dairy'],
+            ingredients: ['Boiled Eggs', 'White & Wheat Bread Slices', 'Amul Table Butter', 'Mixed Fruit Jam']
+          },
+          {
+            id: 'th-bf-3',
+            name: 'Hot Bournvita Milk / Masala Chai',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 90,
+            description: 'Energizing malt beverage or tea.',
+            allergens: ['Dairy', 'Gluten'],
+            ingredients: ['Milk', 'Malted Barley / Bournvita Blend', 'Tea Leaves', 'Cardamom', 'Sugar']
+          }
         ]
       },
       lunch: {
@@ -380,11 +904,58 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.6,
         ratingsCount: 170,
         dishes: [
-          { id: 'th-lu-1', name: 'Kadhi Pakora (Punjabi Gram Flour Dumpling Curry)', category: 'main', tags: ['veg', 'high-protein'], calories: 240, protein: '9g', description: 'Crisp onion fritters simmered in velvety spiced yogurt kadhi.' },
-          { id: 'th-lu-2', name: 'Aloo Methi / Bhindi Fry', category: 'side', tags: ['veg'], calories: 150, description: 'Crisp spiced okra or potatoes with fenugreek.' },
-          { id: 'th-lu-3', name: 'Jeera Basmati Rice & Phulkas', category: 'main', tags: ['veg'], calories: 220, protein: '5g', description: 'Perfect pair for warm Kadhi.' },
-          { id: 'th-lu-4', name: 'Cucumber Salad & Roasted Papad', category: 'side', tags: ['veg'], calories: 50, description: 'Crunchy accompaniments.' },
-          { id: 'th-lu-5', name: 'Fruit Custard with Jelly', category: 'dessert', tags: ['sweet'], calories: 140, description: 'Chilled vanilla custard with apples, bananas, and pomegranate.' }
+          {
+            id: 'th-lu-1',
+            name: 'Kadhi Pakora (Punjabi Gram Flour Dumpling Curry)',
+            category: 'main',
+            tags: ['veg', 'high-protein'],
+            calories: 240,
+            protein: '9g',
+            description: 'Crisp onion fritters simmered in velvety spiced yogurt kadhi.',
+            allergens: ['Dairy'],
+            ingredients: ['Sour Curd / Dahi', 'Besan (Gram Flour)', 'Crisp Onion Pakoras', 'Fenugreek Seeds (Methi Dana)', 'Mustard Oil', 'Whole Red Chillies', 'Curry Leaves']
+          },
+          {
+            id: 'th-lu-2',
+            name: 'Aloo Methi / Bhindi Fry',
+            category: 'side',
+            tags: ['veg'],
+            calories: 150,
+            description: 'Crisp spiced okra or potatoes with fenugreek.',
+            allergens: [],
+            ingredients: ['Fresh Okra (Bhindi)', 'Potatoes', 'Fresh Fenugreek Leaves (Methi)', 'Amchur', 'Cumin', 'Mustard Oil']
+          },
+          {
+            id: 'th-lu-3',
+            name: 'Jeera Basmati Rice & Phulkas',
+            category: 'main',
+            tags: ['veg'],
+            calories: 220,
+            protein: '5g',
+            description: 'Perfect pair for warm Kadhi.',
+            allergens: ['Gluten'],
+            ingredients: ['Basmati Rice', 'Roasted Cumin', 'Whole Wheat Flour (Atta)']
+          },
+          {
+            id: 'th-lu-4',
+            name: 'Cucumber Salad & Roasted Papad',
+            category: 'side',
+            tags: ['veg'],
+            calories: 50,
+            description: 'Crunchy accompaniments.',
+            allergens: [],
+            ingredients: ['Crisp Cucumbers', 'Carrot Slices', 'Urad Dal Papad', 'Chaat Masala', 'Lemon']
+          },
+          {
+            id: 'th-lu-5',
+            name: 'Fruit Custard with Jelly',
+            category: 'dessert',
+            tags: ['sweet'],
+            calories: 140,
+            description: 'Chilled vanilla custard with apples, bananas, and pomegranate.',
+            allergens: ['Dairy'],
+            ingredients: ['Full Cream Milk', 'Vanilla Custard Powder', 'Fresh Apple Cubes', 'Banana Slices', 'Pomegranate Pearls', 'Sugar']
+          }
         ]
       },
       snacks: {
@@ -400,8 +971,26 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.4,
         ratingsCount: 120,
         dishes: [
-          { id: 'th-sn-1', name: 'Bread Pakora with Green Chutney', category: 'snack', tags: ['veg'], calories: 230, description: 'Spiced potato sandwich batter-fried to golden perfection.' },
-          { id: 'th-sn-2', name: 'Hot Ginger Tea', category: 'beverage', tags: ['veg'], calories: 75, description: 'Fresh brew.' }
+          {
+            id: 'th-sn-1',
+            name: 'Bread Pakora with Green Chutney',
+            category: 'snack',
+            tags: ['veg'],
+            calories: 230,
+            description: 'Spiced potato sandwich batter-fried to golden perfection.',
+            allergens: ['Gluten'],
+            ingredients: ['Bread Slices', 'Besan (Gram Flour Batter)', 'Mashed Spiced Potatoes', 'Green Coriander Mint Chutney', 'Ajwain', 'Refined Sunflower Oil']
+          },
+          {
+            id: 'th-sn-2',
+            name: 'Hot Ginger Tea',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 75,
+            description: 'Fresh brew.',
+            allergens: ['Dairy'],
+            ingredients: ['Milk', 'Tea Leaves', 'Fresh Crushed Ginger', 'Sugar']
+          }
         ]
       },
       dinner: {
@@ -417,10 +1006,49 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.7,
         ratingsCount: 180,
         dishes: [
-          { id: 'th-di-1', name: 'Malai Kofta in Cashew Cream Gravy', category: 'main', tags: ['veg', 'special'], calories: 290, protein: '8g', description: 'Paneer and potato dumplings in royal creamy gravy.' },
-          { id: 'th-di-2', name: 'Egg Masala Curry / Chana Dal Tadka', category: 'main', tags: ['egg', 'high-protein'], calories: 230, protein: '14g', description: 'Boiled egg masala or hearty yellow chana lentils.' },
-          { id: 'th-di-3', name: 'Steamed Rice & Butter Roti', category: 'bread', tags: ['veg'], calories: 210, protein: '6g', description: 'Freshly served.' },
-          { id: 'th-di-4', name: 'Gajar ka Halwa (Warm Carrot Pudding)', category: 'dessert', tags: ['sweet', 'special'], calories: 190, description: 'Grated red carrots simmered with full cream milk, ghee, and roasted cashews.' }
+          {
+            id: 'th-di-1',
+            name: 'Malai Kofta in Cashew Cream Gravy',
+            category: 'main',
+            tags: ['veg', 'special'],
+            calories: 290,
+            protein: '8g',
+            description: 'Paneer and potato dumplings in royal creamy gravy.',
+            allergens: ['Dairy', 'Tree Nuts', 'Gluten'],
+            ingredients: ['Paneer (Cottage Cheese)', 'Mashed Potatoes', 'Khoya', 'Cashew Nut Gravy', 'Fresh Cream', 'Butter', 'Refined Flour (Maida for coating)', 'Cardamom', 'Mace']
+          },
+          {
+            id: 'th-di-2',
+            name: 'Egg Masala Curry / Chana Dal Tadka',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 230,
+            protein: '14g',
+            description: 'Boiled egg masala or hearty yellow chana lentils.',
+            allergens: ['Eggs', 'Dairy'],
+            ingredients: ['Farm Boiled Eggs', 'Bengal Gram (Chana Dal)', 'Ghee', 'Onion Tomato Gravy', 'Garam Masala', 'Ginger Garlic']
+          },
+          {
+            id: 'th-di-3',
+            name: 'Steamed Rice & Butter Roti',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 210,
+            protein: '6g',
+            description: 'Freshly served.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Butter', 'Steamed Rice']
+          },
+          {
+            id: 'th-di-4',
+            name: 'Gajar ka Halwa (Warm Carrot Pudding)',
+            category: 'dessert',
+            tags: ['sweet', 'special'],
+            calories: 190,
+            description: 'Grated red carrots simmered with full cream milk, ghee, and roasted cashews.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Fresh Red Carrots', 'Full Fat Cow Milk', 'Khoya / Mawa', 'Pure Desi Ghee', 'Cashew Nuts', 'Golden Raisins', 'Cardamom', 'Sugar']
+          }
         ]
       }
     }
@@ -442,9 +1070,38 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.8,
         ratingsCount: 205,
         dishes: [
-          { id: 'f-bf-1', name: 'Puri Bhaji with Halwa (Poori Chana)', category: 'main', tags: ['veg', 'special'], calories: 360, protein: '7g', description: 'Crisp puffed whole wheat puris with spicy potato curry and sooji halwa.' },
-          { id: 'f-bf-2', name: 'Boiled Eggs / Sprouts', category: 'side', tags: ['egg', 'high-protein'], calories: 140, protein: '12g', description: 'Morning protein option.' },
-          { id: 'f-bf-3', name: 'Filter Coffee / Masala Tea', category: 'beverage', tags: ['veg'], calories: 85, description: 'Hot brew.' }
+          {
+            id: 'f-bf-1',
+            name: 'Puri Bhaji with Halwa (Poori Chana)',
+            category: 'main',
+            tags: ['veg', 'special'],
+            calories: 360,
+            protein: '7g',
+            description: 'Crisp puffed whole wheat puris with spicy potato curry and sooji halwa.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Whole Wheat Flour (Atta Puris)', 'Spiced Potato Curry (Aloo Bhaji)', 'Semolina (Sooji)', 'Desi Ghee', 'Cardamom', 'Sunflower Oil for Frying']
+          },
+          {
+            id: 'f-bf-2',
+            name: 'Boiled Eggs / Sprouts',
+            category: 'side',
+            tags: ['egg', 'high-protein'],
+            calories: 140,
+            protein: '12g',
+            description: 'Morning protein option.',
+            allergens: ['Eggs'],
+            ingredients: ['Fresh Boiled Eggs', 'Sprouted Moong Beans', 'Black Pepper', 'Rock Salt', 'Lemon']
+          },
+          {
+            id: 'f-bf-3',
+            name: 'Filter Coffee / Masala Tea',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 85,
+            description: 'Hot brew.',
+            allergens: ['Dairy'],
+            ingredients: ['Milk', 'Coffee Chicory Powder / Tea Leaves', 'Sugar']
+          }
         ]
       },
       lunch: {
@@ -460,11 +1117,60 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.7,
         ratingsCount: 215,
         dishes: [
-          { id: 'f-lu-1', name: 'Hyderabadi Veg Dum Biryani & Mirchi Ka Salan', category: 'main', tags: ['veg', 'high-protein', 'special'], calories: 340, protein: '11g', description: 'Layered aromatic basmati rice cooked on slow dum with veggies and fried onions.' },
-          { id: 'f-lu-2', name: 'Egg Dum Biryani / Paneer Tikka Masala', category: 'main', tags: ['egg', 'high-protein', 'special'], calories: 360, protein: '18g', description: 'Special Friday Biryani with spiced boiled eggs.' },
-          { id: 'f-lu-3', name: 'Burani Garlic Raita & Kachumber', category: 'side', tags: ['veg'], calories: 80, description: 'Garlic infused yogurt with diced cucumber and mint.' },
-          { id: 'f-lu-4', name: 'Fresh Phulka & Dal Fry', category: 'bread', tags: ['veg'], calories: 180, protein: '6g', description: 'Homestyle lentils and bread.' },
-          { id: 'f-lu-5', name: 'Shahi Tukda with Rabri', category: 'dessert', tags: ['sweet', 'special'], calories: 180, description: 'Crisp ghee-fried bread dipped in saffron syrup topped with thick rabri.' }
+          {
+            id: 'f-lu-1',
+            name: 'Hyderabadi Veg Dum Biryani & Mirchi Ka Salan',
+            category: 'main',
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 340,
+            protein: '11g',
+            description: 'Layered aromatic basmati rice cooked on slow dum with veggies and fried onions.',
+            allergens: ['Dairy', 'Peanuts'],
+            ingredients: ['Aged Long Grain Basmati Rice', 'Paneer', 'French Beans', 'Carrots', 'Fried Crisp Onions (Birista)', 'Desi Ghee', 'Saffron Milk', 'Peanut Sesame Salan Paste', 'Green Chillies'],
+            isChefSpecial: true
+          },
+          {
+            id: 'f-lu-2',
+            name: 'Egg Dum Biryani / Paneer Tikka Masala',
+            category: 'main',
+            tags: ['egg', 'high-protein', 'special'],
+            calories: 360,
+            protein: '18g',
+            description: 'Special Friday Biryani with spiced boiled eggs.',
+            allergens: ['Eggs', 'Dairy'],
+            ingredients: ['Farm Boiled Eggs', 'Paneer Tikka Chunks', 'Basmati Rice', 'Yogurt Marinade', 'Tandoori Masala', 'Mint Leaves', 'Ghee']
+          },
+          {
+            id: 'f-lu-3',
+            name: 'Burani Garlic Raita & Kachumber',
+            category: 'side',
+            tags: ['veg'],
+            calories: 80,
+            description: 'Garlic infused yogurt with diced cucumber and mint.',
+            allergens: ['Dairy'],
+            ingredients: ['Fresh Dahi (Curd)', 'Roasted Garlic Paste', 'Cucumber', 'Onion', 'Mint', 'Black Salt']
+          },
+          {
+            id: 'f-lu-4',
+            name: 'Fresh Phulka & Dal Fry',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 180,
+            protein: '6g',
+            description: 'Homestyle lentils and bread.',
+            allergens: ['Gluten'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Toor Dal', 'Tomatoes', 'Cumin', 'Green Chillies']
+          },
+          {
+            id: 'f-lu-5',
+            name: 'Shahi Tukda with Rabri',
+            category: 'dessert',
+            tags: ['sweet', 'special'],
+            calories: 180,
+            description: 'Crisp ghee-fried bread dipped in saffron syrup topped with thick rabri.',
+            allergens: ['Gluten', 'Dairy', 'Tree Nuts'],
+            ingredients: ['White Bread Triangles', 'Pure Desi Ghee', 'Reduced Thick Milk (Rabri)', 'Saffron Sugar Syrup', 'Pistachios', 'Almonds', 'Silver Vark']
+          }
         ]
       },
       snacks: {
@@ -480,8 +1186,27 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.6,
         ratingsCount: 160,
         dishes: [
-          { id: 'f-sn-1', name: 'Paneer Bread Rolls & Ketchup', category: 'snack', tags: ['veg', 'high-protein'], calories: 240, protein: '8g', description: 'Crispy rolls stuffed with spiced paneer and herbs.' },
-          { id: 'f-sn-2', name: 'Lemon Ice Tea / Hot Chai', category: 'beverage', tags: ['veg'], calories: 90, description: 'Refreshing cooler or traditional tea.' }
+          {
+            id: 'f-sn-1',
+            name: 'Paneer Bread Rolls & Ketchup',
+            category: 'snack',
+            tags: ['veg', 'high-protein'],
+            calories: 240,
+            protein: '8g',
+            description: 'Crispy rolls stuffed with spiced paneer and herbs.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['White / Brown Bread', 'Grated Paneer (Cottage Cheese)', 'Green Chillies', 'Coriander', 'Chaat Masala', 'Sunflower Oil for Crisp Frying']
+          },
+          {
+            id: 'f-sn-2',
+            name: 'Lemon Ice Tea / Hot Chai',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 90,
+            description: 'Refreshing cooler or traditional tea.',
+            allergens: ['Dairy'],
+            ingredients: ['Brewed Black Tea', 'Fresh Lemon Juice', 'Mint Leaves', 'Milk Option', 'Sugar']
+          }
         ]
       },
       dinner: {
@@ -497,11 +1222,59 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.6,
         ratingsCount: 175,
         dishes: [
-          { id: 'f-di-1', name: 'Dal Panchmel (Five Lentil Royal Tadka)', category: 'side', tags: ['veg', 'high-protein'], calories: 160, protein: '9g', description: 'Nutrient-rich blend of toor, moong, chana, urad and masoor dal.' },
-          { id: 'f-di-2', name: 'Paneer Bhurji / Chicken Korma', category: 'main', tags: ['non-veg', 'high-protein', 'special'], calories: 280, protein: '20g', description: 'Minced paneer with bell peppers or mild aromatic chicken curry.' },
-          { id: 'f-di-3', name: 'Tawa Paratha & Steamed Basmati Rice', category: 'bread', tags: ['veg'], calories: 220, protein: '5g', description: 'Flaky layered bread and rice.' },
-          { id: 'f-di-4', name: 'Sev Tamatar Ki Sabzi', category: 'main', tags: ['veg'], calories: 150, description: 'Sweet-sour tomato curry topped with crunchy ratlami sev.' },
-          { id: 'f-di-5', name: 'Creamy Mango Kulfi', category: 'dessert', tags: ['sweet'], calories: 130, description: 'Traditional Indian ice candy.' }
+          {
+            id: 'f-di-1',
+            name: 'Dal Panchmel (Five Lentil Royal Tadka)',
+            category: 'side',
+            tags: ['veg', 'high-protein'],
+            calories: 160,
+            protein: '9g',
+            description: 'Nutrient-rich blend of toor, moong, chana, urad and masoor dal.',
+            allergens: ['Dairy'],
+            ingredients: ['Toor Dal', 'Moong Dal', 'Chana Dal', 'Urad Dal', 'Masoor Dal', 'Desi Ghee', 'Hing', 'Cumin', 'Garlic']
+          },
+          {
+            id: 'f-di-2',
+            name: 'Paneer Bhurji / Chicken Korma',
+            category: 'main',
+            tags: ['non-veg', 'high-protein', 'special'],
+            calories: 280,
+            protein: '20g',
+            description: 'Minced paneer with bell peppers or mild aromatic chicken curry.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Crumbled Fresh Paneer', 'Fresh Chicken Chunks', 'Cashew Yogurt Korma Paste', 'Bell Peppers (Capsicum)', 'Butter', 'Kashmiri Spices']
+          },
+          {
+            id: 'f-di-3',
+            name: 'Tawa Paratha & Steamed Basmati Rice',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 220,
+            protein: '5g',
+            description: 'Flaky layered bread and rice.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Butter', 'Basmati Rice']
+          },
+          {
+            id: 'f-di-4',
+            name: 'Sev Tamatar Ki Sabzi',
+            category: 'main',
+            tags: ['veg'],
+            calories: 150,
+            description: 'Sweet-sour tomato curry topped with crunchy ratlami sev.',
+            allergens: [],
+            ingredients: ['Fresh Juicy Tomatoes', 'Gram Flour Sev (Besan)', 'Mustard Oil', 'Jaggery Touch', 'Cumin', 'Green Chillies']
+          },
+          {
+            id: 'f-di-5',
+            name: 'Creamy Mango Kulfi',
+            category: 'dessert',
+            tags: ['sweet'],
+            calories: 130,
+            description: 'Traditional Indian ice candy.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Condensed Full Cream Milk', 'Alphonso Mango Pulp', 'Pistachio Crumbs', 'Cardamom Powder', 'Sugar']
+          }
         ]
       }
     }
@@ -523,10 +1296,48 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.7,
         ratingsCount: 160,
         dishes: [
-          { id: 'sa-bf-1', name: 'Uttapam with Onion & Tomato Topping', category: 'main', tags: ['veg'], calories: 250, protein: '6g', description: 'Thick fermented rice pancake topped with fresh vegetables.' },
-          { id: 'sa-bf-2', name: 'Coconut Chutney & Vegetable Sambar', category: 'side', tags: ['veg'], calories: 110, description: 'Authentic south sambar.' },
-          { id: 'sa-bf-3', name: 'Boiled Eggs / Cornflakes with Cold Milk', category: 'main', tags: ['egg', 'high-protein'], calories: 150, protein: '11g', description: 'Protein or light cereal choice.' },
-          { id: 'sa-bf-4', name: 'Coffee / Tea', category: 'beverage', tags: ['veg'], calories: 80, description: 'Fresh beverages.' }
+          {
+            id: 'sa-bf-1',
+            name: 'Uttapam with Onion & Tomato Topping',
+            category: 'main',
+            tags: ['veg'],
+            calories: 250,
+            protein: '6g',
+            description: 'Thick fermented rice pancake topped with fresh vegetables.',
+            allergens: [],
+            ingredients: ['Fermented Rice Urad Dal Batter', 'Finely Diced Red Onions', 'Tomatoes', 'Curry Leaves', 'Green Chillies', 'Sunflower Oil']
+          },
+          {
+            id: 'sa-bf-2',
+            name: 'Coconut Chutney & Vegetable Sambar',
+            category: 'side',
+            tags: ['veg'],
+            calories: 110,
+            description: 'Authentic south sambar.',
+            allergens: [],
+            ingredients: ['Fresh Grated Coconut', 'Toor Dal', 'Pumpkin', 'Drumstick', 'Tamarind', 'Curry Leaves', 'Mustard Seeds']
+          },
+          {
+            id: 'sa-bf-3',
+            name: 'Boiled Eggs / Cornflakes with Cold Milk',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 150,
+            protein: '11g',
+            description: 'Protein or light cereal choice.',
+            allergens: ['Eggs', 'Dairy'],
+            ingredients: ['Farm Fresh Boiled Eggs', 'Crispy Corn Flakes', 'Pasteurized Cold Cow Milk', 'Sugar']
+          },
+          {
+            id: 'sa-bf-4',
+            name: 'Coffee / Tea',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 80,
+            description: 'Fresh beverages.',
+            allergens: ['Dairy'],
+            ingredients: ['Milk', 'Coffee / Tea Decoction', 'Sugar']
+          }
         ]
       },
       lunch: {
@@ -542,11 +1353,60 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.6,
         ratingsCount: 165,
         dishes: [
-          { id: 'sa-lu-1', name: 'Kashmiri Dum Aloo with Coriander', category: 'main', tags: ['veg'], calories: 230, protein: '5g', description: 'Baby potatoes simmered in curd and fennel gravy.' },
-          { id: 'sa-lu-2', name: 'Dal Panchratan (Creamy Tadka)', category: 'side', tags: ['veg', 'high-protein'], calories: 160, protein: '8g', description: 'High protein tempered lentils.' },
-          { id: 'sa-lu-3', name: 'Veg Fried Rice & Chili Paneer Gravy', category: 'main', tags: ['veg', 'high-protein', 'special'], calories: 310, protein: '12g', description: 'Indo-Chinese weekend treat with wok tossed rice and paneer.' },
-          { id: 'sa-lu-4', name: 'Roti & Salad', category: 'bread', tags: ['veg'], calories: 140, protein: '4g', description: 'Whole wheat flatbreads.' },
-          { id: 'sa-lu-5', name: 'Jalebi with Rabri', category: 'dessert', tags: ['sweet', 'special'], calories: 180, description: 'Crisp spiral jalebis soaked in saffron syrup.' }
+          {
+            id: 'sa-lu-1',
+            name: 'Kashmiri Dum Aloo with Coriander',
+            category: 'main',
+            tags: ['veg'],
+            calories: 230,
+            protein: '5g',
+            description: 'Baby potatoes simmered in curd and fennel gravy.',
+            allergens: ['Dairy'],
+            ingredients: ['Pricked Baby Potatoes', 'Fresh Dahi (Curd)', 'Fennel Powder (Saunf)', 'Dry Ginger Powder (Sonth)', 'Mustard Oil', 'Kashmiri Mirch']
+          },
+          {
+            id: 'sa-lu-2',
+            name: 'Dal Panchratan (Creamy Tadka)',
+            category: 'side',
+            tags: ['veg', 'high-protein'],
+            calories: 160,
+            protein: '8g',
+            description: 'High protein tempered lentils.',
+            allergens: ['Dairy'],
+            ingredients: ['Mixed Five Lentils', 'Butter Tadka', 'Garlic', 'Cumin', 'Tomatoes']
+          },
+          {
+            id: 'sa-lu-3',
+            name: 'Veg Fried Rice & Chili Paneer Gravy',
+            category: 'main',
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 310,
+            protein: '12g',
+            description: 'Indo-Chinese weekend treat with wok tossed rice and paneer.',
+            allergens: ['Soy', 'Dairy', 'Gluten'],
+            ingredients: ['Steamed Rice', 'Paneer Cubes', 'Dark Soy Sauce', 'Cornflour Batter', 'Spring Onions', 'Bell Peppers', 'Garlic', 'Green Chilli Sauce']
+          },
+          {
+            id: 'sa-lu-4',
+            name: 'Roti & Salad',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 140,
+            protein: '4g',
+            description: 'Whole wheat flatbreads.',
+            allergens: ['Gluten'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Cucumber & Tomato Salad']
+          },
+          {
+            id: 'sa-lu-5',
+            name: 'Jalebi with Rabri',
+            category: 'dessert',
+            tags: ['sweet', 'special'],
+            calories: 180,
+            description: 'Crisp spiral jalebis soaked in saffron syrup.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Refined Flour (Maida Fermented Batter)', 'Pure Desi Ghee', 'Saffron Sugar Syrup', 'Thick Milk Rabri', 'Cardamom']
+          }
         ]
       },
       snacks: {
@@ -562,8 +1422,26 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.5,
         ratingsCount: 130,
         dishes: [
-          { id: 'sa-sn-1', name: 'Aloo Tikki Chaat with Dahi & Chutneys', category: 'snack', tags: ['veg', 'special'], calories: 220, description: 'Griddle fried potato patties with seasoned curd and pomegranate.' },
-          { id: 'sa-sn-2', name: 'Kullad Special Chai', category: 'beverage', tags: ['veg'], calories: 85, description: 'Clay cup tea with cardamom aroma.' }
+          {
+            id: 'sa-sn-1',
+            name: 'Aloo Tikki Chaat with Dahi & Chutneys',
+            category: 'snack',
+            tags: ['veg', 'special'],
+            calories: 220,
+            description: 'Griddle fried potato patties with seasoned curd and pomegranate.',
+            allergens: ['Dairy'],
+            ingredients: ['Boiled Potatoes', 'Cornflour Starch', 'Sweet Dahi (Yogurt)', 'Tamarind Imli Chutney', 'Spicy Mint Chutney', 'Pomegranate Pearls', 'Chaat Spices']
+          },
+          {
+            id: 'sa-sn-2',
+            name: 'Kullad Special Chai',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 85,
+            description: 'Clay cup tea with cardamom aroma.',
+            allergens: ['Dairy'],
+            ingredients: ['Whole Milk', 'Assam Tea', 'Crushed Green Cardamom', 'Sugar']
+          }
         ]
       },
       dinner: {
@@ -579,11 +1457,60 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.7,
         ratingsCount: 185,
         dishes: [
-          { id: 'sa-di-1', name: 'Paneer Butter Masala (Rich Cashew Base)', category: 'main', tags: ['veg', 'high-protein', 'special'], calories: 270, protein: '14g', description: 'Creamy tomato-butter gravy.' },
-          { id: 'sa-di-2', name: 'Egg Curry / Soya Malai Chaap', category: 'main', tags: ['egg', 'high-protein'], calories: 240, protein: '15g', description: 'Nutritious curry.' },
-          { id: 'sa-di-3', name: 'Dal Tadka & Steamed Rice', category: 'side', tags: ['veg'], calories: 200, protein: '6g', description: 'Desi ghee tempered lentils and rice.' },
-          { id: 'sa-di-4', name: 'Butter Tandoori Naan / Roti', category: 'bread', tags: ['veg'], calories: 180, protein: '5g', description: 'Soft leavened bread.' },
-          { id: 'sa-di-5', name: 'Hot Moong Dal Halwa', category: 'dessert', tags: ['sweet'], calories: 170, description: 'Desi ghee sweet.' }
+          {
+            id: 'sa-di-1',
+            name: 'Paneer Butter Masala (Rich Cashew Base)',
+            category: 'main',
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 270,
+            protein: '14g',
+            description: 'Creamy tomato-butter gravy.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Paneer (Cottage Cheese)', 'Cashew Nut Paste', 'Butter', 'Fresh Cream', 'Tomato Puree', 'Kasuri Methi', 'Garam Masala']
+          },
+          {
+            id: 'sa-di-2',
+            name: 'Egg Curry / Soya Malai Chaap',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 240,
+            protein: '15g',
+            description: 'Nutritious curry.',
+            allergens: ['Eggs', 'Soy', 'Dairy', 'Gluten'],
+            ingredients: ['Farm Boiled Eggs', 'Soya Chaap Sticks', 'Wheat Gluten', 'Fresh Cream', 'Cardamom Garlic Gravy']
+          },
+          {
+            id: 'sa-di-3',
+            name: 'Dal Tadka & Steamed Rice',
+            category: 'side',
+            tags: ['veg'],
+            calories: 200,
+            protein: '6g',
+            description: 'Desi ghee tempered lentils and rice.',
+            allergens: ['Dairy'],
+            ingredients: ['Toor Dal', 'Desi Ghee', 'Cumin', 'Garlic', 'Steamed Rice']
+          },
+          {
+            id: 'sa-di-4',
+            name: 'Butter Tandoori Naan / Roti',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 180,
+            protein: '5g',
+            description: 'Soft leavened bread.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Refined Flour (Maida) / Whole Wheat Flour (Atta)', 'Yogurt', 'Baking Soda', 'Butter']
+          },
+          {
+            id: 'sa-di-5',
+            name: 'Hot Moong Dal Halwa',
+            category: 'dessert',
+            tags: ['sweet'],
+            calories: 170,
+            description: 'Desi ghee sweet.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Moong Dal Paste', 'Pure Desi Ghee', 'Cashew Crumbs', 'Cardamom', 'Sugar']
+          }
         ]
       }
     }
@@ -606,9 +1533,38 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingsCount: 240,
         specialNote: 'Extended Sunday timings for all hostel students.',
         dishes: [
-          { id: 'su-bf-1', name: 'Chole Bhature with Pickled Green Chillies', category: 'main', tags: ['veg', 'high-protein', 'special'], calories: 380, protein: '11g', description: 'Golden puffed bhaturas with tangy Amritsari chana.' },
-          { id: 'su-bf-2', name: 'Boiled Eggs / Omelette Counter', category: 'main', tags: ['egg', 'high-protein'], calories: 160, protein: '13g', description: 'Live omelette or boiled eggs station.' },
-          { id: 'su-bf-3', name: 'Sweet Lassi / Masala Buttermilk / Chai', category: 'beverage', tags: ['veg', 'sweet'], calories: 120, description: 'Creamy thick sweet lassi with malai.' }
+          {
+            id: 'su-bf-1',
+            name: 'Chole Bhature with Pickled Green Chillies',
+            category: 'main',
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 380,
+            protein: '11g',
+            description: 'Golden puffed bhaturas with tangy Amritsari chana.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Kabuli Chana (Chickpeas)', 'Fermented Refined Flour (Maida Bhature)', 'Dahi', 'Amchur', 'Anardana', 'Ginger Juliennes', 'Sunflower Oil for Frying']
+          },
+          {
+            id: 'su-bf-2',
+            name: 'Boiled Eggs / Omelette Counter',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 160,
+            protein: '13g',
+            description: 'Live omelette or boiled eggs station.',
+            allergens: ['Eggs', 'Dairy'],
+            ingredients: ['Farm Fresh Eggs', 'Chopped Onions', 'Green Chillies', 'Butter', 'Black Pepper', 'Salt']
+          },
+          {
+            id: 'su-bf-3',
+            name: 'Sweet Lassi / Masala Buttermilk / Chai',
+            category: 'beverage',
+            tags: ['veg', 'sweet'],
+            calories: 120,
+            description: 'Creamy thick sweet lassi with malai.',
+            allergens: ['Dairy'],
+            ingredients: ['Thick Dahi (Yogurt)', 'Clotted Malai (Cream)', 'Rose Syrup / Cumin Spice', 'Sugar']
+          }
         ]
       },
       lunch: {
@@ -625,11 +1581,60 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingsCount: 265,
         specialNote: 'Grand feast featuring Dum Biryani and Gulab Jamun.',
         dishes: [
-          { id: 'su-lu-1', name: 'Kolkata Style Chicken Biryani / Paneer Dum Biryani', category: 'main', tags: ['non-veg', 'high-protein', 'special'], calories: 390, protein: '24g', description: 'Fragrant saffron basmati rice slow dum cooked with spices and roasted potato.', isChefSpecial: true },
-          { id: 'su-lu-2', name: 'Paneer Butter Masala & Shahi Korma', category: 'main', tags: ['veg', 'high-protein'], calories: 260, protein: '13g', description: 'Rich vegetarian main dish.' },
-          { id: 'su-lu-3', name: 'Mirchi Ka Salan & Onion-Mint Raita', category: 'side', tags: ['veg'], calories: 95, description: 'Sesame-peanut curry and spiced curd.' },
-          { id: 'su-lu-4', name: 'Tandoori Butter Roti (Unlimited)', category: 'bread', tags: ['veg'], calories: 150, protein: '4g', description: 'Fresh from the clay oven.' },
-          { id: 'su-lu-5', name: 'Warm Gulab Jamun with Ice Cream', category: 'dessert', tags: ['sweet', 'special'], calories: 210, description: 'Deluxe Sunday dessert pairing.' }
+          {
+            id: 'su-lu-1',
+            name: 'Kolkata Style Chicken Biryani / Paneer Dum Biryani',
+            category: 'main',
+            tags: ['non-veg', 'high-protein', 'special'],
+            calories: 390,
+            protein: '24g',
+            description: 'Fragrant saffron basmati rice slow dum cooked with spices and roasted potato.',
+            allergens: ['Dairy', 'Eggs'],
+            ingredients: ['Aged Long Grain Basmati Rice', 'Chicken Pieces / Paneer Chunks', 'Boiled Potato Halves', 'Boiled Egg Option', 'Desi Ghee', 'Saffron Milk', 'Kewra & Rose Water', 'Meetha Ittar Essence', 'Biryani Spices'],
+            isChefSpecial: true
+          },
+          {
+            id: 'su-lu-2',
+            name: 'Paneer Butter Masala & Shahi Korma',
+            category: 'main',
+            tags: ['veg', 'high-protein'],
+            calories: 260,
+            protein: '13g',
+            description: 'Rich vegetarian main dish.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Paneer (Cottage Cheese)', 'Cashew Nut Paste', 'Butter', 'Fresh Cream', 'Tomato Gravy', 'Cardamom Spices']
+          },
+          {
+            id: 'su-lu-3',
+            name: 'Mirchi Ka Salan & Onion-Mint Raita',
+            category: 'side',
+            tags: ['veg'],
+            calories: 95,
+            description: 'Sesame-peanut curry and spiced curd.',
+            allergens: ['Peanuts', 'Dairy'],
+            ingredients: ['Large Bhavnagri Green Chillies', 'Roasted Peanuts', 'White Sesame Seeds', 'Coconut Paste', 'Tamarind Pulp', 'Dahi (Yogurt)', 'Mint']
+          },
+          {
+            id: 'su-lu-4',
+            name: 'Tandoori Butter Roti (Unlimited)',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 150,
+            protein: '4g',
+            description: 'Fresh from the clay oven.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Butter', 'Salt']
+          },
+          {
+            id: 'su-lu-5',
+            name: 'Warm Gulab Jamun with Ice Cream',
+            category: 'dessert',
+            tags: ['sweet', 'special'],
+            calories: 210,
+            description: 'Deluxe Sunday dessert pairing.',
+            allergens: ['Dairy', 'Gluten'],
+            ingredients: ['Khoya / Mawa Balls', 'Refined Wheat Flour (Maida)', 'Pure Desi Ghee', 'Rose Cardamom Sugar Syrup', 'Vanilla Dairy Ice Cream']
+          }
         ]
       },
       snacks: {
@@ -645,8 +1650,26 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.5,
         ratingsCount: 140,
         dishes: [
-          { id: 'su-sn-1', name: 'Corn Cheese Sandwich / Maggi Noodles', category: 'snack', tags: ['veg'], calories: 210, description: 'Hot grilled sandwich with melted cheese.' },
-          { id: 'su-sn-2', name: 'Cold Coffee with Ice Cream / Hot Tea', category: 'beverage', tags: ['veg'], calories: 110, description: 'Chilled blended cold coffee.' }
+          {
+            id: 'su-sn-1',
+            name: 'Corn Cheese Sandwich / Maggi Noodles',
+            category: 'snack',
+            tags: ['veg'],
+            calories: 210,
+            description: 'Hot grilled sandwich with melted cheese.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Wheat Bread', 'Sweet Golden Corn', 'Processed Cheddar & Mozzarella Cheese', 'Bell Peppers', 'Oregano', 'Chilli Flakes', 'Butter']
+          },
+          {
+            id: 'su-sn-2',
+            name: 'Cold Coffee with Ice Cream / Hot Tea',
+            category: 'beverage',
+            tags: ['veg'],
+            calories: 110,
+            description: 'Chilled blended cold coffee.',
+            allergens: ['Dairy'],
+            ingredients: ['Chilled Cow Milk', 'Instant Coffee Powder', 'Vanilla Ice Cream Scoop', 'Sugar', 'Cocoa Powder Dust']
+          }
         ]
       },
       dinner: {
@@ -662,10 +1685,49 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         ratingAvg: 4.6,
         ratingsCount: 170,
         dishes: [
-          { id: 'su-di-1', name: 'Dal Khichdi with Pure Desi Ghee & Papad', category: 'main', tags: ['veg', 'high-protein'], calories: 270, protein: '10g', description: 'Wholesome rice and yellow lentil comfort porridge.' },
-          { id: 'su-di-2', name: 'Kadai Veg / Egg Bhurji', category: 'main', tags: ['egg', 'high-protein'], calories: 210, protein: '12g', description: 'Wok tossed mixed veggies or spiced eggs.' },
-          { id: 'su-di-3', name: 'Phulkas & Curd', category: 'bread', tags: ['veg'], calories: 140, protein: '5g', description: 'Light digestible Sunday dinner.' },
-          { id: 'su-di-4', name: 'Sweet Jalebi / Fruit Custard', category: 'dessert', tags: ['sweet'], calories: 130, description: 'Evening dessert.' }
+          {
+            id: 'su-di-1',
+            name: 'Dal Khichdi with Pure Desi Ghee & Papad',
+            category: 'main',
+            tags: ['veg', 'high-protein'],
+            calories: 270,
+            protein: '10g',
+            description: 'Wholesome rice and yellow lentil comfort porridge.',
+            allergens: ['Dairy'],
+            ingredients: ['Govindobhog Short Grain Rice', 'Yellow Moong Dal', 'Pure Desi Ghee', 'Cumin Seeds', 'Hing (Asafoetida)', 'Turmeric', 'Urad Papad']
+          },
+          {
+            id: 'su-di-2',
+            name: 'Kadai Veg / Egg Bhurji',
+            category: 'main',
+            tags: ['egg', 'high-protein'],
+            calories: 210,
+            protein: '12g',
+            description: 'Wok tossed mixed veggies or spiced eggs.',
+            allergens: ['Eggs'],
+            ingredients: ['Farm Fresh Eggs', 'Cauliflower', 'Beans', 'Carrots', 'Capsicum', 'Kadai Spices', 'Mustard Oil']
+          },
+          {
+            id: 'su-di-3',
+            name: 'Phulkas & Curd',
+            category: 'bread',
+            tags: ['veg'],
+            calories: 140,
+            protein: '5g',
+            description: 'Light digestible Sunday dinner.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Whole Wheat Flour (Atta)', 'Fresh Set Dahi (Curd)']
+          },
+          {
+            id: 'su-di-4',
+            name: 'Sweet Jalebi / Fruit Custard',
+            category: 'dessert',
+            tags: ['sweet'],
+            calories: 130,
+            description: 'Evening dessert.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['Maida Jalebi', 'Desi Ghee', 'Saffron Sugar Syrup', 'Custard Milk']
+          }
         ]
       }
     }
@@ -713,5 +1775,62 @@ export const INITIAL_ORDERS: AcademicBlockOrder[] = [
     totalAmount: 40,
     useMessPass: false,
     targetWhatsAppNumber: DEFAULT_MESS_WHATSAPP_NUMBER
+  }
+];
+
+export const INITIAL_ANONYMOUS_FEEDBACK: AnonymousFeedback[] = [
+  {
+    id: 'fb-1',
+    mealSlot: 'lunch',
+    dishName: 'Shahi Paneer Butter Masala',
+    rating: 5,
+    comment: 'The cashew gravy was incredibly rich and creamy today! Huge improvement over last week.',
+    timestamp: 'Today, 01:15 PM',
+    date: '2026-08-21'
+  },
+  {
+    id: 'fb-2',
+    mealSlot: 'lunch',
+    dishName: 'Phulka / Butter Tawa Roti (Unlimited)',
+    rating: 4,
+    comment: 'Rotis were hot and soft at Counter 2. Service speed was super fast.',
+    timestamp: 'Today, 01:42 PM',
+    date: '2026-08-21'
+  },
+  {
+    id: 'fb-3',
+    mealSlot: 'breakfast',
+    dishName: 'Steamed Idli & Medu Vada (2 pcs)',
+    rating: 5,
+    comment: 'Vadas were wonderfully crisp on the outside. Coconut chutney was fresh and cool.',
+    timestamp: 'Today, 08:30 AM',
+    date: '2026-08-21'
+  },
+  {
+    id: 'fb-4',
+    mealSlot: 'breakfast',
+    dishName: 'Boiled Eggs (2 pcs) / Peanut Poha',
+    rating: 3,
+    comment: 'Poha was a bit dry today, could use slightly more lemon and roasted peanuts.',
+    timestamp: 'Today, 09:10 AM',
+    date: '2026-08-21'
+  },
+  {
+    id: 'fb-5',
+    mealSlot: 'dinner',
+    dishName: 'Egg Curry (2 Eggs) / Kadai Paneer',
+    rating: 4,
+    comment: 'Great spice balance in the egg curry. Please keep this weekly rotation.',
+    timestamp: 'Yesterday, 08:45 PM',
+    date: '2026-08-20'
+  },
+  {
+    id: 'fb-6',
+    mealSlot: 'snacks',
+    dishName: 'Crispy Veg Samosa with Mint & Imli Chutney',
+    rating: 5,
+    comment: 'Chutney combo was fantastic. High tea queue was well managed by staff.',
+    timestamp: 'Yesterday, 05:40 PM',
+    date: '2026-08-20'
   }
 ];

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useMess } from '../context/MessContext';
 import {
   Send,
@@ -18,12 +18,14 @@ import {
   Utensils,
   CreditCard,
   History,
-  ChefHat
+  ChefHat,
+  ShieldAlert,
+  ShieldCheck
 } from 'lucide-react';
 import { ACADEMIC_BLOCKS, DEFAULT_MESS_WHATSAPP_NUMBER } from '../data/initialData';
 import { generateWhatsAppLink, formatWhatsAppOrderMessage } from '../utils/whatsapp';
 import { getActiveMealStatus, getCurrentDayOfWeek } from '../utils/time';
-import { OrderItem } from '../types/mess';
+import { OrderItem, DayMenu, MealSlot } from '../types/mess';
 
 export const AcademicBlockOrder: React.FC = () => {
   const {
@@ -48,12 +50,14 @@ export const AcademicBlockOrder: React.FC = () => {
   const [deliverySlot, setDeliverySlot] = useState('Immediate Batch (Next 25 mins)');
   const [useMessPass, setUseMessPass] = useState(true);
   const [targetWhatsAppNumber, setTargetWhatsAppNumber] = useState(DEFAULT_MESS_WHATSAPP_NUMBER);
+  const [acknowledgedAllergy, setAcknowledgedAllergy] = useState(false);
 
   // Sync with current student when changed
   useEffect(() => {
     setStudentName(currentStudent.name);
     setPhone(currentStudent.phone);
     setRollNo(currentStudent.rollNo);
+    setAcknowledgedAllergy(false);
   }, [currentStudent]);
 
   // Selected Order Items
@@ -74,6 +78,56 @@ export const AcademicBlockOrder: React.FC = () => {
     ...(todayMenu.meals[mealStatus.currentMeal]?.dishes || []),
     ...(todayMenu.meals.snacks?.dishes || [])
   ];
+
+  // Helper to find dish allergens in current weekly menu
+  const allDishesInMenu = useMemo(() => {
+    const list: { name: string; allergens: string[] }[] = [];
+    Object.values(weeklyMenu).forEach((day: DayMenu) => {
+      Object.values(day.meals).forEach((slot: MealSlot) => {
+        slot.dishes.forEach((d) => {
+          if (d.allergens && d.allergens.length > 0) {
+            list.push({ name: d.name.toLowerCase(), allergens: d.allergens });
+          }
+        });
+      });
+    });
+    return list;
+  }, [weeklyMenu]);
+
+  // Pre-order Allergy Conflict Check
+  const detectedAllergenClashes = useMemo(() => {
+    const clashes: { itemName: string; allergens: string[] }[] = [];
+    const studentAllergens = (currentStudent.allergies || []).map(a => a.toLowerCase());
+    if (studentAllergens.length === 0) return clashes;
+
+    selectedItems.forEach(item => {
+      const itemLower = item.dishName.toLowerCase();
+      // Match with known dishes
+      const matched = allDishesInMenu.find(d => itemLower.includes(d.name) || d.name.includes(itemLower));
+      if (matched) {
+        const matchingAllergens = matched.allergens.filter(alg => studentAllergens.includes(alg.toLowerCase()));
+        if (matchingAllergens.length > 0) {
+          clashes.push({ itemName: item.dishName, allergens: matchingAllergens });
+        }
+      } else if (itemLower.includes('thali') || itemLower.includes('paneer') || itemLower.includes('roti')) {
+        // Fallback detection for common thali items if student has Dairy/Gluten
+        const common: string[] = [];
+        if (studentAllergens.includes('dairy') && (itemLower.includes('paneer') || itemLower.includes('thali') || itemLower.includes('curd'))) {
+          common.push('Dairy');
+        }
+        if (studentAllergens.includes('gluten') && (itemLower.includes('roti') || itemLower.includes('thali') || itemLower.includes('samosa'))) {
+          common.push('Gluten');
+        }
+        if (common.length > 0) {
+          clashes.push({ itemName: item.dishName, allergens: common });
+        }
+      }
+    });
+
+    return clashes;
+  }, [selectedItems, currentStudent.allergies, allDishesInMenu]);
+
+  const hasAllergyConflict = detectedAllergenClashes.length > 0;
 
   const handleAddItem = (dishName: string, price: number = 40, isIncluded: boolean = false) => {
     const existing = selectedItems.find(i => i.dishName === dishName);
@@ -116,7 +170,7 @@ export const AcademicBlockOrder: React.FC = () => {
     roomFloor: roomFloor.trim(),
     items: selectedItems,
     packingType,
-    notes: notes.trim() || undefined,
+    notes: (hasAllergyConflict ? `[Allergen Advisory Acknowledged: ${currentStudent.allergies?.join(', ')}] ` : '') + (notes.trim() || ''),
     deliverySlot,
     useMessPass,
     targetWhatsAppNumber,
@@ -131,6 +185,11 @@ export const AcademicBlockOrder: React.FC = () => {
   const handleWhatsAppOrder = (e: React.FormEvent) => {
     e.preventDefault();
     if (!studentName.trim() || !phone.trim() || !roomFloor.trim() || selectedItems.length === 0) {
+      return;
+    }
+
+    if (hasAllergyConflict && !acknowledgedAllergy) {
+      alert('Please acknowledge the allergen advisory before submitting your order.');
       return;
     }
 
@@ -200,7 +259,7 @@ export const AcademicBlockOrder: React.FC = () => {
           </div>
           <button
             onClick={() => setLastSubmittedId(null)}
-            className="text-[11px] font-bold text-emerald-300 hover:text-emerald-100 hover:underline ml-2"
+            className="text-[11px] font-bold text-emerald-300 hover:text-emerald-100 hover:underline ml-2 cursor-pointer"
           >
             Dismiss
           </button>
@@ -311,7 +370,7 @@ export const AcademicBlockOrder: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleAddItem(`Full ${todayMenu.meals[mealStatus.currentMeal]?.name || 'Meal'} Thali Pack`, 90, true)}
-                    className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors border border-amber-500/40"
+                    className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors border border-amber-500/40 cursor-pointer"
                   >
                     + Standard Meal Thali (Mess Pass)
                   </button>
@@ -320,7 +379,7 @@ export const AcademicBlockOrder: React.FC = () => {
                       key={d.id}
                       type="button"
                       onClick={() => handleAddItem(d.name, 40, false)}
-                      className="text-[11px] font-medium px-2 py-1 rounded-lg bg-slate-900 text-slate-200 hover:bg-slate-800 transition-colors border border-slate-700"
+                      className="text-[11px] font-medium px-2 py-1 rounded-lg bg-slate-900 text-slate-200 hover:bg-slate-800 transition-colors border border-slate-700 cursor-pointer"
                     >
                       + {d.name}
                     </button>
@@ -328,7 +387,7 @@ export const AcademicBlockOrder: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleAddItem('Cutting Chai + Veg Samosa (2 pcs)', 35, false)}
-                    className="text-[11px] font-medium px-2 py-1 rounded-lg bg-slate-900 text-slate-200 hover:bg-slate-800 transition-colors border border-slate-700"
+                    className="text-[11px] font-medium px-2 py-1 rounded-lg bg-slate-900 text-slate-200 hover:bg-slate-800 transition-colors border border-slate-700 cursor-pointer"
                   >
                     + Samosa & Chai Pack (₹35)
                   </button>
@@ -355,7 +414,7 @@ export const AcademicBlockOrder: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleUpdateQuantity(idx, -1)}
-                        className="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-colors border border-slate-700"
+                        className="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-colors border border-slate-700 cursor-pointer"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
@@ -365,7 +424,7 @@ export const AcademicBlockOrder: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleUpdateQuantity(idx, 1)}
-                        className="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-colors border border-slate-700"
+                        className="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-colors border border-slate-700 cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -376,7 +435,7 @@ export const AcademicBlockOrder: React.FC = () => {
                           next.splice(idx, 1);
                           setSelectedItems(next);
                         }}
-                        className="p-1 text-slate-500 hover:text-red-400 rounded-md transition-colors"
+                        className="p-1 text-slate-500 hover:text-red-400 rounded-md transition-colors cursor-pointer"
                         title="Remove item"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -398,12 +457,50 @@ export const AcademicBlockOrder: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleAddCustom}
-                  className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs rounded-xl border border-slate-700 transition-colors"
+                  className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs rounded-xl border border-slate-700 transition-colors cursor-pointer"
                 >
                   Add
                 </button>
               </div>
             </div>
+
+            {/* PRE-ORDER ALLERGY WARNING BANNER & MANDATORY CHECKBOX */}
+            {hasAllergyConflict && (
+              <div className="p-4 rounded-2xl bg-red-950/40 border border-red-500/60 space-y-3 animate-in fade-in duration-200">
+                <div className="flex items-start space-x-3 text-red-200">
+                  <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5 animate-bounce" />
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-red-300">
+                      ⚠️ Allergy Advisory Notice
+                    </h4>
+                    <p className="text-xs text-red-200/90 leading-relaxed">
+                      Your parcel order contains items with allergens matching your registered student profile:
+                    </p>
+                    <ul className="list-disc list-inside text-xs font-mono text-red-300 pt-1 space-y-0.5">
+                      {detectedAllergenClashes.map((c, i) => (
+                        <li key={i}>
+                          <strong>{c.itemName}</strong> contains <span className="underline font-bold">{c.allergens.join(', ')}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-red-900/60">
+                  <label className="flex items-center space-x-2.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={acknowledgedAllergy}
+                      onChange={(e) => setAcknowledgedAllergy(e.target.checked)}
+                      className="w-4 h-4 text-red-500 rounded border-red-600 bg-slate-950 focus:ring-red-500"
+                    />
+                    <span className="text-xs font-bold text-red-200">
+                      I acknowledge the allergy advisory and wish to proceed with this order.
+                    </span>
+                  </label>
+                </div>
+              </div>
+            )}
 
             {/* Packaging & Batch Timing */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-800">
@@ -445,7 +542,7 @@ export const AcademicBlockOrder: React.FC = () => {
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="e.g. Extra pickle, please call when delivery person reaches ground reception"
+                placeholder="e.g. Extra pickle, mild spice, please call when delivery person reaches ground reception"
                 className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
               />
             </div>
@@ -481,8 +578,8 @@ export const AcademicBlockOrder: React.FC = () => {
             <button
               id="submit-whatsapp-order-btn"
               type="submit"
-              disabled={selectedItems.length === 0}
-              className="w-full py-3.5 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-950 flex items-center justify-center space-x-2 transition-all active:scale-98"
+              disabled={selectedItems.length === 0 || (hasAllergyConflict && !acknowledgedAllergy)}
+              className="w-full py-3.5 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-950 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer"
             >
               <Send className="w-5 h-5" />
               <span>Order via WhatsApp Direct</span>

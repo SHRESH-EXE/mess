@@ -17,9 +17,14 @@ import {
   Moon,
   Cookie,
   Award,
-  Leaf
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  ShieldCheck,
+  MessageSquareHeart,
+  Tag
 } from 'lucide-react';
-import { MealType, DishItem, DietaryTag, DayOfWeek } from '../types/mess';
+import { MealType, DishItem, DayOfWeek } from '../types/mess';
 import { getActiveMealStatus, getCurrentDayOfWeek } from '../utils/time';
 import { RateDishModal } from './RateDishModal';
 import { MenuEditorModal } from './MenuEditorModal';
@@ -31,7 +36,8 @@ export const MenuDisplay: React.FC = () => {
     setSelectedDay,
     setActiveTab,
     isMealTakenToday,
-    currentStudent
+    currentStudent,
+    currentSession
   } = useMess();
 
   const todayDay = getCurrentDayOfWeek();
@@ -39,6 +45,7 @@ export const MenuDisplay: React.FC = () => {
 
   const [selectedMealTab, setSelectedMealTab] = useState<MealType>(mealStatus.currentMeal);
   const [dietFilter, setDietFilter] = useState<string>('all');
+  const [expandedIngredientsDishId, setExpandedIngredientsDishId] = useState<string | null>(null);
   const [ratingModalDish, setRatingModalDish] = useState<{ dish: DishItem; mealName: string } | null>(null);
   const [editingSlot, setEditingSlot] = useState<{ day: string; mealType: MealType } | null>(null);
 
@@ -53,9 +60,18 @@ export const MenuDisplay: React.FC = () => {
     { type: 'dinner' as MealType, label: 'Dinner', icon: Moon, timing: '07:30 - 10:00 PM' }
   ];
 
+  const studentAllergies = currentStudent?.allergies || [];
+
   // Filter dishes based on selected tag
   const filteredDishes = (currentSlot?.dishes || []).filter((dish) => {
     if (dietFilter === 'all') return true;
+    if (dietFilter === 'safe-for-me') {
+      if (studentAllergies.length === 0) return true;
+      const hasClash = (dish.allergens || []).some(da =>
+        studentAllergies.some(sa => sa.toLowerCase() === da.toLowerCase())
+      );
+      return !hasClash;
+    }
     if (dietFilter === 'veg') return dish.tags.includes('veg');
     if (dietFilter === 'high-protein') return dish.tags.includes('high-protein');
     if (dietFilter === 'non-veg') return dish.tags.includes('non-veg') || dish.tags.includes('egg');
@@ -65,9 +81,55 @@ export const MenuDisplay: React.FC = () => {
 
   const checkStatus = isMealTakenToday(selectedMealTab, currentStudent.id);
 
+  const toggleIngredients = (dishId: string) => {
+    setExpandedIngredientsDishId(prev => prev === dishId ? null : dishId);
+  };
+
   return (
     <section id="menu-display-section" className="space-y-6 animate-in fade-in duration-200">
       
+      {/* Student Allergy Advisory Bar */}
+      {studentAllergies.length > 0 && (
+        <div className="bg-amber-950/40 border border-amber-500/40 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-amber-200 flex items-center gap-2">
+                <span>Active Dietary Profile for {currentStudent.name}:</span>
+                <span className="font-mono text-[11px] bg-amber-500/20 px-2 py-0.5 rounded text-amber-300">
+                  {studentAllergies.join(', ')}
+                </span>
+              </div>
+              <p className="text-[11px] text-amber-300/80 mt-0.5">
+                Dishes containing these allergens are highlighted with prominent warning banners below.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 self-end sm:self-auto">
+            <button
+              onClick={() => setDietFilter(dietFilter === 'safe-for-me' ? 'all' : 'safe-for-me')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                dietFilter === 'safe-for-me'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                  : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>{dietFilter === 'safe-for-me' ? 'Showing Safe Only ✓' : 'Filter Safe Dishes'}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('pass')}
+              className="text-xs text-slate-400 hover:text-slate-200 underline cursor-pointer"
+            >
+              Edit Profile
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top Day Selector Bar */}
       <div className="bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-800 shadow-lg">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
@@ -88,7 +150,7 @@ export const MenuDisplay: React.FC = () => {
           {selectedDay !== todayDay && (
             <button
               onClick={() => setSelectedDay(todayDay)}
-              className="self-start sm:self-auto px-3 py-1 text-xs font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg transition-colors flex items-center space-x-1"
+              className="self-start sm:self-auto px-3 py-1 text-xs font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>Jump to Today ({todayDay})</span>
@@ -106,7 +168,7 @@ export const MenuDisplay: React.FC = () => {
                 key={day}
                 id={`day-btn-${day}`}
                 onClick={() => setSelectedDay(day)}
-                className={`py-2.5 px-3 rounded-xl text-center transition-all relative ${
+                className={`py-2.5 px-3 rounded-xl text-center transition-all relative cursor-pointer ${
                   isSelected
                     ? 'bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/10'
                     : 'bg-slate-950/70 hover:bg-slate-800 text-slate-300 border border-slate-800'
@@ -143,7 +205,7 @@ export const MenuDisplay: React.FC = () => {
               key={slot.type}
               id={`meal-tab-${slot.type}`}
               onClick={() => setSelectedMealTab(slot.type)}
-              className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
+              className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between cursor-pointer ${
                 isSelected
                   ? 'bg-slate-900 border-amber-500 ring-2 ring-amber-500/30 shadow-xl'
                   : 'bg-slate-900/70 hover:bg-slate-900 border-slate-800 text-slate-300'
@@ -227,16 +289,24 @@ export const MenuDisplay: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setEditingSlot({ day: selectedDay, mealType: selectedMealTab })}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center space-x-1.5"
+                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center space-x-1.5 cursor-pointer"
                 title="Edit this meal slot (Admin/Staff)"
               >
                 <Edit3 className="w-3.5 h-3.5 text-amber-400" />
-                <span>Edit Items</span>
+                <span>Edit Items & Allergens</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab('feedback')}
+                className="px-3 py-1.5 rounded-xl bg-teal-900/60 hover:bg-teal-800 text-teal-200 text-xs font-bold border border-teal-700 transition-all flex items-center space-x-1.5 cursor-pointer"
+              >
+                <MessageSquareHeart className="w-3.5 h-3.5 text-teal-400" />
+                <span>Rate Meals</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('parcel')}
-                className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm"
+                className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm cursor-pointer"
               >
                 <span>Pack for Academic Block</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -251,7 +321,7 @@ export const MenuDisplay: React.FC = () => {
               <span className="text-base font-bold text-slate-100 font-mono">~{currentSlot.caloriesTotal} kcal</span>
             </div>
             <div className="bg-slate-950/60 border border-slate-800/80 p-2.5 rounded-xl">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Avg Rating</span>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Avg Slot Rating</span>
               <span className="text-base font-bold text-amber-400 flex items-center gap-1">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 {currentSlot.ratingAvg || 4.7} / 5.0
@@ -264,13 +334,13 @@ export const MenuDisplay: React.FC = () => {
               </span>
             </div>
             <div className="bg-slate-950/60 border border-slate-800/80 p-2.5 rounded-xl">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Mess Dining Hall</span>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Dining Hall Facility</span>
               <span className="text-xs font-semibold text-slate-200">Main Ground Hall</span>
             </div>
           </div>
         </div>
 
-        {/* Dietary Filters & Dietary Badges Bar */}
+        {/* Dietary Filters & Allergen Bar */}
         <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1">
             <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mr-1">
@@ -278,6 +348,7 @@ export const MenuDisplay: React.FC = () => {
             </span>
             {[
               { id: 'all', label: 'All Items' },
+              { id: 'safe-for-me', label: '🛡️ Safe for My Allergies' },
               { id: 'veg', label: 'Pure Veg 🟢' },
               { id: 'high-protein', label: 'High Protein 💪' },
               { id: 'non-veg', label: 'Non-Veg / Egg 🔴' },
@@ -286,7 +357,7 @@ export const MenuDisplay: React.FC = () => {
               <button
                 key={f.id}
                 onClick={() => setDietFilter(f.id)}
-                className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-all whitespace-nowrap ${
+                className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-all whitespace-nowrap cursor-pointer ${
                   dietFilter === f.id
                     ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
                     : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'
@@ -305,93 +376,164 @@ export const MenuDisplay: React.FC = () => {
         {/* Dish Items Grid */}
         <div className="p-5 sm:p-6 bg-slate-900">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredDishes.map((dish) => (
-              <div
-                key={dish.id}
-                id={`dish-card-${dish.id}`}
-                className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
-                  dish.isChefSpecial
-                    ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/30 border-amber-500/40 shadow-lg'
-                    : 'bg-slate-950/70 border-slate-800 hover:border-slate-700'
-                }`}
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-1.5">
-                    <div className="flex items-center space-x-2">
-                      {dish.tags.includes('veg') ? (
-                        <span className="w-3.5 h-3.5 rounded-xs border-2 border-emerald-500 flex items-center justify-center p-0.5" title="Pure Veg">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        </span>
-                      ) : dish.tags.includes('egg') ? (
-                        <span className="w-3.5 h-3.5 rounded-xs border-2 border-amber-500 flex items-center justify-center p-0.5" title="Contains Egg">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                        </span>
-                      ) : (
-                        <span className="w-3.5 h-3.5 rounded-xs border-2 border-rose-500 flex items-center justify-center p-0.5" title="Non-Veg">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                        </span>
-                      )}
-                      <h4 className="text-sm font-bold text-slate-100 leading-snug">
-                        {dish.name}
-                      </h4>
-                    </div>
+            {filteredDishes.map((dish) => {
+              // Allergen matching
+              const clashingAllergens = (dish.allergens || []).filter(da =>
+                studentAllergies.some(sa => sa.toLowerCase() === da.toLowerCase())
+              );
+              const isClashing = clashingAllergens.length > 0;
+              const isExpanded = expandedIngredientsDishId === dish.id;
 
-                    {dish.isChefSpecial && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-500 text-slate-950 rounded-full shrink-0 shadow-xs">
-                        Chef's Special
+              return (
+                <div
+                  key={dish.id}
+                  id={`dish-card-${dish.id}`}
+                  className={`p-4 rounded-2xl border transition-all flex flex-col justify-between relative ${
+                    isClashing
+                      ? 'bg-red-950/20 border-red-500/60 shadow-lg'
+                      : dish.isChefSpecial
+                      ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/30 border-amber-500/40 shadow-lg'
+                      : 'bg-slate-950/70 border-slate-800 hover:border-slate-700'
+                  }`}
+                >
+                  {/* Clashing Allergy Banner on Card */}
+                  {isClashing && (
+                    <div className="mb-3 p-2 rounded-xl bg-red-950/80 border border-red-600/70 text-red-200 text-xs font-bold flex items-center space-x-2 animate-pulse">
+                      <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                      <span>
+                        ALLERGEN WARNING: Contains {clashingAllergens.join(', ')} (Matches your profile)
                       </span>
-                    )}
-                  </div>
-
-                  {dish.description && (
-                    <p className="text-xs text-slate-400 leading-relaxed mb-3">
-                      {dish.description}
-                    </p>
+                    </div>
                   )}
 
-                  {/* Dietary Badges */}
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {dish.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-md capitalize ${
-                          tag === 'high-protein'
-                            ? 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
-                            : tag === 'special'
-                            ? 'bg-amber-500/15 text-amber-300 border border-amber-500/25'
-                            : tag === 'sweet'
-                            ? 'bg-pink-500/10 text-pink-300 border border-pink-500/20'
-                            : 'bg-slate-800 text-slate-300 border border-slate-700'
-                        }`}
-                      >
-                        {tag === 'high-protein' && '💪 '}
-                        {tag}
-                      </span>
-                    ))}
-                    {dish.protein && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                        {dish.protein} Protein
-                      </span>
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <div className="flex items-center space-x-2">
+                        {dish.tags.includes('veg') ? (
+                          <span className="w-3.5 h-3.5 rounded-xs border-2 border-emerald-500 flex items-center justify-center p-0.5" title="Pure Veg">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          </span>
+                        ) : dish.tags.includes('egg') ? (
+                          <span className="w-3.5 h-3.5 rounded-xs border-2 border-amber-500 flex items-center justify-center p-0.5" title="Contains Egg">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                          </span>
+                        ) : (
+                          <span className="w-3.5 h-3.5 rounded-xs border-2 border-rose-500 flex items-center justify-center p-0.5" title="Non-Veg">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                          </span>
+                        )}
+                        <h4 className="text-sm font-bold text-slate-100 leading-snug">
+                          {dish.name}
+                        </h4>
+                      </div>
+
+                      {dish.isChefSpecial && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-500 text-slate-950 rounded-full shrink-0 shadow-xs">
+                          Chef's Special
+                        </span>
+                      )}
+                    </div>
+
+                    {dish.description && (
+                      <p className="text-xs text-slate-400 leading-relaxed mb-3">
+                        {dish.description}
+                      </p>
                     )}
+
+                    {/* Dietary Badges & Allergen Pills */}
+                    <div className="flex flex-wrap gap-1.5 mb-2.5">
+                      {dish.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-md capitalize ${
+                            tag === 'high-protein'
+                              ? 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
+                              : tag === 'special'
+                              ? 'bg-amber-500/15 text-amber-300 border border-amber-500/25'
+                              : tag === 'sweet'
+                              ? 'bg-pink-500/10 text-pink-300 border border-pink-500/20'
+                              : 'bg-slate-800 text-slate-300 border border-slate-700'
+                          }`}
+                        >
+                          {tag === 'high-protein' && '💪 '}
+                          {tag}
+                        </span>
+                      ))}
+                      {dish.protein && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                          {dish.protein} Protein
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Allergens Listed */}
+                    {dish.allergens && dish.allergens.length > 0 && (
+                      <div className="flex items-center flex-wrap gap-1 mb-2 text-[10px]">
+                        <span className="text-slate-400 font-medium">Allergens:</span>
+                        {dish.allergens.map((alg) => {
+                          const isStudentAllergic = studentAllergies.some(sa => sa.toLowerCase() === alg.toLowerCase());
+                          return (
+                            <span
+                              key={alg}
+                              className={`px-1.5 py-0.2 rounded font-semibold ${
+                                isStudentAllergic
+                                  ? 'bg-red-500/20 text-red-300 border border-red-500/40 font-bold'
+                                  : 'bg-slate-800 text-slate-300 border border-slate-700'
+                              }`}
+                            >
+                              {alg}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Expandable Ingredients Dropdown */}
+                    <div className="mb-2">
+                      <button
+                        type="button"
+                        onClick={() => toggleIngredients(dish.id)}
+                        className="text-[11px] font-medium text-amber-400 hover:text-amber-300 flex items-center space-x-1 py-1 cursor-pointer"
+                      >
+                        <span>{isExpanded ? 'Hide Ingredients' : 'View Ingredients'}</span>
+                        {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                      </button>
+
+                      {isExpanded && (
+                        <div className="mt-1 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1 animate-in fade-in duration-150">
+                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Full Kitchen Ingredients:
+                          </div>
+                          <div className="text-slate-300 text-[11px] leading-relaxed">
+                            {dish.ingredients && dish.ingredients.length > 0
+                              ? dish.ingredients.join(', ')
+                              : 'Standard fresh hostel kitchen ingredients (spices, salt, refined oil).'}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+
+                  {/* Card Footer: Calories & Action Buttons */}
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                    <div className="text-slate-400 font-mono">
+                      {dish.calories ? `~${dish.calories} kcal` : 'Unlimited Portions'}
+                    </div>
+
+                    <div className="flex items-center space-x-1.5">
+                      <button
+                        onClick={() => setRatingModalDish({ dish, mealName: currentSlot.name })}
+                        className="px-2.5 py-1 text-[11px] font-semibold text-slate-300 hover:text-amber-300 bg-slate-850 hover:bg-slate-800 rounded-lg border border-slate-700/80 transition-colors flex items-center space-x-1 cursor-pointer"
+                      >
+                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                        <span>Rate</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                {/* Card Footer: Calories & Rating Button */}
-                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                  <div className="text-slate-400 font-mono">
-                    {dish.calories ? `~${dish.calories} kcal` : 'Unlimited Portions'}
-                  </div>
-
-                  <button
-                    onClick={() => setRatingModalDish({ dish, mealName: currentSlot.name })}
-                    className="px-2.5 py-1 text-[11px] font-semibold text-slate-300 hover:text-amber-300 bg-slate-850 hover:bg-slate-800 rounded-lg border border-slate-700/80 transition-colors flex items-center space-x-1"
-                  >
-                    <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                    <span>Rate Quality</span>
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {filteredDishes.length === 0 && (
@@ -400,7 +542,7 @@ export const MenuDisplay: React.FC = () => {
               <p className="text-sm font-semibold text-slate-300">No dishes match the selected filter.</p>
               <button
                 onClick={() => setDietFilter('all')}
-                className="mt-2 text-xs font-bold text-amber-400 hover:underline"
+                className="mt-2 text-xs font-bold text-amber-400 hover:underline cursor-pointer"
               >
                 Clear Filter
               </button>
@@ -413,11 +555,11 @@ export const MenuDisplay: React.FC = () => {
           <div className="flex items-center space-x-2">
             <ShieldAlert className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>
-              100% RO Filtered Water used in cooking. Separate Jain/Sattvic cookware maintained.
+              100% RO Filtered Water used in cooking. Separate Sattvic cookware & cross-contamination allergen protocols maintained.
             </span>
           </div>
           <div className="text-[11px] text-slate-400 font-medium">
-            Mess Head: Chef Rajendra Kumar & Student Committee
+            Mess Safety Head: Chef Suresh Nair & Student Mess Committee
           </div>
         </div>
 

@@ -11,6 +11,7 @@ import { MenuDisplay } from './components/MenuDisplay';
 import { StudentPassView } from './components/StudentPassView';
 import { AcademicBlockOrder } from './components/AcademicBlockOrder';
 import { AdminDashboard } from './components/AdminDashboard';
+import { AnonymousFeedbackForm } from './components/AnonymousFeedbackForm';
 import { QRScannerModal } from './components/QRScannerModal';
 import { SwitchStudentModal } from './components/SwitchStudentModal';
 import {
@@ -18,10 +19,7 @@ import {
   QrCode,
   Send,
   ShieldCheck,
-  Heart,
-  Phone,
-  HelpCircle,
-  Sparkles
+  MessageSquareHeart
 } from 'lucide-react';
 
 const MainApp: React.FC = () => {
@@ -37,6 +35,8 @@ const MainApp: React.FC = () => {
       </div>
     );
   }
+
+  const isAdmin = currentSession.role === 'admin';
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -57,6 +57,7 @@ const MainApp: React.FC = () => {
           />
         )}
         {activeTab === 'parcel' && <AcademicBlockOrder />}
+        {activeTab === 'feedback' && <AnonymousFeedbackForm />}
         {activeTab === 'admin' && (
           <AdminDashboard onOpenScanner={() => setIsScannerOpen(true)} />
         )}
@@ -76,6 +77,7 @@ const MainApp: React.FC = () => {
           { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
           { id: 'pass' as const, label: 'Pass', icon: QrCode },
           { id: 'parcel' as const, label: 'Parcel', icon: Send },
+          { id: 'feedback' as const, label: 'Rate', icon: MessageSquareHeart },
           { id: 'admin' as const, label: 'Admin', icon: ShieldCheck }
         ].map((item) => {
           const Icon = item.icon;
@@ -84,14 +86,14 @@ const MainApp: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition-all ${
+              className={`flex flex-col items-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
                 isActive
                   ? 'text-amber-400 font-bold'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'scale-110' : ''}`} />
-              <span className="text-[10px] mt-0.5">{item.label}</span>
+              <Icon className={`w-4 h-4 ${isActive ? 'scale-110' : ''}`} />
+              <span className="text-[9px] mt-0.5">{item.label}</span>
             </button>
           );
         })}
@@ -107,7 +109,7 @@ const MainApp: React.FC = () => {
             <div>
               <span className="font-bold text-slate-100">CampusMess Hub</span>
               <p className="text-[11px] text-slate-400">
-                Integrated Hostel Dining Logistics & Smart QR Token Validation
+                Allergen-Safe Hostel Dining Logistics & Anonymous Student Pulse
               </p>
             </div>
           </div>
