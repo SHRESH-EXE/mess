@@ -10,6 +10,7 @@ import { LoginPage } from './components/LoginPage';
 import { MenuDisplay } from './components/MenuDisplay';
 import { StudentPassView } from './components/StudentPassView';
 import { AcademicBlockOrder } from './components/AcademicBlockOrder';
+import { DayScholarOrder } from './components/DayScholarOrder';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AnonymousFeedbackForm } from './components/AnonymousFeedbackForm';
 import { QRScannerModal } from './components/QRScannerModal';
@@ -18,6 +19,7 @@ import {
   UtensilsCrossed,
   QrCode,
   Send,
+  Store,
   ShieldCheck,
   MessageSquareHeart
 } from 'lucide-react';
@@ -57,6 +59,7 @@ const MainApp: React.FC = () => {
           />
         )}
         {activeTab === 'parcel' && <AcademicBlockOrder />}
+        {activeTab === 'dayscholar' && <DayScholarOrder />}
         {activeTab === 'feedback' && <AnonymousFeedbackForm />}
         {activeTab === 'admin' && (
           <AdminDashboard onOpenScanner={() => setIsScannerOpen(true)} />
@@ -77,6 +80,7 @@ const MainApp: React.FC = () => {
           { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
           { id: 'pass' as const, label: 'Pass', icon: QrCode },
           { id: 'parcel' as const, label: 'Parcel', icon: Send },
+          { id: 'dayscholar' as const, label: 'Day Scholar', icon: Store },
           { id: 'feedback' as const, label: 'Rate', icon: MessageSquareHeart },
           { id: 'admin' as const, label: 'Admin', icon: ShieldCheck }
         ].map((item) => {

@@ -31,9 +31,13 @@ import {
   ChefHat,
   Sparkles,
   BarChart3,
-  Check
+  Check,
+  Store,
+  Receipt,
+  IndianRupee,
+  Truck
 } from 'lucide-react';
-import { MealType, STANDARD_ALLERGENS } from '../types/mess';
+import { MealType, STANDARD_ALLERGENS, DayScholarOrderStatus } from '../types/mess';
 import { MenuEditorModal } from './MenuEditorModal';
 import { getCurrentDayOfWeek, formatTimeAmPm } from '../utils/time';
 
@@ -48,6 +52,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
     weeklyMenu,
     orders,
     updateOrderStatus,
+    dayScholarOrders,
+    updateDayScholarOrderStatus,
     attendanceRecords,
     students,
     anonymousFeedbacks,
@@ -56,13 +62,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
   } = useMess();
 
   const todayDay = getCurrentDayOfWeek();
-  const [adminActiveSubTab, setAdminActiveSubTab] = useState<'headcount' | 'feedback' | 'allergies' | 'menu' | 'parcels'>('headcount');
+  const [adminActiveSubTab, setAdminActiveSubTab] = useState<'headcount' | 'dayscholar' | 'feedback' | 'allergies' | 'menu' | 'parcels'>('headcount');
   
   const [editingDay, setEditingDay] = useState<string>(todayDay);
   const [editingMealType, setEditingMealType] = useState<MealType>('lunch');
   const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [orderFilter, setOrderFilter] = useState<string>('all');
+  const [dayScholarSearch, setDayScholarSearch] = useState<string>('');
+  const [dayScholarFilter, setDayScholarFilter] = useState<string>('all');
   const [feedbackRatingFilter, setFeedbackRatingFilter] = useState<number | 'all'>('all');
   const [feedbackMealFilter, setFeedbackMealFilter] = useState<MealType | 'all'>('all');
   const [feedbackSearch, setFeedbackSearch] = useState<string>('');
@@ -70,6 +78,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
   const totalHeadcountToday = todayCounts.breakfast + todayCounts.lunch + todayCounts.snacks + todayCounts.dinner;
   const pendingOrders = orders.filter(o => o.status === 'Pending' || o.status === 'In Kitchen');
+  const pendingDayScholarOrders = dayScholarOrders.filter(o => o.status === 'New' || o.status === 'Preparing');
+  const dayScholarRevenueToday = useMemo(() => {
+    return dayScholarOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+  }, [dayScholarOrders]);
   const rebatesToday = attendanceRecords.filter(r => r.date === todayDateStr && r.status === 'rebate_applied').length;
 
   const mealSlotsList: { type: MealType; label: string; icon: typeof Coffee; color: string }[] = [
@@ -178,6 +190,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
     );
   });
 
+  // Filtered Day Scholar Orders
+  const filteredDayScholarOrders = useMemo(() => {
+    return dayScholarOrders.filter(o => {
+      if (dayScholarFilter !== 'all' && o.status !== dayScholarFilter) return false;
+      if (!dayScholarSearch.trim()) return true;
+      const q = dayScholarSearch.toLowerCase();
+      return (
+        o.name.toLowerCase().includes(q) ||
+        o.phoneNumber.includes(q) ||
+        (o.department && o.department.toLowerCase().includes(q)) ||
+        (o.blockName && o.blockName.toLowerCase().includes(q)) ||
+        o.id.toLowerCase().includes(q)
+      );
+    });
+  }, [dayScholarOrders, dayScholarFilter, dayScholarSearch]);
+
   return (
     <section id="admin-dashboard-section" className="space-y-6 animate-in fade-in duration-200">
       
@@ -232,6 +260,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
       <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none pb-1">
         {[
           { id: 'headcount', label: 'Live Headcount & Attendance', icon: Users, badge: `${totalHeadcountToday}` },
+          { id: 'dayscholar', label: 'Day Scholar Orders', icon: Store, badge: `${pendingDayScholarOrders.length} New` },
           { id: 'feedback', label: 'Anonymous Student Feedback', icon: MessageSquareHeart, badge: `${anonymousFeedbacks.length}` },
           { id: 'allergies', label: 'Allergens & Food Safety', icon: HeartPulse, badge: `${Object.values(allergyDistribution).reduce((a: number, b: number) => a + b, 0)} Profiles` },
           { id: 'menu', label: 'Menu & Recipe Manager', icon: UtensilsCrossed },
@@ -265,69 +294,99 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
       {adminActiveSubTab === 'headcount' && (
         <div className="space-y-6">
           {/* KPI Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  Total Meals Eaten Today
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Meals Eaten Today
                 </span>
-                <div className="text-2xl font-black text-slate-100 font-mono">
+                <div className="text-xl font-black text-slate-100 font-mono">
                   {totalHeadcountToday}
                 </div>
-                <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-                  <TrendingUp className="w-3.5 h-3.5" /> Live headcount
+                <div className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" /> Live count
                 </div>
               </div>
-              <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                <UtensilsCrossed className="w-6 h-6" />
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <UtensilsCrossed className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Day Scholar Orders
+                </span>
+                <div className="text-xl font-black text-amber-400 font-mono">
+                  {dayScholarOrders.length}
+                </div>
+                <div className="text-[10px] text-amber-300">À La Carte Today</div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <Store className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Day Scholar Revenue
+                </span>
+                <div className="text-xl font-black text-emerald-400 font-mono">
+                  ₹{dayScholarRevenueToday}
+                </div>
+                <div className="text-[10px] text-emerald-300">Direct Pay / Counter</div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <IndianRupee className="w-5 h-5" />
+              </div>
+            </div>
+
+            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                   Registered Students
                 </span>
-                <div className="text-2xl font-black text-slate-100 font-mono">
-                  {students.length} Demo Profiles
+                <div className="text-xl font-black text-slate-100 font-mono">
+                  {students.length}
                 </div>
-                <div className="text-[11px] text-slate-400">All Blocks Active</div>
+                <div className="text-[10px] text-slate-400">Hostel Residents</div>
               </div>
-              <div className="p-3 rounded-2xl bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                <Users className="w-6 h-6" />
+              <div className="p-2.5 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                <Users className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                   Avg Meal Rating
                 </span>
-                <div className="text-2xl font-black text-amber-400 font-mono flex items-center gap-1">
-                  <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                <div className="text-xl font-black text-amber-400 font-mono flex items-center gap-1">
+                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                   {feedbackStats.avgRating || '4.5'}
                 </div>
-                <div className="text-[11px] text-slate-400">
-                  {anonymousFeedbacks.length} Anonymous ratings
+                <div className="text-[10px] text-slate-400">
+                  {anonymousFeedbacks.length} Reviews
                 </div>
               </div>
-              <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                <MessageSquareHeart className="w-6 h-6" />
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <MessageSquareHeart className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  Rebates / Skips Today
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Rebates / Skips
                 </span>
-                <div className="text-2xl font-black text-slate-100 font-mono">
+                <div className="text-xl font-black text-slate-100 font-mono">
                   {rebatesToday}
                 </div>
-                <div className="text-[11px] text-blue-400">₹45 credit/meal logged</div>
+                <div className="text-[10px] text-blue-400">₹45/meal credited</div>
               </div>
-              <div className="p-3 rounded-2xl bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                <Clock className="w-6 h-6" />
+              <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                <Clock className="w-5 h-5" />
               </div>
             </div>
           </div>
@@ -392,6 +451,210 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                 );
               })}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUB-VIEW: DAY SCHOLAR ORDERS */}
+      {adminActiveSubTab === 'dayscholar' && (
+        <div className="space-y-6 animate-in fade-in duration-150">
+          {/* Day Scholar Summary Banner */}
+          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider">
+                  À La Carte Pay-Per-Order
+                </span>
+                <span className="text-xs text-slate-400 font-mono">Live Day Scholar Queue</span>
+              </div>
+              <h3 className="text-xl font-bold text-slate-100">
+                Day Scholar Orders & Kitchen Expeditor
+              </h3>
+              <p className="text-xs text-slate-400">
+                Direct meals ordered by non-hostel day scholars. Update prep statuses and manage counter collection / delivery dispatch.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="bg-slate-950 px-4 py-2.5 rounded-2xl border border-slate-800 text-center">
+                <div className="text-[10px] uppercase font-bold text-slate-400">Total Revenue</div>
+                <div className="text-lg font-black text-emerald-400 font-mono">₹{dayScholarRevenueToday}</div>
+              </div>
+              <div className="bg-slate-950 px-4 py-2.5 rounded-2xl border border-slate-800 text-center">
+                <div className="text-[10px] uppercase font-bold text-slate-400">Active / Pending</div>
+                <div className="text-lg font-black text-amber-400 font-mono">{pendingDayScholarOrders.length}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Filter and Search Bar */}
+          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+                <input
+                  type="text"
+                  value={dayScholarSearch}
+                  onChange={(e) => setDayScholarSearch(e.target.value)}
+                  placeholder="Search student, phone, block, dept..."
+                  className="text-xs pl-8 pr-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                />
+              </div>
+
+              <select
+                value={dayScholarFilter}
+                onChange={(e) => setDayScholarFilter(e.target.value)}
+                className="text-xs p-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 font-medium focus:outline-hidden cursor-pointer"
+              >
+                <option value="all">All Statuses ({dayScholarOrders.length})</option>
+                <option value="New">New ({dayScholarOrders.filter(o => o.status === 'New').length})</option>
+                <option value="Preparing">Preparing ({dayScholarOrders.filter(o => o.status === 'Preparing').length})</option>
+                <option value="Ready">Ready ({dayScholarOrders.filter(o => o.status === 'Ready').length})</option>
+                <option value="Collected">Collected ({dayScholarOrders.filter(o => o.status === 'Collected').length})</option>
+                <option value="Cancelled">Cancelled ({dayScholarOrders.filter(o => o.status === 'Cancelled').length})</option>
+              </select>
+            </div>
+
+            <div className="text-xs text-slate-400">
+              Showing <span className="font-bold text-slate-200">{filteredDayScholarOrders.length}</span> orders
+            </div>
+          </div>
+
+          {/* Day Scholar Orders Table */}
+          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl overflow-hidden">
+            {filteredDayScholarOrders.length === 0 ? (
+              <div className="text-center py-12 space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+                  <Store className="w-6 h-6" />
+                </div>
+                <h4 className="text-base font-bold text-slate-300">No Day Scholar Orders Found</h4>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  {dayScholarSearch || dayScholarFilter !== 'all'
+                    ? 'Try clearing the search query or status filter to see other orders.'
+                    : 'Day scholar students have not placed any à la carte orders today yet.'}
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                      <th className="pb-2.5">Order ID</th>
+                      <th className="pb-2.5">Day Scholar / Dept</th>
+                      <th className="pb-2.5">Fulfillment & Slot</th>
+                      <th className="pb-2.5">Items & Special Notes</th>
+                      <th className="pb-2.5">Bill Total</th>
+                      <th className="pb-2.5">Status</th>
+                      <th className="pb-2.5 text-right">Quick Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800">
+                    {filteredDayScholarOrders.map((ord) => (
+                      <tr key={ord.id} className="hover:bg-slate-800/40 transition-colors">
+                        <td className="py-3 font-mono font-bold text-slate-100">
+                          <div>{ord.id}</div>
+                          <div className="text-[10px] text-slate-500 font-normal">{ord.timestamp}</div>
+                        </td>
+                        <td className="py-3">
+                          <div className="font-bold text-slate-100">{ord.name}</div>
+                          <div className="text-[10px] text-slate-400 font-mono">
+                            <a href={`tel:${ord.phoneNumber}`} className="hover:underline text-amber-400">
+                              {ord.phoneNumber}
+                            </a>
+                            {ord.department ? ` • ${ord.department}` : ''}
+                          </div>
+                        </td>
+                        <td className="py-3 max-w-xs">
+                          <div className="flex items-center space-x-1.5">
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                              ord.fulfillmentType === 'delivery'
+                                ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                                : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                            }`}>
+                              {ord.fulfillmentType === 'delivery' ? 'Delivery' : 'Counter Pickup'}
+                            </span>
+                            <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                              {ord.mealSlot}
+                            </span>
+                          </div>
+                          {ord.fulfillmentType === 'delivery' && ord.blockName && (
+                            <div className="text-[11px] text-slate-300 font-medium mt-1">
+                              {ord.blockName} {ord.roomFloor ? `(${ord.roomFloor})` : ''}
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3">
+                          <div className="text-slate-200 font-medium space-y-0.5">
+                            {ord.items.map((i, idx) => (
+                              <div key={idx} className="flex items-center space-x-1.5">
+                                <span className="text-amber-400 font-bold">{i.quantity}x</span>
+                                <span>{i.dishName}</span>
+                                <span className="text-slate-500 font-mono text-[10px]">(₹{i.price * i.quantity})</span>
+                              </div>
+                            ))}
+                          </div>
+                          {ord.specialNotes && (
+                            <div className="text-[10px] text-amber-300/80 bg-amber-500/10 rounded px-1.5 py-0.5 mt-1 border border-amber-500/20">
+                              Note: {ord.specialNotes}
+                            </div>
+                          )}
+                        </td>
+                        <td className="py-3 font-mono font-bold text-emerald-400 text-sm">
+                          ₹{ord.totalAmount}
+                        </td>
+                        <td className="py-3">
+                          <select
+                            value={ord.status}
+                            onChange={(e) => updateDayScholarOrderStatus(ord.id, e.target.value as DayScholarOrderStatus)}
+                            className={`text-xs font-bold p-1 rounded-lg border cursor-pointer ${
+                              ord.status === 'Collected'
+                                ? 'bg-emerald-950 text-emerald-300 border-emerald-800'
+                                : ord.status === 'Ready'
+                                ? 'bg-blue-950 text-blue-300 border-blue-800'
+                                : ord.status === 'Preparing'
+                                ? 'bg-amber-950 text-amber-300 border-amber-800'
+                                : ord.status === 'New'
+                                ? 'bg-rose-950 text-rose-300 border-rose-800'
+                                : 'bg-slate-800 text-slate-200 border-slate-700'
+                            }`}
+                          >
+                            <option value="New" className="bg-slate-900 text-slate-100">New</option>
+                            <option value="Preparing" className="bg-slate-900 text-slate-100">Preparing</option>
+                            <option value="Ready" className="bg-slate-900 text-slate-100">Ready</option>
+                            <option value="Collected" className="bg-slate-900 text-slate-100">Collected</option>
+                            <option value="Cancelled" className="bg-slate-900 text-slate-100">Cancelled</option>
+                          </select>
+                        </td>
+                        <td className="py-3 text-right">
+                          {ord.status !== 'Collected' && ord.status !== 'Cancelled' ? (
+                            <button
+                              onClick={() => {
+                                const nextStatus: DayScholarOrderStatus =
+                                  ord.status === 'New'
+                                    ? 'Preparing'
+                                    : ord.status === 'Preparing'
+                                    ? 'Ready'
+                                    : 'Collected';
+                                updateDayScholarOrderStatus(ord.id, nextStatus);
+                              }}
+                              className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg transition-colors cursor-pointer shadow-sm"
+                            >
+                              Advance →
+                            </button>
+                          ) : ord.status === 'Collected' ? (
+                            <span className="text-emerald-400 font-bold text-[11px] flex items-center justify-end gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Collected
+                            </span>
+                          ) : (
+                            <span className="text-rose-400 font-bold text-[11px]">Cancelled</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       )}

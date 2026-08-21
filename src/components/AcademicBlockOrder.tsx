@@ -43,7 +43,7 @@ export const AcademicBlockOrder: React.FC = () => {
   const [studentName, setStudentName] = useState(currentStudent.name);
   const [phone, setPhone] = useState(currentStudent.phone);
   const [rollNo, setRollNo] = useState(currentStudent.rollNo);
-  const [blockName, setBlockName] = useState(ACADEMIC_BLOCKS[0]);
+  const [blockName, setBlockName] = useState('');
   const [roomFloor, setRoomFloor] = useState('2nd Floor, Room / Desk 204');
   const [packingType, setPackingType] = useState<'Eco Paper Box' | 'Steel Tiffin (Returnable)' | 'Disposable Tray'>('Eco Paper Box');
   const [notes, setNotes] = useState('');
@@ -166,7 +166,7 @@ export const AcademicBlockOrder: React.FC = () => {
     studentName: studentName.trim(),
     phone: phone.trim(),
     rollNo: rollNo.trim(),
-    blockName,
+    blockName: blockName || 'Academic Block (Not Selected)',
     roomFloor: roomFloor.trim(),
     items: selectedItems,
     packingType,
@@ -184,7 +184,7 @@ export const AcademicBlockOrder: React.FC = () => {
 
   const handleWhatsAppOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!studentName.trim() || !phone.trim() || !roomFloor.trim() || selectedItems.length === 0) {
+    if (!studentName.trim() || !phone.trim() || !blockName.trim() || !roomFloor.trim() || selectedItems.length === 0) {
       return;
     }
 
@@ -196,7 +196,8 @@ export const AcademicBlockOrder: React.FC = () => {
     // Save locally
     const savedOrder = createAcademicOrder({
       studentId: currentStudent.id,
-      ...currentOrderPayload
+      ...currentOrderPayload,
+      blockName: blockName.trim()
     });
 
     setLastSubmittedId(savedOrder.id);
@@ -319,13 +320,17 @@ export const AcademicBlockOrder: React.FC = () => {
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                   <Building className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Academic Building / Department *</span>
+                  <span>Academic Block / Building Name *</span>
                 </label>
                 <select
+                  required
                   value={blockName}
                   onChange={(e) => setBlockName(e.target.value)}
-                  className="w-full text-xs p-3 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
+                  className="w-full text-xs p-3 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:outline-hidden cursor-pointer"
                 >
+                  <option value="" disabled className="bg-slate-900 text-slate-500">
+                    -- Select Academic Block --
+                  </option>
                   {ACADEMIC_BLOCKS.map((block) => (
                     <option key={block} value={block} className="bg-slate-900 text-slate-100">
                       {block}

@@ -15,7 +15,8 @@ import {
   UserCheck,
   LogOut,
   AlertTriangle,
-  HeartHandshake
+  HeartHandshake,
+  Store
 } from 'lucide-react';
 import { getActiveMealStatus, formatTimeAmPm, formatDateFull } from '../utils/time';
 
@@ -33,6 +34,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
     logout,
     announcements,
     todayCounts,
+    dayScholarOrders,
     anonymousFeedbacks
   } = useMess();
 
@@ -70,6 +72,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
       badge: 'WhatsApp'
     },
     {
+      id: 'dayscholar' as NavigationTab,
+      label: 'Day Scholar Order',
+      icon: Store,
+      badge: 'À La Carte'
+    },
+    {
       id: 'feedback' as NavigationTab,
       label: 'Rate Meals (Anonymous)',
       icon: MessageSquareHeart,
@@ -83,6 +91,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
       label: 'Admin Operations Hub',
       icon: ShieldCheck,
       badge: `${todayCounts.breakfast + todayCounts.lunch + todayCounts.snacks + todayCounts.dinner} Eaten`
+    },
+    {
+      id: 'dayscholar' as NavigationTab,
+      label: 'Day Scholar Orders',
+      icon: Store,
+      badge: `${dayScholarOrders.length} Orders`
     },
     {
       id: 'menu' as NavigationTab,

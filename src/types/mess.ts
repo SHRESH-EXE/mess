@@ -42,6 +42,7 @@ export interface DishItem {
   allergens?: string[];
   ingredients?: string[];
   isChefSpecial?: boolean;
+  price?: number;
 }
 
 export interface MealSlot {
@@ -162,4 +163,31 @@ export interface AnonymousFeedback {
   timestamp: string;
   date: string;
 }
+
+export type DayScholarOrderStatus = 'New' | 'Preparing' | 'Ready' | 'Collected' | 'Cancelled';
+
+export interface DayScholarOrderItem {
+  dishName: string;
+  quantity: number;
+  price: number;
+  allergens?: string[];
+}
+
+export interface DayScholarOrder {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  department: string;
+  mealSlot: MealType;
+  items: DayScholarOrderItem[];
+  preference: 'pickup' | 'delivery';
+  blockName?: string;
+  roomFloor?: string;
+  specialNotes?: string;
+  status: DayScholarOrderStatus;
+  timestamp: string;
+  totalAmount: number;
+  targetWhatsAppNumber?: string;
+}
+
 

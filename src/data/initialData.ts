@@ -1,4 +1,4 @@
-import { DayMenu, StudentProfile, MessAnnouncement, AcademicBlockOrder, AnonymousFeedback } from '../types/mess';
+import { DayMenu, StudentProfile, MessAnnouncement, AcademicBlockOrder, AnonymousFeedback, DayScholarOrder, DishItem } from '../types/mess';
 
 export const INITIAL_ANNOUNCEMENTS: MessAnnouncement[] = [
   {
@@ -125,16 +125,10 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
   }
 ];
 
-export const ACADEMIC_BLOCKS = [
-  'Dr. APJ Abdul Kalam Computer Science Block',
-  'Vivekananda Central Library & Study Hub',
-  'Sir MV Mechanical Innovation Shed',
-  'Tesla Electrical & Electronics Block',
-  'Ramanujan Mathematics & Data Science Complex',
-  'Bio-Tech & Chemical Labs Tower',
-  'Arya Hall & Management Dept',
-  'Student Activity Centre (SAC) & Innovation Cell'
-];
+export const ACADEMIC_BLOCKS: string[] = Array.from(
+  { length: 30 },
+  (_, i) => `Academic Block ${i + 1}`
+);
 
 export const DEFAULT_MESS_WHATSAPP_NUMBER = '919876543210';
 
@@ -1741,7 +1735,7 @@ export const INITIAL_ORDERS: AcademicBlockOrder[] = [
     studentName: 'Aarav Sharma',
     phone: '+91 98765 43210',
     rollNo: '22CS0142',
-    blockName: 'Dr. APJ Abdul Kalam Computer Science Block',
+    blockName: 'Academic Block 3',
     roomFloor: 'Lab 3, 2nd Floor (Systems Lab)',
     items: [
       { dishName: 'Shahi Paneer Butter Masala Thali + 3 Rotis + Jeera Rice', quantity: 1, price: 90, isIncludedInMessPass: true },
@@ -1762,7 +1756,7 @@ export const INITIAL_ORDERS: AcademicBlockOrder[] = [
     studentName: 'Priya Patel',
     phone: '+91 98451 23456',
     rollNo: '23EE0089',
-    blockName: 'Vivekananda Central Library & Study Hub',
+    blockName: 'Academic Block 12',
     roomFloor: 'Discussion Room 4 (1st Floor)',
     items: [
       { dishName: 'Crispy Veg Samosa (2 pcs) + Cutting Chai', quantity: 1, price: 40, isIncludedInMessPass: false }
@@ -1834,3 +1828,76 @@ export const INITIAL_ANONYMOUS_FEEDBACK: AnonymousFeedback[] = [
     date: '2026-08-20'
   }
 ];
+
+export function getDishPrice(dish: Partial<DishItem>): number {
+  if (dish.price && dish.price > 0) return dish.price;
+  const name = (dish.name || '').toLowerCase();
+  const category = dish.category;
+
+  if (name.includes('thali') || name.includes('biryani') || name.includes('platter')) return 95;
+  if (name.includes('paneer') || name.includes('chaap') || name.includes('kofta') || name.includes('chole bhature')) return 85;
+  if (category === 'main') return 75;
+  if (category === 'bread') return 15;
+  if (category === 'side') return 40;
+  if (category === 'snack') return 45;
+  if (category === 'dessert') return 35;
+  if (category === 'beverage') return 20;
+  return 60;
+}
+
+export const INITIAL_DAY_SCHOLAR_ORDERS: DayScholarOrder[] = [
+  {
+    id: 'DS-4091',
+    name: 'Kavya Sundaram',
+    phoneNumber: '+91 98765 11223',
+    department: 'B.Tech AI & Data Science (Year 3)',
+    mealSlot: 'lunch',
+    items: [
+      { dishName: 'Shahi Paneer Butter Masala Thali + 3 Rotis + Jeera Rice', quantity: 1, price: 95 },
+      { dishName: 'Gulab Jamun (1 pc)', quantity: 2, price: 35 }
+    ],
+    preference: 'pickup',
+    specialNotes: 'Will collect around 1:30 PM from Counter 3. Extra spicy dal please.',
+    status: 'Preparing',
+    timestamp: 'Today, 12:40 PM',
+    totalAmount: 165,
+    targetWhatsAppNumber: DEFAULT_MESS_WHATSAPP_NUMBER
+  },
+  {
+    id: 'DS-4088',
+    name: 'Vikramaditya Roy',
+    phoneNumber: '+91 98450 77889',
+    department: 'M.Tech Robotics & Automation',
+    mealSlot: 'lunch',
+    items: [
+      { dishName: 'Royal Nawabi Paneer Dum Biryani + Mirchi Ka Salan + Raita', quantity: 1, price: 95 },
+      { dishName: 'Masala Chaas (Spiced Buttermilk)', quantity: 1, price: 20 }
+    ],
+    preference: 'delivery',
+    blockName: 'Academic Block 7',
+    roomFloor: 'Robotics Lab 2, 3rd Floor',
+    specialNotes: 'Please call once arrived at Block 7 lift lobby.',
+    status: 'New',
+    timestamp: 'Today, 12:55 PM',
+    totalAmount: 115,
+    targetWhatsAppNumber: DEFAULT_MESS_WHATSAPP_NUMBER
+  },
+  {
+    id: 'DS-4075',
+    name: 'Sneha Kulkarni',
+    phoneNumber: '+91 97654 33445',
+    department: 'B.Des Industrial Design',
+    mealSlot: 'snacks',
+    items: [
+      { dishName: 'Crispy Veg Samosa with Mint & Imli Chutney (2 pcs)', quantity: 2, price: 45 },
+      { dishName: 'Masala Chai / Filter Coffee', quantity: 2, price: 20 }
+    ],
+    preference: 'pickup',
+    specialNotes: 'Less sugar in tea.',
+    status: 'Ready',
+    timestamp: 'Today, 04:30 PM',
+    totalAmount: 130,
+    targetWhatsAppNumber: DEFAULT_MESS_WHATSAPP_NUMBER
+  }
+];
+

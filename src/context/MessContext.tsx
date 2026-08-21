@@ -6,6 +6,8 @@ import {
   StudentProfile,
   MealAttendanceRecord,
   AcademicBlockOrder,
+  DayScholarOrder,
+  DayScholarOrderStatus,
   MessAnnouncement,
   DishRating,
   MealSlot,
@@ -17,13 +19,14 @@ import {
   INITIAL_WEEKLY_MENU,
   INITIAL_STUDENTS,
   INITIAL_ORDERS,
+  INITIAL_DAY_SCHOLAR_ORDERS,
   INITIAL_ANNOUNCEMENTS,
   INITIAL_ANONYMOUS_FEEDBACK
 } from '../data/initialData';
 import { soundEffects } from '../utils/audio';
 import { getCurrentDayOfWeek, getTodayDateString, formatTimeAmPm } from '../utils/time';
 
-export type NavigationTab = 'menu' | 'pass' | 'parcel' | 'feedback' | 'admin';
+export type NavigationTab = 'menu' | 'pass' | 'parcel' | 'dayscholar' | 'feedback' | 'admin';
 
 interface MessContextType {
   activeTab: NavigationTab;
@@ -38,6 +41,7 @@ interface MessContextType {
   weeklyMenu: Record<string, DayMenu>;
   attendanceRecords: MealAttendanceRecord[];
   orders: AcademicBlockOrder[];
+  dayScholarOrders: DayScholarOrder[];
   announcements: MessAnnouncement[];
   dishRatings: DishRating[];
   anonymousFeedbacks: AnonymousFeedback[];
@@ -50,6 +54,8 @@ interface MessContextType {
   skipMealForRebate: (mealType: MealType, studentId?: string, reason?: string) => { success: boolean; message: string };
   createAcademicOrder: (order: Omit<AcademicBlockOrder, 'id' | 'orderTime' | 'status'>) => AcademicBlockOrder;
   updateOrderStatus: (orderId: string, status: AcademicBlockOrder['status']) => void;
+  createDayScholarOrder: (order: Omit<DayScholarOrder, 'id' | 'timestamp' | 'status'>) => DayScholarOrder;
+  updateDayScholarOrderStatus: (orderId: string, status: DayScholarOrderStatus) => void;
   rateDish: (dishId: string, dishName: string, rating: number, comment?: string) => void;
   submitAnonymousFeedback: (feedback: { mealSlot: MealType; dishName: string; rating: number; comment?: string }) => void;
   updateStudentAllergies: (studentId: string, allergies: string[]) => void;
@@ -74,6 +80,7 @@ const STORAGE_KEYS = {
   CURRENT_STUDENT_ID: 'campusmess_current_student_id_v3',
   ATTENDANCE: 'campusmess_attendance_v3',
   ORDERS: 'campusmess_orders_v3',
+  DAY_SCHOLAR_ORDERS: 'campusmess_dayscholar_orders_v3',
   ANNOUNCEMENTS: 'campusmess_announcements_v3',
   RATINGS: 'campusmess_ratings_v3',
   FEEDBACK: 'campusmess_anonymous_feedback_v3',
@@ -158,6 +165,15 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return INITIAL_ORDERS;
   });
 
+  // 5b. Day Scholar Orders
+  const [dayScholarOrders, setDayScholarOrders] = useState<DayScholarOrder[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.DAY_SCHOLAR_ORDERS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return INITIAL_DAY_SCHOLAR_ORDERS;
+  });
+
   // 6. Announcements
   const [announcements] = useState<MessAnnouncement[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.ANNOUNCEMENTS);
@@ -219,6 +235,10 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
   }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.DAY_SCHOLAR_ORDERS, JSON.stringify(dayScholarOrders));
+  }, [dayScholarOrders]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.RATINGS, JSON.stringify(dishRatings));
@@ -372,6 +392,31 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Update order status
   const updateOrderStatus = useCallback((orderId: string, status: AcademicBlockOrder['status']) => {
     setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status } : ord));
+  }, []);
+
+  // Create Day Scholar Order
+  const createDayScholarOrder = useCallback((orderData: Omit<DayScholarOrder, 'id' | 'timestamp' | 'status'>): DayScholarOrder => {
+    const newOrder: DayScholarOrder = {
+      ...orderData,
+      id: `DS-${Math.floor(1000 + Math.random() * 9000)}`,
+      timestamp: `Today, ${formatTimeAmPm(new Date())}`,
+      status: 'New'
+    };
+
+    setDayScholarOrders(prev => [newOrder, ...prev]);
+    soundEffects.playSuccess();
+    confetti({
+      particleCount: 50,
+      spread: 70,
+      origin: { y: 0.7 },
+      colors: ['#f59e0b', '#10b981', '#06b6d4']
+    });
+    return newOrder;
+  }, []);
+
+  // Update Day Scholar Order Status
+  const updateDayScholarOrderStatus = useCallback((orderId: string, status: DayScholarOrderStatus) => {
+    setDayScholarOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status } : ord));
   }, []);
 
   // Rate dish (Legacy helper)
@@ -568,6 +613,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem(STORAGE_KEYS.CURRENT_STUDENT_ID);
     localStorage.removeItem(STORAGE_KEYS.ATTENDANCE);
     localStorage.removeItem(STORAGE_KEYS.ORDERS);
+    localStorage.removeItem(STORAGE_KEYS.DAY_SCHOLAR_ORDERS);
     localStorage.removeItem(STORAGE_KEYS.RATINGS);
     localStorage.removeItem(STORAGE_KEYS.FEEDBACK);
     localStorage.removeItem(STORAGE_KEYS.TODAY_COUNTS);
@@ -575,6 +621,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setStudents(INITIAL_STUDENTS);
     setCurrentStudentId('stu-1');
     setOrders(INITIAL_ORDERS);
+    setDayScholarOrders(INITIAL_DAY_SCHOLAR_ORDERS);
     setAttendanceRecords([]);
     setDishRatings([]);
     setAnonymousFeedbacks(INITIAL_ANONYMOUS_FEEDBACK);
@@ -697,6 +744,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         weeklyMenu,
         attendanceRecords,
         orders,
+        dayScholarOrders,
         announcements,
         dishRatings,
         anonymousFeedbacks,
@@ -707,6 +755,8 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         skipMealForRebate,
         createAcademicOrder,
         updateOrderStatus,
+        createDayScholarOrder,
+        updateDayScholarOrderStatus,
         rateDish,
         submitAnonymousFeedback,
         updateStudentAllergies,
