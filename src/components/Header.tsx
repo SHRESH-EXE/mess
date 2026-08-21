@@ -12,7 +12,10 @@ import {
   ChevronDown,
   Sparkles,
   Flame,
-  UserCheck
+  UserCheck,
+  LogOut,
+  ShieldAlert,
+  User
 } from 'lucide-react';
 import { getActiveMealStatus, formatTimeAmPm, formatDateFull } from '../utils/time';
 
@@ -26,6 +29,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
     activeTab,
     setActiveTab,
     currentStudent,
+    currentSession,
+    logout,
     announcements,
     todayCounts
   } = useMess();
@@ -183,25 +188,56 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
               )}
             </div>
 
-            {/* Active Student Switcher Pill */}
+            {/* Active Profile Badge / Switcher Pill */}
+            {currentSession?.role === 'admin' ? (
+              <div
+                id="admin-session-pill"
+                className="flex items-center space-x-2 pl-2 pr-3 py-1.5 rounded-xl bg-slate-900 border border-amber-500/40 text-left shadow-xs"
+              >
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 flex items-center justify-center font-bold text-xs shadow-xs">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
+                <div className="hidden sm:block">
+                  <div className="text-xs font-bold text-amber-300 leading-tight flex items-center gap-1">
+                    <span>{currentSession.name}</span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono">
+                    {currentSession.designation || 'Mess Authority'}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <button
+                id="student-switcher-btn"
+                onClick={onOpenSwitchStudent}
+                className="flex items-center space-x-2 pl-2 pr-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-850 hover:border-amber-500/40 border border-slate-800 transition-all text-left group shadow-xs cursor-pointer"
+                title="Switch Student Profile"
+              >
+                <div className="w-7 h-7 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs shadow-xs">
+                  {currentStudent.name.charAt(0)}
+                </div>
+                <div className="hidden sm:block">
+                  <div className="text-xs font-bold text-slate-100 leading-tight group-hover:text-amber-300 flex items-center gap-1">
+                    <span>{currentStudent.name}</span>
+                    <UserCheck className="w-3 h-3 text-emerald-400 inline" />
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono">
+                    {currentStudent.rollNo} • {currentStudent.roomNo}
+                  </div>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-200" />
+              </button>
+            )}
+
+            {/* Persistent Logout Button */}
             <button
-              id="student-switcher-btn"
-              onClick={onOpenSwitchStudent}
-              className="flex items-center space-x-2 pl-2 pr-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-850 hover:border-amber-500/40 border border-slate-800 transition-all text-left group shadow-xs"
+              id="header-logout-btn"
+              onClick={logout}
+              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-red-950/70 text-slate-400 hover:text-red-300 border border-slate-800 hover:border-red-800/80 transition-all duration-150 active:scale-95 text-xs font-semibold shadow-xs cursor-pointer"
+              title="End Session & Logout"
             >
-              <div className="w-7 h-7 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs shadow-xs">
-                {currentStudent.name.charAt(0)}
-              </div>
-              <div className="hidden sm:block">
-                <div className="text-xs font-bold text-slate-100 leading-tight group-hover:text-amber-300 flex items-center gap-1">
-                  <span>{currentStudent.name}</span>
-                  <UserCheck className="w-3 h-3 text-emerald-400 inline" />
-                </div>
-                <div className="text-[10px] text-slate-400 font-mono">
-                  {currentStudent.rollNo} • {currentStudent.roomNo}
-                </div>
-              </div>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-200" />
+              <LogOut className="w-4 h-4 text-red-400" />
+              <span className="hidden sm:inline">Logout</span>
             </button>
 
           </div>

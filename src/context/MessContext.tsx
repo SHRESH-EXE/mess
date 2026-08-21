@@ -8,7 +8,8 @@ import {
   AcademicBlockOrder,
   MessAnnouncement,
   DishRating,
-  MealSlot
+  MealSlot,
+  UserSession
 } from '../types/mess';
 import {
   INITIAL_WEEKLY_MENU,
@@ -22,6 +23,10 @@ import { getCurrentDayOfWeek, getTodayDateString, formatTimeAmPm } from '../util
 interface MessContextType {
   activeTab: 'menu' | 'pass' | 'parcel' | 'admin';
   setActiveTab: (tab: 'menu' | 'pass' | 'parcel' | 'admin') => void;
+  currentSession: UserSession | null;
+  loginStudent: (rollNo: string, roomNoOrPass: string) => Promise<{ success: boolean; error?: string }>;
+  loginAdmin: (emailOrId: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => void;
   currentStudent: StudentProfile;
   setCurrentStudent: (student: StudentProfile) => void;
   students: StudentProfile[];
@@ -65,6 +70,7 @@ const STORAGE_KEYS = {
 
 export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<'menu' | 'pass' | 'parcel' | 'admin'>('menu');
+  const [currentSession, setCurrentSession] = useState<UserSession | null>(null);
   const todayDayName = getCurrentDayOfWeek();
   const [selectedDay, setSelectedDay] = useState<string>(todayDayName);
   const todayDateStr = getTodayDateString();
@@ -435,6 +441,111 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAttendanceRecords([]);
     setDishRatings([]);
     setTodayCounts({ breakfast: 412, lunch: 485, snacks: 198, dinner: 0 });
+    setCurrentSession(null);
+  }, []);
+
+  // Authentication: Student Login
+  const loginStudent = useCallback(async (rollNoInput: string, passOrRoomInput: string): Promise<{ success: boolean; error?: string }> => {
+    // Simulated auth delay (~800ms)
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    const cleanRoll = rollNoInput.trim().toUpperCase();
+    const cleanPass = passOrRoomInput.trim().toUpperCase();
+
+    // Look for matching student in students list
+    const foundStudent = students.find((s) => s.rollNo.toUpperCase() === cleanRoll);
+
+    if (!foundStudent) {
+      soundEffects.playError();
+      return {
+        success: false,
+        error: `No registered student found with Roll Number "${rollNoInput}". Please check demo credentials or register.`
+      };
+    }
+
+    // Password / Room verification (accepts roomNo like "B-312", standard demo pass "student123", "pass123", or room number)
+    const validRoom = foundStudent.roomNo.toUpperCase().replace(/\s+/g, '');
+    const enteredRoom = cleanPass.replace(/\s+/g, '');
+    const validPasswords = ['STUDENT123', 'PASS123', 'CAMPUS2026', '123456', validRoom];
+
+    const isPasswordValid = validPasswords.includes(cleanPass) || enteredRoom === validRoom;
+
+    if (!isPasswordValid) {
+      soundEffects.playError();
+      return {
+        success: false,
+        error: `Incorrect password or room number for ${foundStudent.name} (${foundStudent.rollNo}). Use room "${foundStudent.roomNo}" or "student123".`
+      };
+    }
+
+    // Auth Success!
+    setCurrentStudentId(foundStudent.id);
+    const newSession: UserSession = {
+      role: 'student',
+      name: foundStudent.name,
+      id: foundStudent.id,
+      email: foundStudent.email,
+      rollNo: foundStudent.rollNo,
+      hostel: foundStudent.hostel,
+      roomNo: foundStudent.roomNo,
+      avatarUrl: foundStudent.photoUrl,
+      loginTime: formatTimeAmPm(new Date())
+    };
+
+    setCurrentSession(newSession);
+    setActiveTab('menu');
+    soundEffects.playSuccess();
+    return { success: true };
+  }, [students]);
+
+  // Authentication: Admin Login
+  const loginAdmin = useCallback(async (emailOrIdInput: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
+    // Simulated auth delay (~800ms)
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    const cleanId = emailOrIdInput.trim().toLowerCase();
+    const cleanPass = passwordInput.trim();
+
+    const validAdminIds = ['admin@campus.edu', 'staff-101', 'admin', 'warden@campus.edu', 'chef@campus.edu', 'staff-202'];
+    const validAdminPasswords = ['admin123', 'warden2026', 'chef123', 'admin', 'campus2026'];
+
+    if (!validAdminIds.includes(cleanId) && !cleanId.includes('admin') && !cleanId.includes('staff')) {
+      soundEffects.playError();
+      return {
+        success: false,
+        error: `Staff ID / Email "${emailOrIdInput}" is not recognized as a registered Mess Authority.`
+      };
+    }
+
+    if (!validAdminPasswords.includes(cleanPass) && cleanPass !== 'admin123') {
+      soundEffects.playError();
+      return {
+        success: false,
+        error: 'Invalid Admin security password. Try demo password "admin123".'
+      };
+    }
+
+    const isChef = cleanId.includes('chef') || cleanId === 'staff-202';
+    const newSession: UserSession = {
+      role: 'admin',
+      name: isChef ? 'Master Chef Suresh Nair' : 'Dr. K. S. Rajan (Chief Warden)',
+      id: isChef ? 'STAFF-202' : 'STAFF-101',
+      email: cleanId.includes('@') ? cleanId : `${cleanId}@campus.edu`,
+      designation: isChef ? 'Kitchen Operations Head Chef' : 'Chief Hostel Mess Warden',
+      loginTime: formatTimeAmPm(new Date())
+    };
+
+    setCurrentSession(newSession);
+    setActiveTab('admin');
+    soundEffects.playSuccess();
+    return { success: true };
+  }, []);
+
+  // Authentication: Logout
+  const logout = useCallback(() => {
+    setCurrentSession(null);
+    setActiveTab('menu');
+    soundEffects.playTap();
   }, []);
 
   return (
@@ -442,6 +553,10 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         activeTab,
         setActiveTab,
+        currentSession,
+        loginStudent,
+        loginAdmin,
+        logout,
         currentStudent,
         setCurrentStudent: updateStudentProfile,
         students,

@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { MessProvider, useMess } from './context/MessContext';
 import { Header } from './components/Header';
+import { LoginPage } from './components/LoginPage';
 import { MenuDisplay } from './components/MenuDisplay';
 import { StudentPassView } from './components/StudentPassView';
 import { AcademicBlockOrder } from './components/AcademicBlockOrder';
@@ -24,12 +25,21 @@ import {
 } from 'lucide-react';
 
 const MainApp: React.FC = () => {
-  const { activeTab, setActiveTab } = useMess();
+  const { activeTab, setActiveTab, currentSession } = useMess();
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
   const [isSwitchStudentOpen, setIsSwitchStudentOpen] = useState<boolean>(false);
 
+  // If no active session, show Login Page
+  if (!currentSession) {
+    return (
+      <div className="animate-in fade-in duration-300">
+        <LoginPage />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-300">
       
       {/* Top Application Header */}
       <Header

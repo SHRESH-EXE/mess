@@ -1,3 +1,18 @@
+export type UserRole = 'student' | 'admin';
+
+export interface UserSession {
+  role: UserRole;
+  name: string;
+  id: string;
+  email?: string;
+  rollNo?: string;
+  hostel?: string;
+  roomNo?: string;
+  avatarUrl?: string;
+  designation?: string;
+  loginTime: string;
+}
+
 export type MealType = 'breakfast' | 'lunch' | 'snacks' | 'dinner';
 
 export type DietaryTag = 'veg' | 'non-veg' | 'egg' | 'high-protein' | 'jain' | 'special' | 'sweet';
