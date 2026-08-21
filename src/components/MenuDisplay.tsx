@@ -74,8 +74,8 @@ export const MenuDisplay: React.FC = () => {
     }
     if (dietFilter === 'veg') return dish.tags.includes('veg');
     if (dietFilter === 'high-protein') return dish.tags.includes('high-protein');
-    if (dietFilter === 'non-veg') return dish.tags.includes('non-veg') || dish.tags.includes('egg');
     if (dietFilter === 'special') return dish.tags.includes('special') || dish.isChefSpecial;
+    if (dietFilter === 'sweet') return dish.tags.includes('sweet');
     return true;
   });
 
@@ -347,12 +347,11 @@ export const MenuDisplay: React.FC = () => {
               <Filter className="w-3.5 h-3.5" /> Filter:
             </span>
             {[
-              { id: 'all', label: 'All Items' },
+              { id: 'all', label: 'All Pure Veg Items 🌿' },
               { id: 'safe-for-me', label: '🛡️ Safe for My Allergies' },
-              { id: 'veg', label: 'Pure Veg 🟢' },
               { id: 'high-protein', label: 'High Protein 💪' },
-              { id: 'non-veg', label: 'Non-Veg / Egg 🔴' },
-              { id: 'special', label: 'Chef Specials ⭐' }
+              { id: 'special', label: 'Chef Specials ⭐' },
+              { id: 'sweet', label: 'Desserts & Sweets 🍮' }
             ].map((f) => (
               <button
                 key={f.id}
@@ -409,19 +408,9 @@ export const MenuDisplay: React.FC = () => {
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <div className="flex items-center space-x-2">
-                        {dish.tags.includes('veg') ? (
-                          <span className="w-3.5 h-3.5 rounded-xs border-2 border-emerald-500 flex items-center justify-center p-0.5" title="Pure Veg">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          </span>
-                        ) : dish.tags.includes('egg') ? (
-                          <span className="w-3.5 h-3.5 rounded-xs border-2 border-amber-500 flex items-center justify-center p-0.5" title="Contains Egg">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          </span>
-                        ) : (
-                          <span className="w-3.5 h-3.5 rounded-xs border-2 border-rose-500 flex items-center justify-center p-0.5" title="Non-Veg">
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                          </span>
-                        )}
+                        <span className="w-3.5 h-3.5 rounded-xs border-2 border-emerald-500 flex items-center justify-center p-0.5" title="100% Pure Vegetarian">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        </span>
                         <h4 className="text-sm font-bold text-slate-100 leading-snug">
                           {dish.name}
                         </h4>

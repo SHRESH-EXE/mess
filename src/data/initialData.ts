@@ -3,10 +3,10 @@ import { DayMenu, StudentProfile, MessAnnouncement, AcademicBlockOrder, Anonymou
 export const INITIAL_ANNOUNCEMENTS: MessAnnouncement[] = [
   {
     id: 'ann-1',
-    title: 'Sunday Grand Feast: Dum Biryani & Gulab Jamun',
+    title: 'Sunday Grand Feast: Pure Veg Dum Biryani & Gulab Jamun',
     date: 'Upcoming Sunday',
     priority: 'high',
-    message: 'Special dinner served between 7:30 PM - 10:00 PM with Paneer Dum Biryani, Chicken Dum Biryani, Raita & Hot Gulab Jamun.',
+    message: 'Special dinner served between 7:30 PM - 10:00 PM with Royal Paneer Dum Biryani, Mirchi Ka Salan, Burani Raita & Hot Gulab Jamun.',
     tag: 'Feast Menu'
   },
   {
@@ -181,14 +181,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'm-bf-3',
-            name: 'Boiled Eggs (2 pcs) / Peanut Poha',
+            name: 'Sprouted Moong & Peanut Poha (High Protein)',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 155,
-            protein: '12g',
-            description: 'Protein option: farm fresh boiled eggs or flattened rice tempered with mustard and peanuts.',
-            allergens: ['Eggs', 'Peanuts'],
-            ingredients: ['Farm Fresh Eggs', 'Flattened Rice (Poha)', 'Roasted Peanuts', 'Mustard Seeds', 'Turmeric Powder', 'Green Chillies', 'Fresh Coriander', 'Lemon Juice']
+            tags: ['veg', 'high-protein'],
+            calories: 195,
+            protein: '10g',
+            description: 'Flattened rice tempered with mustard, curry leaves, roasted peanuts and steamed sprouted moong.',
+            allergens: ['Peanuts'],
+            ingredients: ['Flattened Rice (Poha)', 'Sprouted Moong Beans', 'Roasted Peanuts', 'Mustard Seeds', 'Turmeric Powder', 'Green Chillies', 'Fresh Coriander', 'Lemon Juice']
           },
           {
             id: 'm-bf-4',
@@ -345,14 +345,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'm-di-2',
-            name: 'Egg Curry (2 Eggs) / Kadai Paneer',
+            name: 'Kadai Paneer & Soya Chaap Gravy',
             category: 'main',
-            tags: ['egg', 'high-protein', 'special'],
-            calories: 260,
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 270,
             protein: '16g',
-            description: 'Rich spiced onion-tomato curry with boiled eggs or cottage cheese cubes.',
-            allergens: ['Eggs', 'Dairy'],
-            ingredients: ['Boiled Eggs', 'Paneer (Cottage Cheese)', 'Bell Peppers (Capsicum)', 'Butter', 'Onions', 'Tomatoes', 'Kadai Masala Spices']
+            description: 'Rich spiced onion-tomato curry with fresh cottage cheese cubes and bell peppers.',
+            allergens: ['Dairy', 'Soy'],
+            ingredients: ['Fresh Paneer (Cottage Cheese)', 'Soya Chunks', 'Bell Peppers (Capsicum)', 'Butter', 'Onions', 'Tomatoes', 'Kadai Masala Spices', 'Kasuri Methi']
           },
           {
             id: 'm-di-3',
@@ -560,14 +560,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 't-di-2',
-            name: 'Chicken Curry / Soya Chaap Masala',
+            name: 'Soya Chaap Tikka Masala & Mushroom Do Pyaza',
             category: 'main',
-            tags: ['non-veg', 'high-protein', 'special'],
-            calories: 290,
-            protein: '22g',
-            description: 'Desi style chicken curry or protein-packed soya chaap chunks.',
-            allergens: ['Soy', 'Gluten'],
-            ingredients: ['Fresh Poultry Chicken / Soya Flour Sticks', 'Wheat Gluten', 'Whole Spices', 'Fried Onion Gravy', 'Ginger Garlic Paste', 'Mustard Oil']
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 280,
+            protein: '18g',
+            description: 'Tender protein-packed soya chaap chunks and button mushrooms in rich Punjabi gravy.',
+            allergens: ['Soy', 'Gluten', 'Dairy'],
+            ingredients: ['Soya Flour Sticks (Chaap)', 'Fresh Button Mushrooms', 'Wheat Gluten', 'Whole Spices', 'Fried Onion Gravy', 'Ginger Garlic Paste', 'Desi Ghee', 'Fresh Cream']
           },
           {
             id: 't-di-3',
@@ -645,14 +645,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'w-bf-3',
-            name: 'Boiled Eggs / Vegetable Upma',
+            name: 'Sprouted Moong & Vegetable Rava Upma',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 140,
-            protein: '10g',
-            description: 'Protein boost for morning workouts and lectures.',
-            allergens: ['Eggs', 'Gluten'],
-            ingredients: ['Farm Boiled Eggs', 'Roasted Semolina (Rava)', 'Carrots', 'Beans', 'Ginger', 'Curry Leaves', 'Mustard Seeds']
+            tags: ['veg', 'high-protein'],
+            calories: 190,
+            protein: '8g',
+            description: 'Roasted semolina upma loaded with fresh farm vegetables, steamed moong sprouts, and cashews.',
+            allergens: ['Gluten', 'Tree Nuts'],
+            ingredients: ['Roasted Semolina (Rava)', 'Sprouted Moong Beans', 'Carrots', 'Beans', 'Ginger', 'Curry Leaves', 'Mustard Seeds', 'Roasted Cashews', 'Ghee']
           },
           {
             id: 'w-bf-4',
@@ -795,14 +795,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'w-di-2',
-            name: 'Egg Bhurji / Veg Kolhapuri',
+            name: 'Amritsari Paneer Bhurji & Veg Kolhapuri',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 220,
+            tags: ['veg', 'high-protein'],
+            calories: 240,
             protein: '14g',
-            description: 'Spiced scrambled eggs with green chillies or fiery mixed vegetables.',
-            allergens: ['Eggs', 'Tree Nuts'],
-            ingredients: ['Farm Eggs', 'Onions', 'Tomatoes', 'Green Chillies', 'White Butter', 'Kolhapuri Spices (Sesame, Poppy Seeds, Coconut, Red Chillies)']
+            description: 'Spiced crumbled cottage cheese with bell peppers and fiery Kolhapuri mixed vegetables.',
+            allergens: ['Dairy', 'Tree Nuts'],
+            ingredients: ['Crumbled Fresh Paneer', 'Bell Peppers', 'Onions', 'Tomatoes', 'Green Chillies', 'White Butter', 'Kolhapuri Spices (Sesame, Poppy Seeds, Coconut, Red Chillies)']
           },
           {
             id: 'w-di-3',
@@ -870,14 +870,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'th-bf-2',
-            name: 'Warm Boiled Eggs / Bread Toast with Jam & Butter',
+            name: 'Sprouted Moong Salad & Bread Toast with Jam & Butter',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 170,
-            protein: '12g',
-            description: 'High protein morning essentials.',
-            allergens: ['Eggs', 'Gluten', 'Dairy'],
-            ingredients: ['Boiled Eggs', 'White & Wheat Bread Slices', 'Amul Table Butter', 'Mixed Fruit Jam']
+            tags: ['veg', 'high-protein'],
+            calories: 210,
+            protein: '9g',
+            description: 'Toasted whole wheat bread with butter and jam paired with zesty sprouted moong salad.',
+            allergens: ['Gluten', 'Dairy'],
+            ingredients: ['White & Wheat Bread Slices', 'Amul Table Butter', 'Mixed Fruit Jam', 'Sprouted Green Moong', 'Chaat Masala', 'Lemon']
           },
           {
             id: 'th-bf-3',
@@ -1019,14 +1019,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'th-di-2',
-            name: 'Egg Masala Curry / Chana Dal Tadka',
+            name: 'Mushroom Matar Masala / Chana Dal Tadka',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 230,
-            protein: '14g',
-            description: 'Boiled egg masala or hearty yellow chana lentils.',
-            allergens: ['Eggs', 'Dairy'],
-            ingredients: ['Farm Boiled Eggs', 'Bengal Gram (Chana Dal)', 'Ghee', 'Onion Tomato Gravy', 'Garam Masala', 'Ginger Garlic']
+            tags: ['veg', 'high-protein'],
+            calories: 220,
+            protein: '11g',
+            description: 'Tender button mushrooms and green peas in spiced gravy alongside hearty tempered chana dal.',
+            allergens: ['Dairy'],
+            ingredients: ['Fresh Button Mushrooms', 'Green Peas', 'Bengal Gram (Chana Dal)', 'Desi Ghee', 'Onion Tomato Gravy', 'Garam Masala', 'Ginger Garlic']
           },
           {
             id: 'th-di-3',
@@ -1083,14 +1083,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'f-bf-2',
-            name: 'Boiled Eggs / Sprouts',
+            name: 'High-Protein Sprouted Moong & Kala Chana Chaat',
             category: 'side',
-            tags: ['egg', 'high-protein'],
-            calories: 140,
-            protein: '12g',
-            description: 'Morning protein option.',
-            allergens: ['Eggs'],
-            ingredients: ['Fresh Boiled Eggs', 'Sprouted Moong Beans', 'Black Pepper', 'Rock Salt', 'Lemon']
+            tags: ['veg', 'high-protein'],
+            calories: 150,
+            protein: '9g',
+            description: 'Fresh sprouted lentils tossed with diced cucumber, tomatoes, lemon and rock salt.',
+            allergens: [],
+            ingredients: ['Sprouted Green Moong Beans', 'Sprouted Kala Chana', 'Cucumber', 'Tomatoes', 'Black Pepper', 'Rock Salt', 'Fresh Lemon Juice', 'Coriander']
           },
           {
             id: 'f-bf-3',
@@ -1131,14 +1131,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'f-lu-2',
-            name: 'Egg Dum Biryani / Paneer Tikka Masala',
+            name: 'Soya Chaap Dum Biryani & Paneer Tikka Masala',
             category: 'main',
-            tags: ['egg', 'high-protein', 'special'],
-            calories: 360,
-            protein: '18g',
-            description: 'Special Friday Biryani with spiced boiled eggs.',
-            allergens: ['Eggs', 'Dairy'],
-            ingredients: ['Farm Boiled Eggs', 'Paneer Tikka Chunks', 'Basmati Rice', 'Yogurt Marinade', 'Tandoori Masala', 'Mint Leaves', 'Ghee']
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 350,
+            protein: '16g',
+            description: 'Special Friday aromatic Biryani with marinated soya chaap chunks and paneer tikka masala.',
+            allergens: ['Soy', 'Gluten', 'Dairy'],
+            ingredients: ['Soya Chaap Chunks', 'Paneer Tikka Chunks', 'Basmati Rice', 'Yogurt Marinade', 'Tandoori Masala', 'Mint Leaves', 'Desi Ghee', 'Saffron Milk']
           },
           {
             id: 'f-lu-3',
@@ -1235,14 +1235,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'f-di-2',
-            name: 'Paneer Bhurji / Chicken Korma',
+            name: 'Shahi Paneer Bhurji & Navratan Korma',
             category: 'main',
-            tags: ['non-veg', 'high-protein', 'special'],
-            calories: 280,
-            protein: '20g',
-            description: 'Minced paneer with bell peppers or mild aromatic chicken curry.',
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 270,
+            protein: '15g',
+            description: 'Minced spiced cottage cheese with bell peppers and royal mild aromatic mixed vegetable & nut korma.',
             allergens: ['Dairy', 'Tree Nuts'],
-            ingredients: ['Crumbled Fresh Paneer', 'Fresh Chicken Chunks', 'Cashew Yogurt Korma Paste', 'Bell Peppers (Capsicum)', 'Butter', 'Kashmiri Spices']
+            ingredients: ['Crumbled Fresh Paneer', 'Mixed Seasonal Veggies', 'Cashew Yogurt Korma Paste', 'Bell Peppers (Capsicum)', 'Butter', 'Kashmiri Spices', 'Saffron Touch']
           },
           {
             id: 'f-di-3',
@@ -1319,14 +1319,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'sa-bf-3',
-            name: 'Boiled Eggs / Cornflakes with Cold Milk',
+            name: 'Sprouted Moong Bowl / Cornflakes with Cold Milk',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 150,
-            protein: '11g',
-            description: 'Protein or light cereal choice.',
-            allergens: ['Eggs', 'Dairy'],
-            ingredients: ['Farm Fresh Boiled Eggs', 'Crispy Corn Flakes', 'Pasteurized Cold Cow Milk', 'Sugar']
+            tags: ['veg', 'high-protein'],
+            calories: 170,
+            protein: '9g',
+            description: 'Nutritious morning cereal with chilled milk or crunchy spiced sprouted pulses.',
+            allergens: ['Dairy'],
+            ingredients: ['Crispy Corn Flakes', 'Pasteurized Cold Cow Milk', 'Sprouted Moong', 'Sugar', 'Almond Flakes']
           },
           {
             id: 'sa-bf-4',
@@ -1470,14 +1470,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'sa-di-2',
-            name: 'Egg Curry / Soya Malai Chaap',
+            name: 'Soya Malai Chaap Gravy & Mushroom Masala',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 240,
+            tags: ['veg', 'high-protein'],
+            calories: 250,
             protein: '15g',
-            description: 'Nutritious curry.',
-            allergens: ['Eggs', 'Soy', 'Dairy', 'Gluten'],
-            ingredients: ['Farm Boiled Eggs', 'Soya Chaap Sticks', 'Wheat Gluten', 'Fresh Cream', 'Cardamom Garlic Gravy']
+            description: 'Tender soya chaap sticks in velvety cream gravy with spiced button mushrooms.',
+            allergens: ['Soy', 'Dairy', 'Gluten'],
+            ingredients: ['Soya Chaap Sticks', 'Fresh Button Mushrooms', 'Wheat Gluten', 'Fresh Cream', 'Cardamom Garlic Gravy', 'Desi Ghee', 'Kasuri Methi']
           },
           {
             id: 'sa-di-3',
@@ -1546,14 +1546,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'su-bf-2',
-            name: 'Boiled Eggs / Omelette Counter',
+            name: 'Live Moong Dal Chilla & Paneer Stuffed Wrap Station',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 160,
-            protein: '13g',
-            description: 'Live omelette or boiled eggs station.',
-            allergens: ['Eggs', 'Dairy'],
-            ingredients: ['Farm Fresh Eggs', 'Chopped Onions', 'Green Chillies', 'Butter', 'Black Pepper', 'Salt']
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 220,
+            protein: '12g',
+            description: 'Live griddle station serving hot yellow lentil crepes stuffed with grated paneer and herbs.',
+            allergens: ['Dairy'],
+            ingredients: ['Yellow Moong Dal Batter', 'Grated Fresh Paneer', 'Chopped Onions', 'Green Chillies', 'Butter', 'Black Pepper', 'Mint Chutney', 'Rock Salt']
           },
           {
             id: 'su-bf-3',
@@ -1583,14 +1583,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
         dishes: [
           {
             id: 'su-lu-1',
-            name: 'Kolkata Style Chicken Biryani / Paneer Dum Biryani',
+            name: 'Royal Nawabi Paneer Dum Biryani (with Saffron & Roasted Potatoes)',
             category: 'main',
-            tags: ['non-veg', 'high-protein', 'special'],
-            calories: 390,
-            protein: '24g',
-            description: 'Fragrant saffron basmati rice slow dum cooked with spices and roasted potato.',
-            allergens: ['Dairy', 'Eggs'],
-            ingredients: ['Aged Long Grain Basmati Rice', 'Chicken Pieces / Paneer Chunks', 'Boiled Potato Halves', 'Boiled Egg Option', 'Desi Ghee', 'Saffron Milk', 'Kewra & Rose Water', 'Meetha Ittar Essence', 'Biryani Spices'],
+            tags: ['veg', 'high-protein', 'special'],
+            calories: 370,
+            protein: '16g',
+            description: 'Fragrant saffron basmati rice slow dum cooked with marinated paneer cubes, roasted spiced potato halves, and caramelized onions.',
+            allergens: ['Dairy'],
+            ingredients: ['Aged Long Grain Basmati Rice', 'Fresh Paneer Chunks', 'Boiled & Roasted Potato Halves', 'Desi Ghee', 'Saffron Milk', 'Kewra & Rose Water', 'Meetha Ittar Essence', 'Biryani Spices', 'Fried Onions (Birista)'],
             isChefSpecial: true
           },
           {
@@ -1698,14 +1698,14 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
           },
           {
             id: 'su-di-2',
-            name: 'Kadai Veg / Egg Bhurji',
+            name: 'Kadai Veg & Soya Paneer Toss',
             category: 'main',
-            tags: ['egg', 'high-protein'],
-            calories: 210,
-            protein: '12g',
-            description: 'Wok tossed mixed veggies or spiced eggs.',
-            allergens: ['Eggs'],
-            ingredients: ['Farm Fresh Eggs', 'Cauliflower', 'Beans', 'Carrots', 'Capsicum', 'Kadai Spices', 'Mustard Oil']
+            tags: ['veg', 'high-protein'],
+            calories: 220,
+            protein: '13g',
+            description: 'Wok tossed seasonal mixed vegetables with paneer and soya chunks in crushed coriander and kadai spice blend.',
+            allergens: ['Dairy', 'Soy'],
+            ingredients: ['Fresh Paneer Cubes', 'Nutri Soya Chunks', 'Cauliflower', 'Beans', 'Carrots', 'Capsicum', 'Kadai Spices', 'Mustard Oil']
           },
           {
             id: 'su-di-3',
@@ -1809,7 +1809,7 @@ export const INITIAL_ANONYMOUS_FEEDBACK: AnonymousFeedback[] = [
   {
     id: 'fb-4',
     mealSlot: 'breakfast',
-    dishName: 'Boiled Eggs (2 pcs) / Peanut Poha',
+    dishName: 'Sprouted Moong & Peanut Poha (High Protein)',
     rating: 3,
     comment: 'Poha was a bit dry today, could use slightly more lemon and roasted peanuts.',
     timestamp: 'Today, 09:10 AM',
@@ -1818,9 +1818,9 @@ export const INITIAL_ANONYMOUS_FEEDBACK: AnonymousFeedback[] = [
   {
     id: 'fb-5',
     mealSlot: 'dinner',
-    dishName: 'Egg Curry (2 Eggs) / Kadai Paneer',
+    dishName: 'Kadai Paneer & Soya Chaap Gravy',
     rating: 4,
-    comment: 'Great spice balance in the egg curry. Please keep this weekly rotation.',
+    comment: 'Great spice balance in the kadai gravy. Please keep this weekly rotation.',
     timestamp: 'Yesterday, 08:45 PM',
     date: '2026-08-20'
   },

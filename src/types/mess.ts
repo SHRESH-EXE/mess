@@ -29,7 +29,7 @@ export interface UserSession {
 
 export type MealType = 'breakfast' | 'lunch' | 'snacks' | 'dinner';
 
-export type DietaryTag = 'veg' | 'non-veg' | 'egg' | 'high-protein' | 'jain' | 'special' | 'sweet';
+export type DietaryTag = 'veg' | 'high-protein' | 'jain' | 'special' | 'sweet';
 
 export interface DishItem {
   id: string;

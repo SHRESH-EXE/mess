@@ -1,6 +1,6 @@
 {
   "name": "CampusMess Hub",
-  "description": "Hostel Mess Management System with allergen-awareness alerts, QR digital pass check-in, academic block WhatsApp delivery parcels, anonymous student pulse reviews, and staff operations console.",
+  "description": "100% Pure Vegetarian Hostel Mess Management System with allergen-awareness alerts, QR digital pass check-in, academic block WhatsApp delivery parcels, anonymous student pulse reviews, and staff operations console.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

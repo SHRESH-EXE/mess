@@ -144,18 +144,22 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
                 <span className="text-xl sm:text-2xl font-black tracking-tight text-white font-serif">
                   CampusMess<span className="text-amber-400">Hub</span>
                 </span>
+                <span className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/40">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span>100% Pure Veg</span>
+                </span>
                 {isAdmin ? (
                   <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/40 uppercase">
                     Admin Portal
                   </span>
                 ) : (
-                  <span className="hidden md:inline-flex items-center px-2 py-0.5 text-[11px] font-semibold bg-amber-500/10 text-amber-300 rounded-full border border-amber-500/30">
+                  <span className="hidden lg:inline-flex items-center px-2 py-0.5 text-[11px] font-semibold bg-amber-500/10 text-amber-300 rounded-full border border-amber-500/30">
                     Hostel Dining v2.5
                   </span>
                 )}
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block">
-                Allergen-Safe Hostel Dining, QR Tokens & Anonymous Student Pulse
+                100% Pure Veg Allergen-Safe Hostel Dining, QR Tokens & Anonymous Student Pulse
               </p>
             </div>
           </div>

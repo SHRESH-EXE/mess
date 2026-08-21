@@ -217,7 +217,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
 
                     {/* Tags */}
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      {(['veg', 'non-veg', 'egg', 'high-protein', 'special', 'sweet'] as DietaryTag[]).map((tag) => {
+                      {(['veg', 'high-protein', 'special', 'sweet', 'jain'] as DietaryTag[]).map((tag) => {
                         const active = dish.tags.includes(tag);
                         return (
                           <button
@@ -271,11 +271,10 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                 className="text-xs p-2.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-100 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
               >
                 <option value="veg" className="bg-slate-900 text-slate-100">Pure Veg 🟢</option>
-                <option value="non-veg" className="bg-slate-900 text-slate-100">Non-Veg 🔴</option>
-                <option value="egg" className="bg-slate-900 text-slate-100">Egg / High Protein 🟡</option>
                 <option value="high-protein" className="bg-slate-900 text-slate-100">High Protein 💪</option>
                 <option value="special" className="bg-slate-900 text-slate-100">Chef Special ⭐</option>
                 <option value="sweet" className="bg-slate-900 text-slate-100">Sweet / Dessert 🍮</option>
+                <option value="jain" className="bg-slate-900 text-slate-100">Jain Friendly 🌿</option>
               </select>
             </div>
 
