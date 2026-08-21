@@ -1,0 +1,43 @@
+import { AcademicBlockOrder } from '../types/mess';
+
+export function formatWhatsAppOrderMessage(order: Omit<AcademicBlockOrder, 'id' | 'orderTime' | 'status'> & { orderId?: string }): string {
+  const itemsText = order.items
+    .filter(it => it.quantity > 0)
+    .map(it => `• *${it.dishName}* x ${it.quantity} ${it.price > 0 ? `(₹${it.price * it.quantity})` : '(Included in Mess Pass)'}`)
+    .join('\n');
+
+  const lines = [
+    `🍱 *CAMPUS MESS HUB - ACADEMIC PARCEL ORDER* 🍱`,
+    order.orderId ? `🔖 *Order ID:* \`#${order.orderId}\`` : '',
+    `----------------------------------------`,
+    `👤 *Student Name:* ${order.studentName}`,
+    order.rollNo ? `🎓 *Roll No:* ${order.rollNo}` : '',
+    `📞 *Phone:* ${order.phone}`,
+    `🏢 *Delivery Location:* ${order.blockName}`,
+    `📍 *Room / Floor / Desk:* ${order.roomFloor}`,
+    `⏰ *Requested Batch:* ${order.deliverySlot}`,
+    `📦 *Packaging:* ${order.packingType}`,
+    `💳 *Payment/Billing:* ${order.useMessPass ? '✅ Active Mess Pass (Meal Count Deducted)' : `💵 Direct Pay on Delivery (Total: ₹${order.totalAmount})`}`,
+    ``,
+    `📋 *ORDERED ITEMS:*`,
+    itemsText || '• 1x Full Standard Thali / Snack Pack',
+    ``,
+    order.notes ? `📝 *Special Instructions:* ${order.notes}\n` : '',
+    `----------------------------------------`,
+    `📍 *Mess Kitchen:* Campus Central Dining Hall, Ground Floor`,
+    `_Sent via CampusMess Hub Portal_`
+  ].filter(Boolean);
+
+  return lines.join('\n');
+}
+
+export function generateWhatsAppLink(
+  phoneNumber: string,
+  order: Omit<AcademicBlockOrder, 'id' | 'orderTime' | 'status'> & { orderId?: string }
+): string {
+  // Clean phone number: remove +, -, spaces
+  const cleanNumber = phoneNumber.replace(/[^0-9]/g, '');
+  const message = formatWhatsAppOrderMessage(order);
+  const encodedText = encodeURIComponent(message);
+  return `https://wa.me/${cleanNumber}?text=${encodedText}`;
+}
