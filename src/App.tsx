@@ -61,9 +61,10 @@ const MainApp: React.FC = () => {
         {activeTab === 'parcel' && <AcademicBlockOrder />}
         {activeTab === 'dayscholar' && <DayScholarOrder />}
         {activeTab === 'feedback' && <AnonymousFeedbackForm />}
-        {activeTab === 'admin' && (
+        {activeTab === 'admin' && isAdmin && (
           <AdminDashboard onOpenScanner={() => setIsScannerOpen(true)} />
         )}
+        {activeTab === 'admin' && !isAdmin && <MenuDisplay />}
       </main>
 
       {/* Modals */}
@@ -76,14 +77,21 @@ const MainApp: React.FC = () => {
 
       {/* Mobile Sticky Bottom Navigation Bar */}
       <div className="md:hidden sticky bottom-0 z-30 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-3 py-2 flex items-center justify-around shadow-2xl">
-        {[
-          { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
-          { id: 'pass' as const, label: 'Pass', icon: QrCode },
-          { id: 'parcel' as const, label: 'Parcel', icon: Send },
-          { id: 'dayscholar' as const, label: 'Day Scholar', icon: Store },
-          { id: 'feedback' as const, label: 'Rate', icon: MessageSquareHeart },
-          { id: 'admin' as const, label: 'Admin', icon: ShieldCheck }
-        ].map((item) => {
+        {(isAdmin
+          ? [
+              { id: 'admin' as const, label: 'Admin Hub', icon: ShieldCheck },
+              { id: 'dayscholar' as const, label: 'Orders', icon: Store },
+              { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
+              { id: 'feedback' as const, label: 'Feedback', icon: MessageSquareHeart }
+            ]
+          : [
+              { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
+              { id: 'pass' as const, label: 'Pass', icon: QrCode },
+              { id: 'parcel' as const, label: 'Parcel', icon: Send },
+              { id: 'dayscholar' as const, label: 'Day Scholar', icon: Store },
+              { id: 'feedback' as const, label: 'Rate', icon: MessageSquareHeart }
+            ]
+        ).map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
           return (

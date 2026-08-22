@@ -235,7 +235,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
             className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-sm cursor-pointer"
           >
             <QrCode className="w-4 h-4" />
-            <span>Open Gate Scanner (QR &amp; Barcode)</span>
+            <span>Open Gate QR Scanner</span>
           </button>
 
           <button

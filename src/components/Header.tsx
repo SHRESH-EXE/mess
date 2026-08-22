@@ -9,14 +9,11 @@ import {
   Calendar,
   Bell,
   MessageSquareHeart,
-  ChevronDown,
   Sparkles,
   Flame,
-  UserCheck,
   LogOut,
-  AlertTriangle,
-  HeartHandshake,
-  Store
+  Store,
+  ArrowRight
 } from 'lucide-react';
 import { getActiveMealStatus, formatTimeAmPm, formatDateFull } from '../utils/time';
 
@@ -35,11 +32,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
     announcements,
     todayCounts,
     dayScholarOrders,
-    anonymousFeedbacks
+    anonymousFeedbacks,
+    students,
+    switchStudentById
   } = useMess();
 
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [showAnnouncements, setShowAnnouncements] = useState<boolean>(false);
+  const [quickRollInput, setQuickRollInput] = useState<string>('');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -51,6 +51,25 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
   const mealStatus = getActiveMealStatus(currentTime);
   const isAdmin = currentSession?.role === 'admin';
 
+  // Handle Quick Roll Search from Header Text Box
+  const handleQuickRollSwitch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickRollInput.trim()) return;
+
+    const query = quickRollInput.trim().toLowerCase();
+    const matched = students.find(
+      (s) =>
+        s.rollNo.toLowerCase() === query ||
+        s.id.toLowerCase() === query ||
+        s.roomNo.toLowerCase() === query
+    );
+
+    if (matched) {
+      switchStudentById(matched.id);
+      setQuickRollInput('');
+    }
+  };
+
   // Navigation Items
   const studentNavItems = [
     {
@@ -61,53 +80,50 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
     },
     {
       id: 'pass' as NavigationTab,
-      label: 'Meal Pass & Allergies',
-      icon: QrCode,
-      badge: currentStudent.allergies?.length > 0 ? `${currentStudent.allergies.length} Allergens` : undefined
+      label: 'Meal Pass',
+      icon: QrCode
     },
     {
       id: 'parcel' as NavigationTab,
-      label: 'Parcel (Academic Block)',
+      label: 'Parcel',
       icon: Send,
       badge: 'WhatsApp'
     },
     {
       id: 'dayscholar' as NavigationTab,
-      label: 'Day Scholar Order',
-      icon: Store,
-      badge: 'À La Carte'
+      label: 'Day Scholar',
+      icon: Store
     },
     {
       id: 'feedback' as NavigationTab,
-      label: 'Rate Meals (Anonymous)',
-      icon: MessageSquareHeart,
-      badge: 'Protected'
+      label: 'Rate Meals',
+      icon: MessageSquareHeart
     }
   ];
 
   const adminNavItems = [
     {
       id: 'admin' as NavigationTab,
-      label: 'Admin Operations Hub',
+      label: 'Admin Hub',
       icon: ShieldCheck,
-      badge: `${todayCounts.breakfast + todayCounts.lunch + todayCounts.snacks + todayCounts.dinner} Eaten`
+      badge: `${todayCounts.breakfast + todayCounts.lunch + todayCounts.snacks + todayCounts.dinner}`
     },
     {
       id: 'dayscholar' as NavigationTab,
       label: 'Day Scholar Orders',
       icon: Store,
-      badge: `${dayScholarOrders.length} Orders`
+      badge: `${dayScholarOrders.length}`
     },
     {
       id: 'menu' as NavigationTab,
-      label: 'Public Menu View',
+      label: 'Menu View',
       icon: UtensilsCrossed
     },
     {
       id: 'feedback' as NavigationTab,
-      label: 'Student Feedback Stream',
+      label: 'Feedback',
       icon: MessageSquareHeart,
-      badge: `${anonymousFeedbacks.length} Reviews`
+      badge: `${anonymousFeedbacks.length}`
     }
   ];
 
@@ -116,12 +132,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
   return (
     <header id="campusmess-header" className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 shadow-xl">
       {/* Top Notification Bar / Live Ticker */}
-      <div className="bg-gradient-to-r from-slate-950 via-amber-950/60 to-slate-950 text-amber-200 text-xs px-3 py-1.5 font-medium border-b border-slate-800/80">
+      <div className="bg-slate-950 text-amber-200 text-xs px-3 py-1.5 font-medium border-b border-slate-800/80">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
             <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-bold text-[10px] tracking-wide uppercase border border-amber-500/30">
               <Flame className="w-3 h-3 mr-1 text-amber-400 inline animate-pulse" />
-              Live Mess Status
+              Live Status
             </span>
             <span className="font-medium text-slate-200">
               {mealStatus.label} ({mealStatus.timeWindow}) • <span className="text-amber-400">{mealStatus.countdownText}</span>
@@ -147,52 +163,39 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
           
           {/* Brand Logo & Name */}
           <div
-            className="flex items-center space-x-3 cursor-pointer"
+            className="flex items-center space-x-3 cursor-pointer shrink-0"
             onClick={() => setActiveTab(isAdmin ? 'admin' : 'menu')}
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 shadow-md shadow-amber-500/20 ring-2 ring-amber-400/30">
-              <UtensilsCrossed className="w-5 h-5 sm:w-6 sm:h-6" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-slate-950 shadow-md shadow-amber-500/20 ring-2 ring-amber-400/30">
+              <UtensilsCrossed className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xl sm:text-2xl font-black tracking-tight text-white font-serif">
                   CampusMess<span className="text-amber-400">Hub</span>
                 </span>
-                <span className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10px] sm:text-[11px] font-bold bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/40">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span>100% Pure Veg</span>
+                <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/40">
+                  Pure Veg
                 </span>
-                {isAdmin ? (
-                  <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/40 uppercase">
-                    Admin Portal
-                  </span>
-                ) : (
-                  <span className="hidden lg:inline-flex items-center px-2 py-0.5 text-[11px] font-semibold bg-amber-500/10 text-amber-300 rounded-full border border-amber-500/30">
-                    Hostel Dining v2.5
-                  </span>
-                )}
               </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">
-                100% Pure Veg Allergen-Safe Hostel Dining, QR Tokens & Anonymous Student Pulse
-              </p>
             </div>
           </div>
 
-          {/* Quick Actions & Profile Header */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Quick Actions */}
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
             
-            {/* Quick QR & Barcode Scan Entry Trigger */}
+            {/* Quick QR Scan Button */}
             <button
               id="quick-scan-button"
               onClick={onOpenScanner}
-              className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm hover:shadow transition-all duration-150 active:scale-95 cursor-pointer ring-1 ring-emerald-400/30"
-              title="Open QR & Barcode Camera Scanner"
+              className="flex items-center space-x-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm hover:shadow transition-all duration-150 active:scale-95 cursor-pointer ring-1 ring-emerald-400/30"
+              title="Open QR Scanner"
             >
               <QrCode className="w-4 h-4 text-emerald-100" />
-              <span className="inline font-bold">Scan</span>
+              <span className="inline">Scan QR</span>
             </button>
 
-            {/* Announcements Dropdown */}
+            {/* Announcements */}
             <div className="relative">
               <button
                 id="announcements-toggle-btn"
@@ -215,7 +218,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
                   <div className="px-4 pb-2 border-b border-slate-800 flex items-center justify-between">
                     <div className="flex items-center space-x-1.5 text-slate-200 font-semibold text-sm">
                       <Sparkles className="w-4 h-4 text-amber-400" />
-                      <span>Mess Committee Notices</span>
+                      <span>Notices</span>
                     </div>
                     <span className="text-[11px] text-slate-400">{announcements.length} active</span>
                   </div>
@@ -240,53 +243,38 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
               )}
             </div>
 
-            {/* Active Profile Badge / Switcher Pill */}
+            {/* Student Roll / Admin Badge */}
             {isAdmin ? (
               <div
                 id="admin-session-pill"
-                className="flex items-center space-x-2 pl-2 pr-3 py-1.5 rounded-xl bg-slate-900 border border-amber-500/40 text-left shadow-xs"
+                className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-amber-500/40 text-left shadow-xs"
               >
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 flex items-center justify-center font-bold text-xs shadow-xs">
-                  <ShieldCheck className="w-4 h-4" />
+                <div className="w-6 h-6 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs">
+                  <ShieldCheck className="w-3.5 h-3.5" />
                 </div>
                 <div className="hidden sm:block">
-                  <div className="text-xs font-bold text-amber-300 leading-tight flex items-center gap-1">
-                    <span>{currentSession?.name || 'Mess Admin'}</span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-mono">
-                    {currentSession?.designation || 'Mess Authority'}
-                  </div>
+                  <div className="text-xs font-bold text-amber-300 leading-tight">Admin</div>
                 </div>
               </div>
             ) : (
-              <button
-                id="student-switcher-btn"
-                onClick={onOpenSwitchStudent}
-                className="flex items-center space-x-2 pl-2 pr-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-850 hover:border-amber-500/40 border border-slate-800 transition-all text-left group shadow-xs cursor-pointer"
-                title="Switch Student Profile"
+              <div
+                className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-left"
               >
-                <div className="w-7 h-7 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs shadow-xs">
-                  {currentStudent.name.charAt(0)}
+                <div className="w-6 h-6 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs">
+                  <span className="w-2 h-2 rounded-full bg-slate-950"></span>
                 </div>
-                <div className="hidden sm:block">
-                  <div className="text-xs font-bold text-slate-100 leading-tight group-hover:text-amber-300 flex items-center gap-1">
-                    <span>{currentStudent.name}</span>
-                    <UserCheck className="w-3 h-3 text-emerald-400 inline" />
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-mono">
-                    {currentStudent.rollNo} • {currentStudent.roomNo}
-                  </div>
+                <div className="hidden sm:block font-mono text-xs font-bold text-slate-200">
+                  {currentStudent.rollNo}
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-200" />
-              </button>
+              </div>
             )}
 
-            {/* Persistent Logout Button */}
+            {/* Logout Button */}
             <button
               id="header-logout-btn"
               onClick={logout}
               className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-slate-900 hover:bg-red-950/70 text-slate-400 hover:text-red-300 border border-slate-800 hover:border-red-800/80 transition-all duration-150 active:scale-95 text-xs font-semibold shadow-xs cursor-pointer"
-              title="End Session & Logout"
+              title="Logout"
             >
               <LogOut className="w-4 h-4 text-red-400" />
               <span className="hidden sm:inline">Logout</span>
@@ -318,10 +306,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
                     className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
                       isActive
                         ? 'bg-slate-950 text-amber-400'
-                        : item.id === 'parcel'
-                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                        : item.id === 'feedback'
-                        ? 'bg-teal-950 text-teal-300 border border-teal-800'
                         : 'bg-slate-800 text-slate-300 border border-slate-700'
                     }`}
                   >
@@ -331,18 +315,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
               </button>
             );
           })}
-
-          {/* Quick Toggle for Role Switch Preview if in Student Mode */}
-          {!isAdmin && (
-            <button
-              id="switch-to-admin-view-tab"
-              onClick={() => setActiveTab('admin')}
-              className="ml-auto flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-amber-300 hover:bg-slate-900 border border-slate-800/80 transition-colors"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden md:inline">Admin Mode</span>
-            </button>
-          )}
         </nav>
 
       </div>

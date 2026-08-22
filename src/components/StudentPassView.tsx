@@ -170,13 +170,9 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               </div>
             </div>
 
-            <button
-              onClick={onOpenSwitchStudent}
-              className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors shrink-0 cursor-pointer"
-              title="Switch to another student pass"
-            >
-              Switch ID
-            </button>
+            <div className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 shrink-0 font-mono">
+              Verified ID
+            </div>
           </div>
 
           {/* Student Profile Row */}
@@ -241,14 +237,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
           {/* Simulated QR Code & Live Scanner Actions */}
           <div className="relative z-10 pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
             
-            {/* Dynamic Simulated QR & 1D Barcode Block */}
+            {/* Dynamic Simulated QR Block */}
             <div className="flex items-center space-x-3 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
               <div className="w-14 h-14 bg-white p-1 rounded-lg flex items-center justify-center shrink-0">
                 <QrCode className="w-12 h-12 text-slate-950" />
               </div>
               <div className="font-mono text-[10px] text-slate-400 leading-tight">
-                <div className="text-slate-100 font-bold tracking-wider">{currentStudent.barcode}</div>
-                <div className="text-emerald-400 font-semibold">Dynamic Pass &amp; Barcode Token</div>
+                <div className="text-slate-100 font-bold tracking-wider">{currentStudent.passToken}</div>
+                <div className="text-emerald-400 font-semibold">Dynamic Pass QR Token</div>
                 <div className="text-slate-500">Scan at entrance scanner</div>
               </div>
             </div>
@@ -261,7 +257,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                 className="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
               >
                 <Zap className="w-4 h-4 text-amber-300" />
-                <span>Open QR &amp; Barcode Scanner</span>
+                <span>Open QR Scanner</span>
               </button>
 
               <button
