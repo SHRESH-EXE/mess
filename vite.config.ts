@@ -8,7 +8,7 @@ export default defineConfig(({ command }) => {
     // IMPORTANT: Set 'base' for GitHub Pages deployment.
     // Replace '/REPLACE_WITH_REPO_NAME/' with your actual GitHub repository name (e.g., '/my-repo-name/') before running 'npm run deploy' or 'npm run build'.
     // In local development (`npm run dev`), base resolves to '/' for local preview compatibility.
-    base: command === 'serve' ? '/' : '/REPLACE_WITH_REPO_NAME/',
+    base: command === 'serve' ? '/' : '/mess/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
