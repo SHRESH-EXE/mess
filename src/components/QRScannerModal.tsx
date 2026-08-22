@@ -72,9 +72,9 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
     }
   };
 
-  // Handle Camera Scan callback
-  const handleLiveCameraScan = (decodedText: string) => {
-    // Check if the decoded text corresponds to a student ID, Roll No, or JSON token
+  // Handle Camera Scan callback (QR Code or 1D Barcode)
+  const handleLiveCameraScan = (decodedText: string, format?: string) => {
+    // Check if the decoded text corresponds to a student ID, Roll No, barcode token, or JSON token
     let matchedStudent: StudentProfile | undefined;
 
     try {
@@ -91,18 +91,36 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
     }
 
     if (!matchedStudent) {
+      const cleanText = decodedText.trim().toLowerCase();
       matchedStudent = students.find(
-        s => s.id.toLowerCase() === decodedText.toLowerCase() ||
-             s.rollNo.toLowerCase() === decodedText.toLowerCase()
+        s => s.id.toLowerCase() === cleanText ||
+             s.rollNo.toLowerCase() === cleanText ||
+             s.roomNo.toLowerCase() === cleanText ||
+             cleanText.includes(s.rollNo.toLowerCase()) ||
+             cleanText.includes(s.id.toLowerCase())
       );
     }
 
     if (matchedStudent) {
-      handleExecuteScan(matchedStudent);
+      const result = markMealAttendance(selectedMeal, matchedStudent.id, 'qr_scanner');
+      if (result.success) {
+        setScanResult({
+          status: 'success',
+          message: `${result.message} (${format || 'Code Detected'})`,
+          student: matchedStudent,
+          timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+        });
+      } else {
+        setScanResult({
+          status: 'error',
+          message: `${result.message} (${format || 'Code Detected'})`,
+          student: matchedStudent
+        });
+      }
     } else {
       setScanResult({
         status: 'success',
-        message: `Scanned code: "${decodedText}". (Non-student QR or external payload detected)`,
+        message: `Scanned ${format || 'Code'}: "${decodedText}". (External payload or ID barcode verified)`,
         decodedText
       });
     }

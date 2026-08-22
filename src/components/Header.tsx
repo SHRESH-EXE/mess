@@ -181,15 +181,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSwitchStudent, onOpenScann
           {/* Quick Actions & Profile Header */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             
-            {/* Quick QR Scan Entry Trigger */}
+            {/* Quick QR & Barcode Scan Entry Trigger */}
             <button
               id="quick-scan-button"
               onClick={onOpenScanner}
-              className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm hover:shadow transition-all duration-150 active:scale-95 cursor-pointer"
-              title="Open QR Scanner"
+              className="flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm hover:shadow transition-all duration-150 active:scale-95 cursor-pointer ring-1 ring-emerald-400/30"
+              title="Open QR & Barcode Camera Scanner"
             >
-              <QrCode className="w-4 h-4" />
-              <span className="hidden md:inline">Scan Entry</span>
+              <QrCode className="w-4 h-4 text-emerald-100" />
+              <span className="inline font-bold">Scan</span>
             </button>
 
             {/* Announcements Dropdown */}
