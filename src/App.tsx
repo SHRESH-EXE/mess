@@ -78,10 +78,10 @@ const MainAppContent: React.FC = () => {
       <div className="min-h-screen liquid-glass-bg text-slate-900 flex flex-col font-sans selection:bg-[#ff7a30] selection:text-white relative glass-theme-wrapper">
         <LiquidGlassBackdrop />
 
-        {/* Top Navbar in Clean Light Glassmorphism */}
-        <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-orange-200/80 px-4 sm:px-6 py-3.5 flex items-center justify-between shadow-xs">
+        {/* Top Navbar in Clean Light Liquid Glassmorphism */}
+        <header className="sticky top-0 z-40 bg-white/75 backdrop-blur-2xl border-b border-white/80 px-4 sm:px-6 py-3.5 flex items-center justify-between shadow-[0_10px_30px_rgba(249,115,22,0.06)]">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-sm shadow-orange-500/20">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-md shadow-orange-500/25 border border-white/40">
               <UtensilsCrossed className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -94,7 +94,7 @@ const MainAppContent: React.FC = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setIsScannerOpen(true)}
-              className="flex items-center space-x-1.5 px-3.5 py-2 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl shadow-md shadow-orange-500/25 transition-all cursor-pointer active:scale-95"
+              className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-full shadow-lg shadow-orange-500/25 transition-all cursor-pointer active:scale-95 border border-white/30"
             >
               <QrCode className="w-4 h-4 text-white" />
               <span className="hidden sm:inline">Launch QR Scanner</span>
@@ -103,7 +103,7 @@ const MainAppContent: React.FC = () => {
             <button
               onClick={logout}
               title="Logout session"
-              className="flex items-center space-x-1.5 px-3 py-2 bg-white/80 hover:bg-rose-50 active:scale-95 text-slate-700 hover:text-rose-700 text-xs font-bold rounded-xl border border-orange-200/80 shadow-xs transition-all cursor-pointer"
+              className="flex items-center space-x-1.5 px-3.5 py-2.5 bg-white/75 backdrop-blur-xl hover:bg-rose-50/90 active:scale-95 text-slate-700 hover:text-rose-700 text-xs font-bold rounded-full border border-orange-200/70 shadow-xs transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Logout</span>
@@ -135,12 +135,12 @@ const MainAppContent: React.FC = () => {
     <div className="min-h-screen liquid-glass-bg text-slate-900 flex flex-col font-sans selection:bg-[#ff7a30] selection:text-white relative glass-theme-wrapper">
       <LiquidGlassBackdrop />
 
-      {/* Top Header in Clean Light Glassmorphism */}
-      <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-orange-200/80 px-4 sm:px-6 py-3 shadow-xs">
+      {/* Top Header in Clean Light Liquid Glassmorphism */}
+      <header className="sticky top-0 z-40 bg-white/75 backdrop-blur-2xl border-b border-white/80 px-4 sm:px-6 py-3 shadow-[0_10px_30px_rgba(249,115,22,0.06)]">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* Logo */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-sm shadow-orange-500/20">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-md shadow-orange-500/25 border border-white/40">
               <UtensilsCrossed className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -151,26 +151,26 @@ const MainAppContent: React.FC = () => {
           </div>
 
           {/* Right: Student Profile & Controls */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2.5 sm:space-x-3">
             {/* Allergen Warning Pill if any */}
             {currentStudent.allergies && currentStudent.allergies.length > 0 && (
               <div
                 title={`Allergens tracked: ${currentStudent.allergies.join(', ')}`}
-                className="hidden md:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-rose-100 border border-rose-300 text-rose-900 text-[11px] font-bold shadow-xs"
+                className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-rose-100/90 backdrop-blur-md border border-rose-300/80 text-rose-900 text-[11px] font-bold shadow-xs"
               >
-                <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
                 <span>{currentStudent.allergies.length} Allergens</span>
               </div>
             )}
 
-            {/* Student Info Pill */}
-            <div className="flex items-center space-x-2.5 bg-white/90 px-3 py-1.5 rounded-2xl border border-orange-200/80 shadow-xs">
+            {/* Student Info Oval Pill */}
+            <div className="flex items-center space-x-2.5 bg-white/80 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 shadow-sm">
               <img
                 src={currentStudent.photoUrl}
                 alt={currentStudent.name}
-                className="w-7 h-7 rounded-full object-cover border border-[#ff7a30]"
+                className="w-7 h-7 rounded-full object-cover border-2 border-[#ff7a30]"
               />
-              <div className="hidden sm:block text-left">
+              <div className="hidden sm:block text-left pr-1">
                 <div className="text-xs font-bold text-slate-900 leading-tight">
                   {currentStudent.name}
                 </div>
@@ -182,7 +182,7 @@ const MainAppContent: React.FC = () => {
               type="button"
               onClick={() => setIsSwitchStudentOpen(true)}
               title="Switch Demo Student Profile"
-              className="p-2 rounded-xl bg-white/80 hover:bg-white text-slate-700 hover:text-slate-950 border border-orange-200/80 shadow-xs transition-all cursor-pointer"
+              className="p-2.5 rounded-full bg-white/75 backdrop-blur-xl hover:bg-white text-slate-700 hover:text-slate-950 border border-orange-200/70 shadow-xs transition-all cursor-pointer"
             >
               <UserCheck className="w-4 h-4" />
             </button>
@@ -192,15 +192,15 @@ const MainAppContent: React.FC = () => {
               type="button"
               onClick={logout}
               title="Logout"
-              className="p-2 rounded-xl bg-white/80 hover:bg-rose-50 text-slate-700 hover:text-rose-700 border border-orange-200/80 shadow-xs transition-all cursor-pointer"
+              className="p-2.5 rounded-full bg-white/75 backdrop-blur-xl hover:bg-rose-50/90 text-slate-700 hover:text-rose-700 border border-orange-200/70 shadow-xs transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Student Navigation Bar */}
-        <div className="max-w-7xl mx-auto mt-3 pt-2 border-t border-orange-200/60 flex items-center space-x-1 sm:space-x-2 overflow-x-auto">
+        {/* Student Navigation Bar - Oval Pill Container */}
+        <div className="max-w-7xl mx-auto mt-2.5 pt-2 border-t border-orange-200/50 flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto pb-0.5">
           {studentNavTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -208,10 +208,10 @@ const MainAppContent: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-md shadow-orange-500/25'
-                    : 'text-slate-700 hover:text-slate-950 hover:bg-white/80'
+                    ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-md shadow-orange-500/25 border border-white/30 scale-[1.02]'
+                    : 'text-slate-700 hover:text-slate-950 hover:bg-white/75 backdrop-blur-md'
                 }`}
               >
                 <Icon className="w-4 h-4 shrink-0" />

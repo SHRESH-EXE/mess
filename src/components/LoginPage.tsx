@@ -135,36 +135,36 @@ export const LoginPage: React.FC = () => {
       <main className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6">
         <div className="w-full max-w-[420px] relative">
           
-          {/* THE GLASSMORPHISM CARD */}
+          {/* THE LIQUID GLASSMORPHISM OVAL CARD */}
           <div
             id="login-card"
-            className={`relative glassmorphism-card rounded-[24px] p-7 sm:p-9 text-center overflow-hidden transition-all duration-200 shadow-xl ${
+            className={`relative glassmorphism-card rounded-[36px] p-7 sm:p-9 text-center overflow-hidden transition-all duration-300 shadow-[0_25px_50px_-12px_rgba(249,115,22,0.15)] border-[1.5px] border-white/90 ${
               isShaking ? 'animate-[shake_0.4s_ease-in-out]' : ''
             }`}
           >
-            {/* Top-left to bottom-right light-catching glass sheen overlay */}
+            {/* Top-left to bottom-right specular light-catching liquid glass sheen overlay */}
             <div
-              className="absolute inset-0 pointer-events-none rounded-[24px]"
+              className="absolute inset-0 pointer-events-none rounded-[36px]"
               style={{
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 45%, transparent 60%)'
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 45%, transparent 65%)'
               }}
             />
 
             {/* Card Header */}
             <div className="relative z-10 mb-6">
-              {/* Glass Icon Badge */}
-              <div className="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-200 mx-auto flex items-center justify-center mb-3 shadow-xs">
-                <UtensilsCrossed className="w-7 h-7 text-[#ea580c]" strokeWidth={2.2} />
+              {/* Glass Icon Oval Badge */}
+              <div className="w-16 h-16 rounded-[22px] bg-orange-500/10 border border-orange-200/80 mx-auto flex items-center justify-center mb-3.5 shadow-sm">
+                <UtensilsCrossed className="w-8 h-8 text-[#ea580c]" strokeWidth={2.2} />
               </div>
 
-              <h1 className="text-2xl sm:text-[26px] font-black text-slate-900 tracking-tight font-sans">
+              <h1 className="text-2xl sm:text-[28px] font-black text-slate-900 tracking-tight font-sans">
                 Hello!
               </h1>
             </div>
 
             {/* Error Message */}
             {errorMessage && (
-              <div className="relative z-10 mb-4 p-3 rounded-xl bg-red-100 border border-red-300 text-red-900 text-xs flex items-center space-x-2 text-left shadow-xs">
+              <div className="relative z-10 mb-4 p-3.5 rounded-2xl bg-red-100/90 backdrop-blur-md border border-red-300 text-red-900 text-xs flex items-center space-x-2 text-left shadow-xs">
                 <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
                 <span className="font-bold">{errorMessage}</span>
               </div>
@@ -177,12 +177,12 @@ export const LoginPage: React.FC = () => {
               <div className="space-y-1.5">
                 <label
                   htmlFor="registration-id-field"
-                  className="block text-xs font-black text-slate-900"
+                  className="block text-xs font-black text-slate-900 ml-1"
                 >
                   Registration ID / Email
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#ea580c]">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#ea580c]">
                     <User className="w-4 h-4" />
                   </div>
                   <input
@@ -195,14 +195,14 @@ export const LoginPage: React.FC = () => {
                     }}
                     placeholder="e.g. 22CS0142 or admin"
                     required
-                    className="w-full glassmorphism-input rounded-xl pl-10 pr-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold"
+                    className="w-full glassmorphism-input rounded-[18px] pl-11 pr-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold shadow-xs"
                   />
                 </div>
               </div>
 
               {/* Field 2: Password */}
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between px-1">
                   <label
                     htmlFor="password-field"
                     className="block text-xs font-black text-slate-900"
@@ -218,7 +218,7 @@ export const LoginPage: React.FC = () => {
                   </button>
                 </div>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#ea580c]">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#ea580c]">
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
@@ -231,12 +231,12 @@ export const LoginPage: React.FC = () => {
                     }}
                     placeholder="Enter password..."
                     required
-                    className="w-full glassmorphism-input rounded-xl pl-10 pr-10 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold"
+                    className="w-full glassmorphism-input rounded-[18px] pl-11 pr-11 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold shadow-xs"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -244,7 +244,7 @@ export const LoginPage: React.FC = () => {
               </div>
 
               {/* Remember Me Checkbox */}
-              <div className="flex items-center justify-between text-xs py-1">
+              <div className="flex items-center justify-between text-xs py-1 px-1">
                 <label className="flex items-center space-x-2 text-slate-800 cursor-pointer font-semibold">
                   <input
                     type="checkbox"
@@ -256,18 +256,18 @@ export const LoginPage: React.FC = () => {
                 </label>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit Button - Oval Capsule */}
               <button
                 id="login-submit-button"
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] active:scale-[0.99] transition-all shadow-md shadow-orange-500/30 flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-3.5 px-6 rounded-full font-bold text-sm text-white bg-gradient-to-r from-[#ff7a30] via-[#ff843a] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] active:scale-[0.98] transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 border border-white/30"
               >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    <span className="text-white">Enter Mess Portal</span>
+                    <span className="text-white font-bold">Enter Mess Portal</span>
                     <ArrowRight className="w-4 h-4 text-white" />
                   </>
                 )}

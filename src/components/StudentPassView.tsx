@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
 import {
-  QrCode,
   CheckCircle2,
   Clock,
   Sparkles,
@@ -143,16 +142,16 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Digital Mess Pass ID Card (Left 7 Cols) */}
-        <div className="lg:col-span-7 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-800 relative overflow-hidden flex flex-col justify-between">
+        <div className="lg:col-span-7 dark-glass-card rounded-[32px] p-6 sm:p-7 shadow-2xl border border-white/10 relative overflow-hidden flex flex-col justify-between">
           
           {/* Holographic Security Background Glow */}
-          <div className="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-amber-500/15 blur-3xl pointer-events-none" />
           <div className="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
 
           {/* Pass Top Banner */}
           <div className="flex items-start justify-between gap-3 relative z-10">
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-600 p-0.5 shadow-lg flex items-center justify-center font-serif text-slate-950 font-black text-xl">
+            <div className="flex items-center space-x-3.5">
+              <div className="w-12 h-12 rounded-[18px] bg-gradient-to-tr from-amber-500 to-amber-600 p-0.5 shadow-lg flex items-center justify-center font-serif text-slate-950 font-black text-xl border border-white/30">
                 CM
               </div>
               <div>
@@ -160,7 +159,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                   <span className="text-xs font-black tracking-widest uppercase text-amber-400">
                     CAMPUS DINING PASS
                   </span>
-                  <span className="px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono">
                     ACTIVE 2026
                   </span>
                 </div>
@@ -170,26 +169,26 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               </div>
             </div>
 
-            <div className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 shrink-0 font-mono">
+            <div className="text-[11px] px-3 py-1 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700/80 shrink-0 font-mono">
               Verified ID
             </div>
           </div>
 
           {/* Student Profile Row */}
-          <div className="my-6 relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-xs">
-            <div className="w-18 h-18 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-600 p-1 shrink-0 shadow-lg">
+          <div className="my-6 relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 sm:p-5 rounded-[24px] bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
+            <div className="w-20 h-20 rounded-[20px] bg-gradient-to-tr from-amber-500 to-amber-600 p-1 shrink-0 shadow-lg">
               <img
                 src={currentStudent.photoUrl}
                 alt={currentStudent.name}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover rounded-xl"
+                className="w-full h-full object-cover rounded-[16px]"
               />
             </div>
 
             <div className="flex-1 text-center sm:text-left">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
                 <h4 className="text-lg font-black text-white">{currentStudent.name}</h4>
-                <span className="font-mono text-xs px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 inline-block self-center sm:self-auto">
+                <span className="font-mono text-xs px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 inline-block self-center sm:self-auto">
                   {currentStudent.rollNo}
                 </span>
               </div>
@@ -203,14 +202,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               </div>
 
               {/* Allergies Chip Summary on Pass */}
-              <div className="mt-2.5 pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+              <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-[11px]">
                 <div className="flex items-center space-x-1.5">
                   <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
                   <span className="text-slate-400">Dietary Allergies:</span>
                   {currentStudent.allergies && currentStudent.allergies.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {currentStudent.allergies.map(alg => (
-                        <span key={alg} className="px-1.5 py-0.2 rounded bg-red-500/20 text-red-300 border border-red-500/30 font-bold text-[10px]">
+                        <span key={alg} className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30 font-bold text-[10px]">
                           {alg}
                         </span>
                       ))}
@@ -225,7 +224,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                     setSelectedAllergens(currentStudent.allergies || []);
                     setShowAllergyEditor(true);
                   }}
-                  className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 text-[10px] font-bold border border-slate-700 transition flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-0.5 rounded-full bg-slate-800 hover:bg-slate-700 text-amber-300 text-[10px] font-bold border border-slate-700 transition flex items-center gap-1 cursor-pointer"
                 >
                   <Edit2 className="w-3 h-3" />
                   <span>Edit</span>
@@ -234,27 +233,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
             </div>
           </div>
 
-          {/* Simulated QR Code & Live Scanner Actions */}
-          <div className="relative z-10 pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-            
-            {/* Dynamic Simulated QR Block */}
-            <div className="flex items-center space-x-3 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-              <div className="w-14 h-14 bg-white p-1 rounded-lg flex items-center justify-center shrink-0">
-                <QrCode className="w-12 h-12 text-slate-950" />
-              </div>
-              <div className="font-mono text-[10px] text-slate-400 leading-tight">
-                <div className="text-slate-100 font-bold tracking-wider">{currentStudent.passToken}</div>
-                <div className="text-emerald-400 font-semibold">Dynamic Pass QR Token</div>
-                <div className="text-slate-500">Scan at entrance scanner</div>
-              </div>
-            </div>
-
+          {/* Live Scanner Actions */}
+          <div className="relative z-10 pt-3 border-t border-slate-800/80 flex items-center justify-end">
             {/* Direct Scan Actions */}
-            <div className="flex items-center space-x-2 w-full sm:w-auto">
+            <div className="flex items-center space-x-2.5 w-full sm:w-auto">
               <button
                 id="open-camera-scanner-btn"
                 onClick={onOpenScanner}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                className="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-full shadow-md flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer border border-white/20"
               >
                 <Zap className="w-4 h-4 text-amber-300" />
                 <span>Open QR Scanner</span>
@@ -262,20 +248,19 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
 
               <button
                 onClick={() => handleMarkMeal(mealStatus.currentMeal)}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer"
+                className="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 text-xs font-bold rounded-full shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer border border-white/30"
                 title={`Mark ${mealStatus.currentMeal.toUpperCase()} for current student`}
               >
                 <Check className="w-4 h-4" />
                 <span>1-Tap Pass Tap</span>
               </button>
             </div>
-
           </div>
 
         </div>
 
         {/* Meal Counter & Plan Balance (Right 5 Cols) */}
-        <div className="lg:col-span-5 bg-slate-900 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-5 dark-glass-card rounded-[32px] p-6 sm:p-7 border border-white/10 shadow-xl flex flex-col justify-between space-y-6">
           <div>
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -286,13 +271,13 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                   Meal Counter & Balance
                 </h3>
               </div>
-              <span className="text-xs font-mono px-2 py-1 rounded-lg bg-slate-800 text-slate-300 font-bold border border-slate-700">
+              <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-bold border border-slate-700">
                 Current Month
               </span>
             </div>
 
             {/* Consumption Progress Bar & Number */}
-            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
+            <div className="p-4 sm:p-5 rounded-[24px] bg-slate-950/70 border border-slate-800/80 space-y-3">
               <div className="flex items-end justify-between">
                 <div>
                   <span className="text-3xl font-black text-slate-100 font-mono">
@@ -311,7 +296,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-full h-3.5 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/60">
                 <div
                   className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all duration-500"
                   style={{ width: `${consumptionPercentage}%` }}
@@ -325,7 +310,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
             </div>
 
             {/* Registered Allergies Banner */}
-            <div className="mt-4 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+            <div className="mt-4 p-4 rounded-[22px] bg-slate-950/70 border border-slate-800/80 space-y-2">
               <div className="flex items-center justify-between text-xs font-bold text-slate-200">
                 <div className="flex items-center space-x-1.5 text-amber-300">
                   <HeartPulse className="w-4 h-4 text-amber-400" />
@@ -347,7 +332,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                   currentStudent.allergies.map(alg => (
                     <span
                       key={alg}
-                      className="px-2 py-0.5 rounded-md bg-red-950/60 text-red-300 border border-red-800/60 text-xs font-bold"
+                      className="px-2.5 py-0.5 rounded-full bg-red-950/60 text-red-300 border border-red-800/60 text-xs font-bold"
                     >
                       {alg}
                     </span>
@@ -359,24 +344,13 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
             </div>
           </div>
 
-          {/* Quick Outstation Rebate Notice */}
-          <div className="p-3.5 rounded-xl bg-blue-950/50 border border-blue-800/80 text-xs text-blue-200 flex items-start space-x-2">
-            <ShieldCheck className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-            <div className="space-y-0.5">
-              <div className="font-bold text-blue-100">Automated Mess Rebate System</div>
-              <p className="text-[11px] text-blue-300">
-                Planning outstation trip? Tap "Skip / Rebate" on any upcoming meal to credit ₹45/meal back on monthly mess adjustments.
-              </p>
-            </div>
-          </div>
-
         </div>
 
       </div>
 
       {/* Today's 4-Meal Status Check-Off Grid */}
-      <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+      <div className="dark-glass-card rounded-[32px] p-6 sm:p-7 border border-white/10 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-slate-800">
           <div>
             <h3 className="text-base font-bold text-slate-100">
               Today's Meal Check-Off Status ({todayDateStr})
@@ -385,7 +359,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               Instant meal attendance validation for {currentStudent.name}
             </p>
           </div>
-          <div className="text-xs font-medium text-slate-300 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+          <div className="text-xs font-medium text-slate-300 bg-slate-800/90 px-3.5 py-1.5 rounded-full border border-slate-700">
             Active Meal: <strong className="text-amber-400 capitalize">{mealStatus.currentMeal}</strong>
           </div>
         </div>
@@ -400,7 +374,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               <div
                 key={m.type}
                 id={`checkoff-card-${m.type}`}
-                className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
+                className={`p-4 sm:p-5 rounded-[24px] border transition-all flex flex-col justify-between ${
                   check.isTaken
                     ? check.status === 'rebate_applied'
                       ? 'bg-blue-950/40 border-blue-800/80'
@@ -412,9 +386,9 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2.5">
                       <div
-                        className={`p-2 rounded-xl ${
+                        className={`p-2.5 rounded-2xl ${
                           check.isTaken
                             ? 'bg-emerald-600 text-white'
                             : isOngoing
@@ -431,14 +405,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                     </div>
 
                     {isOngoing && !check.isTaken && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 animate-pulse">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 animate-pulse">
                         LIVE
                       </span>
                     )}
                   </div>
 
                   {/* Status Badges */}
-                  <div className="my-2">
+                  <div className="my-2.5">
                     {check.isTaken ? (
                       check.status === 'rebate_applied' ? (
                         <div className="text-xs font-bold text-blue-400 flex items-center gap-1.5">
@@ -466,7 +440,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                     <>
                       <button
                         onClick={() => handleMarkMeal(m.type)}
-                        className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                        className={`flex-1 py-2 px-3 text-xs font-bold rounded-full transition-all cursor-pointer ${
                           isOngoing
                             ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md shadow-amber-500/20'
                             : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
@@ -476,14 +450,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                       </button>
                       <button
                         onClick={() => setShowRebateModal(m.type)}
-                        className="py-1.5 px-2 text-[11px] font-semibold text-slate-300 hover:text-blue-300 hover:bg-blue-950/60 rounded-lg border border-slate-700 transition-colors cursor-pointer"
+                        className="py-2 px-3 text-[11px] font-semibold text-slate-300 hover:text-blue-300 hover:bg-blue-950/60 rounded-full border border-slate-700 transition-colors cursor-pointer"
                         title="Skip meal for rebate credit"
                       >
                         Skip
                       </button>
                     </>
                   ) : (
-                    <div className="w-full text-center py-1 text-[11px] font-mono text-emerald-400 font-bold bg-emerald-950/60 rounded-lg border border-emerald-800">
+                    <div className="w-full text-center py-1.5 text-[11px] font-mono text-emerald-400 font-bold bg-emerald-950/60 rounded-full border border-emerald-800">
                       Token Verified #{check.record?.id.slice(-4) || 'OK'}
                     </div>
                   )}
@@ -495,10 +469,10 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
       </div>
 
       {/* Student Attendance Logs History */}
-      <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
+      <div className="dark-glass-card rounded-[32px] p-6 sm:p-7 border border-white/10 shadow-xl space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
               <FileText className="w-4 h-4" />
             </div>
             <div>
@@ -510,7 +484,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               </p>
             </div>
           </div>
-          <span className="text-xs font-mono text-slate-400">{studentAttendance.length} records</span>
+          <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-800 text-slate-300">{studentAttendance.length} records</span>
         </div>
 
         <div className="overflow-x-auto">
@@ -555,10 +529,10 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
 
       {/* Allergy Setup Modal */}
       {showAllergyEditor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 p-6 space-y-4 text-slate-100">
-            <div className="flex items-center space-x-2.5">
-              <div className="p-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="w-full max-w-lg dark-glass-card rounded-[32px] shadow-2xl border border-white/10 p-6 sm:p-7 space-y-4 text-slate-100">
+            <div className="flex items-center space-x-3">
+              <div className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
                 <HeartPulse className="w-5 h-5" />
               </div>
               <div>
@@ -574,7 +548,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
             </p>
 
             {/* Allergen Checkboxes */}
-            <div className="grid grid-cols-2 gap-2 pt-2">
+            <div className="grid grid-cols-2 gap-2.5 pt-2">
               {STANDARD_ALLERGENS.map((alg) => {
                 const isChecked = selectedAllergens.includes(alg);
                 return (
@@ -582,14 +556,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                     key={alg}
                     type="button"
                     onClick={() => handleToggleAllergen(alg)}
-                    className={`p-2.5 rounded-xl text-left text-xs font-semibold border transition-all flex items-center justify-between cursor-pointer ${
+                    className={`p-3 rounded-2xl text-left text-xs font-semibold border transition-all flex items-center justify-between cursor-pointer ${
                       isChecked
                         ? 'bg-amber-500/20 border-amber-500 text-amber-200'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
+                        : 'bg-slate-950/80 border-slate-800 text-slate-400 hover:bg-slate-800'
                     }`}
                   >
                     <span>{alg}</span>
-                    <span className={`w-4 h-4 rounded flex items-center justify-center text-[10px] ${isChecked ? 'bg-amber-500 text-slate-950 font-bold' : 'border border-slate-700'}`}>
+                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${isChecked ? 'bg-amber-500 text-slate-950 font-bold' : 'border border-slate-700'}`}>
                       {isChecked ? '✓' : ''}
                     </span>
                   </button>
@@ -603,25 +577,25 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setSelectedAllergens([])}
-                  className="text-red-400 hover:underline cursor-pointer"
+                  className="text-red-400 hover:underline cursor-pointer font-semibold"
                 >
                   Clear All
                 </button>
               </div>
             )}
 
-            <div className="flex items-center justify-end space-x-2 pt-4 border-t border-slate-800">
+            <div className="flex items-center justify-end space-x-2 pt-4 border-t border-slate-800/80">
               <button
                 type="button"
                 onClick={() => setShowAllergyEditor(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition cursor-pointer"
+                className="px-5 py-2.5 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-full transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSaveAllergies}
-                className="px-5 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg transition shadow-md shadow-amber-500/20 cursor-pointer"
+                className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 rounded-full transition shadow-md shadow-amber-500/20 cursor-pointer"
               >
                 Save Dietary Profile
               </button>
@@ -632,10 +606,10 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
 
       {/* Rebate Confirmation Modal */}
       {showRebateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 p-6 space-y-4 text-slate-100">
-            <div className="flex items-center space-x-2.5">
-              <div className="p-2 rounded-xl bg-blue-950 text-blue-300 border border-blue-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="w-full max-w-md dark-glass-card rounded-[32px] shadow-2xl border border-white/10 p-6 sm:p-7 space-y-4 text-slate-100">
+            <div className="flex items-center space-x-3">
+              <div className="p-2.5 rounded-2xl bg-blue-950 text-blue-300 border border-blue-800">
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
@@ -655,7 +629,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               <select
                 value={rebateReason}
                 onChange={(e) => setRebateReason(e.target.value)}
-                className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
+                className="w-full text-xs p-3 rounded-2xl bg-slate-950 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
               >
                 <option value="Outstation / Home Visit">Outstation / Home Visit</option>
                 <option value="Academic Lab Work / Exam">Academic Lab Work / Exam</option>
@@ -664,18 +638,18 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               </select>
             </div>
 
-            <div className="flex items-center justify-end space-x-2 pt-2">
+            <div className="flex items-center justify-end space-x-2 pt-3">
               <button
                 type="button"
                 onClick={() => setShowRebateModal(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                className="px-5 py-2.5 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-full transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => handleApplyRebate(showRebateModal)}
-                className="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors shadow-sm cursor-pointer"
+                className="px-6 py-2.5 text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-colors shadow-sm cursor-pointer"
               >
                 Confirm Skip & Credit Rebate
               </button>
