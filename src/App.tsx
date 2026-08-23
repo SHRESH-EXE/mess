@@ -103,7 +103,7 @@ const MainAppContent: React.FC = () => {
             <button
               onClick={logout}
               title="Logout session"
-              className="flex items-center space-x-1.5 px-3.5 py-2.5 bg-white/75 backdrop-blur-xl hover:bg-rose-50/90 active:scale-95 text-slate-700 hover:text-rose-700 text-xs font-bold rounded-full border border-orange-200/70 shadow-xs transition-all cursor-pointer"
+              className="flex items-center space-x-1.5 px-3.5 py-2.5 bg-white/75 backdrop-blur-xl hover:bg-emerald-50/90 active:scale-95 text-slate-700 hover:text-emerald-800 text-xs font-bold rounded-full border border-orange-200/70 shadow-xs transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Logout</span>
@@ -152,13 +152,13 @@ const MainAppContent: React.FC = () => {
 
           {/* Right: Student Profile & Controls */}
           <div className="flex items-center space-x-2.5 sm:space-x-3">
-            {/* Allergen Warning Pill if any */}
+            {/* Allergen Warning Pill if any - Light Green Glassmorphism */}
             {currentStudent.allergies && currentStudent.allergies.length > 0 && (
               <div
                 title={`Allergens tracked: ${currentStudent.allergies.join(', ')}`}
-                className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-rose-100/90 backdrop-blur-md border border-rose-300/80 text-rose-900 text-[11px] font-bold shadow-xs"
+                className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-xl border border-emerald-500/40 text-emerald-800 text-[11px] font-bold shadow-xs"
               >
-                <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                <AlertTriangle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span>{currentStudent.allergies.length} Allergens</span>
               </div>
             )}
@@ -192,7 +192,7 @@ const MainAppContent: React.FC = () => {
               type="button"
               onClick={logout}
               title="Logout"
-              className="p-2.5 rounded-full bg-white/75 backdrop-blur-xl hover:bg-rose-50/90 text-slate-700 hover:text-rose-700 border border-orange-200/70 shadow-xs transition-all cursor-pointer"
+              className="p-2.5 rounded-full bg-white/75 backdrop-blur-xl hover:bg-emerald-50/90 text-slate-700 hover:text-emerald-800 border border-orange-200/70 shadow-xs transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
             </button>

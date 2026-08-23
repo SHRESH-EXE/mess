@@ -87,7 +87,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
   const mealSlotsList: { type: MealType; label: string; icon: typeof Coffee; color: string }[] = [
     { type: 'breakfast', label: 'Breakfast', icon: Coffee, color: 'text-amber-400 bg-amber-500/20 border border-amber-500/30' },
     { type: 'lunch', label: 'Lunch', icon: Sun, color: 'text-amber-300 bg-amber-500/20 border border-amber-500/30' },
-    { type: 'snacks', label: 'High Tea', icon: Cookie, color: 'text-rose-400 bg-rose-500/20 border border-rose-500/30' },
+    { type: 'snacks', label: 'High Tea', icon: Cookie, color: 'text-emerald-400 bg-emerald-500/20 border border-emerald-500/30' },
     { type: 'dinner', label: 'Dinner', icon: Moon, color: 'text-indigo-400 bg-indigo-500/20 border border-indigo-500/30' }
   ];
 
@@ -242,7 +242,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
           <button
             onClick={() => setShowResetConfirm(true)}
-            className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-red-950 text-slate-300 hover:text-red-300 text-xs font-semibold transition-colors border border-slate-700 cursor-pointer"
+            className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-emerald-950 text-slate-300 hover:text-emerald-300 text-xs font-semibold transition-colors border border-slate-700 cursor-pointer"
             title="Reset to default prototype state"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -604,7 +604,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                                 : ord.status === 'Preparing'
                                 ? 'bg-amber-950 text-amber-300 border-amber-800'
                                 : ord.status === 'New'
-                                ? 'bg-rose-950 text-rose-300 border-rose-800'
+                                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-600/50'
                                 : 'bg-slate-800 text-slate-200 border-slate-700'
                             }`}
                           >
@@ -636,7 +636,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                               <CheckCircle2 className="w-3.5 h-3.5" /> Collected
                             </span>
                           ) : (
-                            <span className="text-rose-400 font-bold text-[11px]">Cancelled</span>
+                            <span className="text-emerald-400 font-bold text-[11px]">Cancelled</span>
                           )}
                         </td>
                       </tr>
@@ -701,7 +701,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                       <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-300 ${
-                            stars >= 4 ? 'bg-emerald-500' : stars === 3 ? 'bg-amber-500' : 'bg-red-500'
+                            stars >= 4 ? 'bg-emerald-500' : stars === 3 ? 'bg-amber-500' : 'bg-emerald-400/60'
                           }`}
                           style={{ width: `${pct}%` }}
                         />
@@ -883,7 +883,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                       <td className="py-3">
                         <div className="flex flex-wrap gap-1">
                           {c.allergens.map(a => (
-                            <span key={a} className="px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-bold text-[10px] border border-red-500/30">
+                            <span key={a} className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold text-[10px] border border-emerald-500/30">
                               {a}
                             </span>
                           ))}
@@ -1134,7 +1134,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                   resetToDefaultData();
                   setShowResetConfirm(false);
                 }}
-                className="px-4 py-2 text-xs font-bold bg-red-600 hover:bg-red-500 text-white rounded-lg cursor-pointer"
+                className="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer"
               >
                 Confirm Reset
               </button>

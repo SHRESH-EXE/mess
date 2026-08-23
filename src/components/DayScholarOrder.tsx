@@ -270,34 +270,25 @@ export const DayScholarOrder: React.FC = () => {
       {/* Top Banner / Hero Header */}
       <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px] tracking-wider uppercase border border-emerald-500/30">
-              <Store className="w-3.5 h-3.5 mr-1" />
-              Day Scholar Dining Hub
-            </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold text-[10px] uppercase border border-amber-500/30">
-              Pay-Per-Order • No Pass Required
-            </span>
-          </div>
           <h1 className="text-xl sm:text-2xl font-black text-white font-serif tracking-tight">
             Day Scholar À La Carte Ordering
           </h1>
         </div>
 
         {/* View Switcher: Place Order vs Live Tracker */}
-        <div className="flex items-center space-x-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 self-start md:self-auto shadow-inner">
+        <div className="flex items-center space-x-2 bg-slate-950/80 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 self-start md:self-auto shadow-inner">
           <button
             onClick={() => setActiveViewTab('order')}
-            className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeViewTab === 'order'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25 border border-white/20'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>Order Menu</span>
             {cartItems.length > 0 && (
-              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-slate-950 text-amber-400 font-black">
+              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-slate-950 text-orange-400 font-black">
                 {totalCartItemCount}
               </span>
             )}
@@ -305,9 +296,9 @@ export const DayScholarOrder: React.FC = () => {
 
           <button
             onClick={() => setActiveViewTab('tracking')}
-            className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeViewTab === 'tracking'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
+                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25 border border-white/20'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -432,21 +423,26 @@ export const DayScholarOrder: React.FC = () => {
                             )}
 
                             {/* Nutrition & Allergens preview */}
-                            <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 font-mono pt-0.5">
+                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400 font-mono pt-0.5">
                               {dish.calories && (
-                                <span>{dish.calories} kcal</span>
+                                <span className="px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300">{dish.calories} kcal</span>
                               )}
                               {dish.allergens && dish.allergens.length > 0 && (
-                                <span className="text-slate-400">
-                                  Allergens: {dish.allergens.join(', ')}
-                                </span>
+                                <div className="flex flex-wrap items-center gap-1">
+                                  <span className="text-slate-400">Allergens:</span>
+                                  {dish.allergens.map(alg => (
+                                    <span key={alg} className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 font-medium text-[10px]">
+                                      {alg}
+                                    </span>
+                                  ))}
+                                </div>
                               )}
                             </div>
 
-                            {/* Prominent Allergy Conflict Alert for this dish */}
+                            {/* Allergy Conflict Alert - Light Green Soft Warning */}
                             {hasClash && (
-                              <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-rose-950/80 border border-rose-800 text-rose-300 text-[11px] font-semibold mt-1">
-                                <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                              <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 text-[11px] font-semibold mt-1">
+                                <AlertTriangle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                                 <span>Contains your flagged allergen: <strong>{dishClashes.join(', ')}</strong></span>
                               </div>
                             )}
@@ -455,14 +451,14 @@ export const DayScholarOrder: React.FC = () => {
                           {/* Price & Quantity Controls */}
                           <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3 sm:gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
                             <div className="text-right">
-                              <div className="text-base sm:text-lg font-black text-amber-400 font-mono">
+                              <div className="text-base sm:text-lg font-black text-orange-400 font-mono">
                                 ₹{price}
                               </div>
                               <span className="text-[10px] text-slate-400">per portion</span>
                             </div>
 
                             {cartItem ? (
-                              <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-amber-500/40">
+                              <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-orange-500/40">
                                 <button
                                   type="button"
                                   onClick={() => handleUpdateQuantity(dish.name, -1)}
@@ -471,13 +467,13 @@ export const DayScholarOrder: React.FC = () => {
                                 >
                                   <Minus className="w-3.5 h-3.5" />
                                 </button>
-                                <span className="w-8 text-center text-xs font-mono font-bold text-amber-300">
+                                <span className="w-8 text-center text-xs font-mono font-bold text-orange-300">
                                   {cartItem.quantity}
                                 </span>
                                 <button
                                   type="button"
                                   onClick={() => handleUpdateQuantity(dish.name, 1)}
-                                  className="w-7 h-7 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center font-bold transition-colors cursor-pointer"
+                                  className="w-7 h-7 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white flex items-center justify-center font-bold transition-colors cursor-pointer shadow-sm shadow-orange-500/20"
                                   title="Increase quantity"
                                 >
                                   <Plus className="w-3.5 h-3.5" />
@@ -487,11 +483,7 @@ export const DayScholarOrder: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleAddToCart(dish)}
-                                className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer ${
-                                  hasClash
-                                    ? 'bg-rose-950/80 hover:bg-rose-900 text-rose-200 border border-rose-700'
-                                    : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md shadow-amber-500/20'
-                                }`}
+                                className="px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/25 border border-white/20"
                               >
                                 <Plus className="w-3.5 h-3.5" />
                                 <span>Add to Order</span>
@@ -525,7 +517,7 @@ export const DayScholarOrder: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleClearCart}
-                    className="text-[11px] text-slate-400 hover:text-red-400 flex items-center space-x-1 transition-colors cursor-pointer"
+                    className="text-[11px] text-slate-400 hover:text-emerald-400 flex items-center space-x-1 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-3 h-3" />
                     <span>Clear All</span>
@@ -578,7 +570,7 @@ export const DayScholarOrder: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleRemoveItem(item.dishName)}
-                          className="p-1 text-slate-500 hover:text-red-400 transition-colors ml-1"
+                          className="p-1 text-slate-500 hover:text-emerald-400 transition-colors ml-1"
                           title="Remove item"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -609,27 +601,27 @@ export const DayScholarOrder: React.FC = () => {
 
               {/* Allergy Warning Notification if conflict detected in cart */}
               {detectedAllergenClashes.length > 0 && (
-                <div className="p-3.5 rounded-2xl bg-rose-950/70 border border-rose-800 space-y-2">
-                  <div className="flex items-center space-x-2 text-rose-300 text-xs font-bold">
-                    <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                <div className="p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 space-y-2">
+                  <div className="flex items-center space-x-2 text-emerald-300 text-xs font-bold">
+                    <AlertTriangle className="w-4 h-4 text-emerald-400 shrink-0" />
                     <span>Allergen Warning Detected</span>
                   </div>
-                  <p className="text-[11px] text-rose-200 leading-relaxed">
+                  <p className="text-[11px] text-emerald-200 leading-relaxed">
                     You have selected dishes with allergens matching your preferences:
                   </p>
-                  <ul className="text-[10px] text-rose-300 font-mono list-disc list-inside space-y-0.5">
+                  <ul className="text-[10px] text-emerald-300 font-mono list-disc list-inside space-y-0.5">
                     {detectedAllergenClashes.map((c, idx) => (
                       <li key={idx}>
                         <strong>{c.itemName}</strong>: {c.allergens.join(', ')}
                       </li>
                     ))}
                   </ul>
-                  <label className="flex items-center space-x-2 text-[11px] text-rose-200 cursor-pointer pt-1">
+                  <label className="flex items-center space-x-2 text-[11px] text-emerald-200 cursor-pointer pt-1">
                     <input
                       type="checkbox"
                       checked={acknowledgedAllergyWarning}
                       onChange={(e) => setAcknowledgedAllergyWarning(e.target.checked)}
-                      className="rounded border-rose-700 bg-slate-950 text-amber-500 focus:ring-amber-500"
+                      className="rounded border-emerald-500/50 bg-slate-950 text-emerald-500 focus:ring-emerald-500"
                     />
                     <span>I understand the ingredients and wish to proceed with this order.</span>
                   </label>
@@ -792,7 +784,7 @@ export const DayScholarOrder: React.FC = () => {
                 <button
                   type="submit"
                   disabled={cartItems.length === 0}
-                  className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-black text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer"
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
                 >
                   <Send className="w-4 h-4" />
                   <span>

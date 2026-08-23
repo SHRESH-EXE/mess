@@ -377,7 +377,7 @@ export const AcademicBlockOrder: React.FC = () => {
                           next.splice(idx, 1);
                           setSelectedItems(next);
                         }}
-                        className="p-1 text-slate-500 hover:text-red-400 rounded-md transition-colors cursor-pointer"
+                        className="p-1 text-slate-500 hover:text-emerald-400 rounded-md transition-colors cursor-pointer"
                         title="Remove item"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -406,19 +406,19 @@ export const AcademicBlockOrder: React.FC = () => {
               </div>
             </div>
 
-            {/* PRE-ORDER ALLERGY WARNING BANNER & MANDATORY CHECKBOX */}
+            {/* PRE-ORDER ALLERGY WARNING BANNER & MANDATORY CHECKBOX - Light Green Soft Warning */}
             {hasAllergyConflict && (
-              <div className="p-4 rounded-2xl bg-red-950/40 border border-red-500/60 space-y-3 animate-in fade-in duration-200">
-                <div className="flex items-start space-x-3 text-red-200">
-                  <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5 animate-bounce" />
+              <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/60 space-y-3 animate-in fade-in duration-200">
+                <div className="flex items-start space-x-3 text-emerald-200">
+                  <AlertTriangle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                   <div className="space-y-1">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-red-300">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-300">
                       Allergy Advisory Notice
                     </h4>
-                    <p className="text-xs text-red-200/90 leading-relaxed">
+                    <p className="text-xs text-emerald-200/90 leading-relaxed">
                       Your parcel order contains items with allergens matching your registered student profile:
                     </p>
-                    <ul className="list-disc list-inside text-xs font-mono text-red-300 pt-1 space-y-0.5">
+                    <ul className="list-disc list-inside text-xs font-mono text-emerald-300 pt-1 space-y-0.5">
                       {detectedAllergenClashes.map((c, i) => (
                         <li key={i}>
                           <strong>{c.itemName}</strong> contains <span className="underline font-bold">{c.allergens.join(', ')}</span>
@@ -428,15 +428,15 @@ export const AcademicBlockOrder: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-red-900/60">
+                <div className="pt-2 border-t border-emerald-900/60">
                   <label className="flex items-center space-x-2.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={acknowledgedAllergy}
                       onChange={(e) => setAcknowledgedAllergy(e.target.checked)}
-                      className="w-4 h-4 text-red-500 rounded border-red-600 bg-slate-950 focus:ring-red-500"
+                      className="w-4 h-4 text-emerald-500 rounded border-emerald-600 bg-slate-950 focus:ring-emerald-500"
                     />
-                    <span className="text-xs font-bold text-red-200">
+                    <span className="text-xs font-bold text-emerald-200">
                       I acknowledge the allergy advisory and wish to proceed with this order.
                     </span>
                   </label>
@@ -521,7 +521,7 @@ export const AcademicBlockOrder: React.FC = () => {
               id="submit-whatsapp-order-btn"
               type="submit"
               disabled={selectedItems.length === 0 || (hasAllergyConflict && !acknowledgedAllergy)}
-              className="w-full py-3.5 px-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-emerald-950 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer"
+              className="w-full py-3.5 px-6 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:opacity-50 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-orange-500/25 border border-white/20 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer"
             >
               <Send className="w-5 h-5" />
               <span>Order via WhatsApp Direct</span>

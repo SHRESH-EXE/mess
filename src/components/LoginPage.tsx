@@ -164,8 +164,8 @@ export const LoginPage: React.FC = () => {
 
             {/* Error Message */}
             {errorMessage && (
-              <div className="relative z-10 mb-4 p-3.5 rounded-2xl bg-red-100/90 backdrop-blur-md border border-red-300 text-red-900 text-xs flex items-center space-x-2 text-left shadow-xs">
-                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+              <div className="relative z-10 mb-4 p-3.5 rounded-2xl bg-emerald-50/90 backdrop-blur-md border border-emerald-300 text-emerald-950 text-xs flex items-center space-x-2 text-left shadow-xs">
+                <AlertCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span className="font-bold">{errorMessage}</span>
               </div>
             )}

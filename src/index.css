@@ -206,21 +206,50 @@
   color: #0f172a !important;
 }
 
-/* Liquid Glass Buttons */
-.liquid-glass-btn {
+/* Liquid Glass Buttons - Glossy Orange by Default */
+.liquid-glass-btn,
+.glass-btn-orange {
   border-radius: 9999px !important;
+  background: linear-gradient(135deg, #ff7a30 0%, #f97316 50%, #ea580c 100%) !important;
+  color: #ffffff !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 8px 24px -4px rgba(249, 115, 22, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  font-weight: 700;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.liquid-glass-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px -4px rgba(249, 115, 22, 0.25);
+.liquid-glass-btn:hover,
+.glass-btn-orange:hover {
+  background: linear-gradient(135deg, #ff9248 0%, #ff7a30 50%, #f97316 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(249, 115, 22, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.liquid-glass-btn:active {
+.liquid-glass-btn:active,
+.glass-btn-orange:active {
   transform: translateY(0) scale(0.98);
+}
+
+/* Light Green Allergy Tag Styles */
+.allergy-tag,
+.tag-allergy {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(52, 211, 153, 0.35) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-weight: 600;
+  border-radius: 9999px;
+}
+
+.allergy-tag-light {
+  background: rgba(209, 250, 229, 0.9) !important;
+  color: #065f46 !important;
+  border: 1px solid rgba(110, 231, 183, 0.8) !important;
+  font-weight: 700;
+  border-radius: 9999px;
 }
 
 /* Global rounded utilities enhanced for smooth oval/squircle aesthetics */
@@ -386,18 +415,6 @@
 .bg-slate-900 .text-emerald-300,
 .bg-black .text-emerald-300 {
   color: #6ee7b7 !important;
-}
-
-.bg-slate-950 .text-red-400,
-.bg-slate-900 .text-red-400,
-.bg-black .text-red-400 {
-  color: #f87171 !important;
-}
-
-.bg-slate-950 .text-red-300,
-.bg-slate-900 .text-red-300,
-.bg-black .text-red-300 {
-  color: #fca5a5 !important;
 }
 
 /* White text on buttons with gradient or solid colors */

@@ -211,10 +211,10 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                   />
                 </div>
 
-                {/* Submit CTA */}
+                {/* Submit CTA - Orange Glassmorphism */}
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-teal-500/20 active:scale-98 flex items-center justify-center space-x-2"
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 active:scale-98 flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span>Post Anonymous Review</span>

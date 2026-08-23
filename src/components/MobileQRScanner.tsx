@@ -593,9 +593,9 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
 
             {/* Error Message if camera failed */}
             {cameraError && (
-              <div className="p-3 rounded-xl bg-rose-100 border border-rose-300 text-rose-950 text-xs space-y-1">
-                <div className="font-bold flex items-center gap-1.5 text-rose-900">
-                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
+              <div className="p-3 rounded-xl bg-emerald-50/90 border border-emerald-300 text-emerald-950 text-xs space-y-1">
+                <div className="font-bold flex items-center gap-1.5 text-emerald-900">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
                   <span>Camera Notice</span>
                 </div>
                 <p className="text-[11px] opacity-90 font-medium">{cameraError}</p>

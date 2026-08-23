@@ -171,13 +171,13 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
               className={`p-4 rounded-2xl border flex items-start space-x-3 animate-in slide-in-from-top-2 duration-150 ${
                 scanResult.status === 'success'
                   ? 'bg-emerald-100 border-emerald-300 text-emerald-950'
-                  : 'bg-rose-100 border-rose-300 text-rose-950'
+                  : 'bg-emerald-50/90 border-emerald-300 text-emerald-950'
               }`}
             >
               {scanResult.status === 'success' ? (
                 <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               ) : (
-                <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                <AlertTriangle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               )}
               <div className="text-xs space-y-1 flex-1">
                 <div className="font-black flex items-center justify-between">

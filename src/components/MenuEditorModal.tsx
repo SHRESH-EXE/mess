@@ -178,7 +178,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                       <span className="text-slate-600 font-bold">Allergens:</span>
                       {dish.allergens && dish.allergens.length > 0 ? (
                         dish.allergens.map(a => (
-                          <span key={a} className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 font-bold border border-rose-300">
+                          <span key={a} className="px-1.5 py-0.2 rounded-md bg-emerald-500/20 text-emerald-800 font-bold border border-emerald-300">
                             {a}
                           </span>
                         ))
@@ -198,7 +198,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                   <button
                     type="button"
                     onClick={() => handleRemoveDish(dish.id)}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors self-end sm:self-start cursor-pointer"
+                    className="p-1.5 text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors self-end sm:self-start cursor-pointer"
                     title="Remove Dish"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -264,7 +264,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                       onClick={() => toggleNewDishAllergen(alg)}
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
                         isChecked
-                          ? 'bg-rose-100 text-rose-900 border-rose-300'
+                          ? 'bg-emerald-500/20 text-emerald-800 border-emerald-400'
                           : 'bg-white text-slate-700 border-orange-200 hover:border-orange-400'
                       }`}
                     >

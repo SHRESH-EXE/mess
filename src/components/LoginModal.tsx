@@ -140,8 +140,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
           {/* Error Banner */}
           {errorMessage && (
-            <div className="relative z-10 mb-4 p-2.5 rounded-xl bg-red-100 border border-red-300 text-red-900 text-xs flex items-center space-x-2 text-left">
-              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <div className="relative z-10 mb-4 p-2.5 rounded-xl bg-emerald-50/90 backdrop-blur-md border border-emerald-300 text-emerald-950 text-xs flex items-center space-x-2 text-left">
+              <AlertCircle className="w-4 h-4 text-emerald-600 shrink-0" />
               <span className="font-bold">{errorMessage}</span>
             </div>
           )}

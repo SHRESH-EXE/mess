@@ -95,8 +95,8 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
             </div>
 
             {errorMsg && (
-              <div className="p-3 rounded-xl bg-red-100 border border-red-300 text-red-900 text-xs flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+              <div className="p-3 rounded-xl bg-emerald-50/90 backdrop-blur-md border border-emerald-300 text-emerald-950 text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-emerald-600" />
                 <span className="font-bold">{errorMsg}</span>
               </div>
             )}

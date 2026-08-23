@@ -72,69 +72,6 @@ export const MenuDisplay: React.FC = () => {
   return (
     <section id="menu-display-section" className="space-y-6 animate-in fade-in duration-200">
       
-      {/* Student Allergy Advisory Bar with Highlight/Hide Toggle */}
-      {studentAllergies.length > 0 && (
-        <div className="bg-amber-950/40 backdrop-blur-xl border border-amber-500/40 rounded-[28px] p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-[0_10px_30px_rgba(245,158,11,0.1)]">
-          <div className="flex items-center space-x-3.5">
-            <div className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-amber-200 flex flex-wrap items-center gap-2">
-                <span>Active Dietary Profile for {currentStudent.name}:</span>
-                <span className="font-mono text-[11px] bg-amber-500/20 px-3 py-1 rounded-full text-amber-300 border border-amber-500/30">
-                  {studentAllergies.join(', ')}
-                </span>
-              </div>
-              <p className="text-[11px] text-amber-300/80 mt-1">
-                {allergenFilterMode === 'hide'
-                  ? 'Filtering menu to hide dishes containing your allergens.'
-                  : 'Dishes containing these allergens are highlighted with warning banners.'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
-            {/* Highlight vs Hide Allergen Toggle - Smooth Oval Pill */}
-            <div className="flex items-center bg-slate-950/80 backdrop-blur-md border border-slate-800 p-1.5 rounded-full shadow-inner">
-              <button
-                type="button"
-                id="allergen-toggle-highlight"
-                onClick={() => setAllergenFilterMode('highlight')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer ${
-                  allergenFilterMode === 'highlight'
-                    ? 'bg-amber-500 text-slate-950 shadow-sm scale-[1.02]'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>Highlight</span>
-              </button>
-              <button
-                type="button"
-                id="allergen-toggle-hide"
-                onClick={() => setAllergenFilterMode('hide')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer ${
-                  allergenFilterMode === 'hide'
-                    ? 'bg-emerald-500 text-slate-950 shadow-sm scale-[1.02]'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <EyeOff className="w-3.5 h-3.5" />
-                <span>Hide Allergens</span>
-              </button>
-            </div>
-
-            <button
-              onClick={() => setActiveTab('pass')}
-              className="text-xs text-slate-400 hover:text-slate-200 underline cursor-pointer px-2"
-            >
-              Edit Profile
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Top Day Selector Bar */}
       <div className="dark-glass-card p-4 sm:p-5 border border-white/10 shadow-xl">
         <div className="flex items-center space-x-2.5 mb-3.5">
@@ -330,22 +267,13 @@ export const MenuDisplay: React.FC = () => {
                   id={`dish-card-${dish.id}`}
                   className={`p-5 rounded-[26px] border transition-all flex flex-col justify-between relative ${
                     isClashing
-                      ? 'bg-red-950/25 border-red-500/60 shadow-lg'
+                      ? 'bg-emerald-950/30 border-emerald-500/60 shadow-lg'
                       : dish.isChefSpecial
                       ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/30 border-amber-500/40 shadow-lg'
                       : 'bg-slate-950/75 backdrop-blur-md border-slate-800/80 hover:border-slate-700'
                   }`}
                 >
-                  {/* Clashing Allergy Banner on Card */}
-                  {isClashing && (
-                    <div className="mb-3 p-3 rounded-2xl bg-red-950/80 border border-red-600/70 text-red-200 text-xs font-bold flex items-center space-x-2 animate-pulse">
-                      <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-                      <span>
-                        ALLERGEN WARNING: Contains {clashingAllergens.join(', ')} (Matches your profile)
-                      </span>
-                    </div>
-                  )}
-
+                  {/* Dish details */}
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h4 className="text-sm font-bold text-slate-100 leading-snug">
@@ -359,20 +287,15 @@ export const MenuDisplay: React.FC = () => {
                       </p>
                     )}
 
-                    {/* Allergens Listed */}
+                    {/* Allergens Listed - Light Green Glass Tag */}
                     {dish.allergens && dish.allergens.length > 0 && (
                       <div className="flex items-center flex-wrap gap-1.5 mb-2 text-[10px]">
                         <span className="text-slate-400 font-medium">Allergens:</span>
                         {dish.allergens.map((alg) => {
-                          const isStudentAllergic = studentAllergies.some(sa => sa.toLowerCase() === alg.toLowerCase());
                           return (
                             <span
                               key={alg}
-                              className={`px-2.5 py-0.5 rounded-full font-semibold ${
-                                isStudentAllergic
-                                  ? 'bg-red-500/20 text-red-300 border border-red-500/40 font-bold'
-                                  : 'bg-slate-800 text-slate-300 border border-slate-700'
-                              }`}
+                              className="px-2.5 py-0.5 rounded-full font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 backdrop-blur-xs"
                             >
                               {alg}
                             </span>
@@ -386,14 +309,14 @@ export const MenuDisplay: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => toggleIngredients(dish.id)}
-                        className="text-[11px] font-medium text-amber-400 hover:text-amber-300 flex items-center space-x-1 py-1 cursor-pointer"
+                        className="text-[11px] font-medium text-orange-400 hover:text-orange-300 flex items-center space-x-1 py-1 cursor-pointer"
                       >
                         <span>{isExpanded ? 'Hide Ingredients' : 'View Ingredients'}</span>
                         {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                       </button>
 
                       {isExpanded && (
-                        <div className="mt-1.5 p-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs space-y-1 animate-in fade-in duration-150">
+                        <div className="mt-1.5 p-3 rounded-2xl bg-slate-950/80 backdrop-blur-md border border-slate-800 text-xs space-y-1 animate-in fade-in duration-150">
                           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                             Full Kitchen Ingredients:
                           </div>
@@ -417,9 +340,9 @@ export const MenuDisplay: React.FC = () => {
                     <div className="flex items-center space-x-1.5">
                       <button
                         onClick={() => setRatingModalDish({ dish, mealName: currentSlot.name })}
-                        className="px-3.5 py-1.5 text-[11px] font-semibold text-slate-300 hover:text-slate-950 bg-slate-800 hover:bg-amber-400 rounded-full border border-slate-700/80 transition-all flex items-center space-x-1 cursor-pointer"
+                        className="px-3.5 py-1.5 text-[11px] font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 rounded-full border border-white/20 shadow-md shadow-orange-500/20 transition-all flex items-center space-x-1.5 cursor-pointer"
                       >
-                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 group-hover:text-slate-950" />
+                        <Star className="w-3.5 h-3.5 text-white fill-white" />
                         <span>Rate</span>
                       </button>
                     </div>
