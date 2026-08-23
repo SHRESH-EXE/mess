@@ -1,33 +1,21 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
 import {
-  Clock,
-  Flame,
-  Sparkles,
   Star,
   CheckCircle2,
   Calendar,
-  Filter,
-  ChevronRight,
-  ShieldAlert,
   Info,
-  Edit3,
   Coffee,
   Sun,
   Moon,
   Cookie,
-  Award,
   AlertTriangle,
   ChevronDown,
-  ChevronUp,
-  ShieldCheck,
-  MessageSquareHeart,
-  Tag
+  ChevronUp
 } from 'lucide-react';
 import { MealType, DishItem, DayOfWeek } from '../types/mess';
 import { getActiveMealStatus, getCurrentDayOfWeek } from '../utils/time';
 import { RateDishModal } from './RateDishModal';
-import { MenuEditorModal } from './MenuEditorModal';
 
 export const MenuDisplay: React.FC = () => {
   const {
@@ -36,18 +24,15 @@ export const MenuDisplay: React.FC = () => {
     setSelectedDay,
     setActiveTab,
     isMealTakenToday,
-    currentStudent,
-    currentSession
+    currentStudent
   } = useMess();
 
   const todayDay = getCurrentDayOfWeek();
   const mealStatus = getActiveMealStatus();
 
   const [selectedMealTab, setSelectedMealTab] = useState<MealType>(mealStatus.currentMeal);
-  const [dietFilter, setDietFilter] = useState<string>('all');
   const [expandedIngredientsDishId, setExpandedIngredientsDishId] = useState<string | null>(null);
   const [ratingModalDish, setRatingModalDish] = useState<{ dish: DishItem; mealName: string } | null>(null);
-  const [editingSlot, setEditingSlot] = useState<{ day: string; mealType: MealType } | null>(null);
 
   const daysList: DayOfWeek[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const dayMenu = weeklyMenu[selectedDay] || weeklyMenu['Monday'];
@@ -61,23 +46,7 @@ export const MenuDisplay: React.FC = () => {
   ];
 
   const studentAllergies = currentStudent?.allergies || [];
-
-  // Filter dishes based on selected tag
-  const filteredDishes = (currentSlot?.dishes || []).filter((dish) => {
-    if (dietFilter === 'all') return true;
-    if (dietFilter === 'safe-for-me') {
-      if (studentAllergies.length === 0) return true;
-      const hasClash = (dish.allergens || []).some(da =>
-        studentAllergies.some(sa => sa.toLowerCase() === da.toLowerCase())
-      );
-      return !hasClash;
-    }
-    if (dietFilter === 'veg') return dish.tags.includes('veg');
-    if (dietFilter === 'high-protein') return dish.tags.includes('high-protein');
-    if (dietFilter === 'special') return dish.tags.includes('special') || dish.isChefSpecial;
-    if (dietFilter === 'sweet') return dish.tags.includes('sweet');
-    return true;
-  });
+  const dishes = currentSlot?.dishes || [];
 
   const checkStatus = isMealTakenToday(selectedMealTab, currentStudent.id);
 
@@ -110,17 +79,6 @@ export const MenuDisplay: React.FC = () => {
 
           <div className="flex items-center space-x-2 self-end sm:self-auto">
             <button
-              onClick={() => setDietFilter(dietFilter === 'safe-for-me' ? 'all' : 'safe-for-me')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
-                dietFilter === 'safe-for-me'
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{dietFilter === 'safe-for-me' ? 'Showing Safe Only ✓' : 'Filter Safe Dishes'}</span>
-            </button>
-            <button
               onClick={() => setActiveTab('pass')}
               className="text-xs text-slate-400 hover:text-slate-200 underline cursor-pointer"
             >
@@ -141,116 +99,114 @@ export const MenuDisplay: React.FC = () => {
               <h2 className="text-sm sm:text-base font-bold text-slate-100">
                 Weekly Hostel Mess Schedule
               </h2>
-              <p className="text-xs text-slate-400">
-                {selectedDay === todayDay ? "Viewing Today's Live Menu" : `Viewing ${selectedDay} Schedule`}
-              </p>
             </div>
           </div>
 
+          {/* Quick jump to Today */}
           {selectedDay !== todayDay && (
             <button
               onClick={() => setSelectedDay(todayDay)}
-              className="self-start sm:self-auto px-3 py-1 text-xs font-bold text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg transition-colors flex items-center space-x-1 cursor-pointer"
+              className="text-xs px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-all self-start sm:self-auto cursor-pointer shadow-sm"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Jump to Today ({todayDay})</span>
+              Jump to Today ({todayDay})
             </button>
           )}
         </div>
 
-        {/* Days Pill List */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+        {/* Day Pills Carousel */}
+        <div className="grid grid-cols-2 xs:grid-cols-4 sm:grid-cols-7 gap-2">
           {daysList.map((day) => {
             const isSelected = selectedDay === day;
-            const isToday = day === todayDay;
+            const isToday = todayDay === day;
+
             return (
               <button
                 key={day}
-                id={`day-btn-${day}`}
+                id={`day-tab-${day.toLowerCase()}`}
                 onClick={() => setSelectedDay(day)}
-                className={`py-2.5 px-3 rounded-xl text-center transition-all relative cursor-pointer ${
+                className={`py-2.5 px-2 rounded-xl text-center transition-all relative font-bold cursor-pointer ${
                   isSelected
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/10'
-                    : 'bg-slate-950/70 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                    ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 scale-[1.02]'
+                    : isToday
+                    ? 'bg-slate-800 text-amber-400 border border-amber-500/40 hover:bg-slate-750'
+                    : 'bg-slate-950/70 text-slate-300 border border-slate-800/80 hover:bg-slate-800 hover:text-slate-100'
                 }`}
               >
                 {isToday && (
                   <span
-                    className={`absolute -top-1.5 right-2 text-[9px] font-extrabold px-1.5 py-0.2 rounded-full uppercase tracking-wider ${
-                      isSelected ? 'bg-slate-950 text-amber-400 border border-slate-800' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                    className={`absolute -top-1.5 left-1/2 -translate-x-1/2 text-[9px] px-1.5 py-0.2 rounded-full font-bold uppercase tracking-wider ${
+                      isSelected
+                        ? 'bg-slate-950 text-amber-400'
+                        : 'bg-amber-500 text-slate-950'
                     }`}
                   >
                     Today
                   </span>
                 )}
                 <div className="text-xs">{day.slice(0, 3)}</div>
-                <div className="text-[11px] opacity-75 truncate">{weeklyMenu[day]?.theme || 'Standard'}</div>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Meal Slots Navigation Tabs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* Meal Slot Tabs (Breakfast, Lunch, Snacks, Dinner) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
         {mealTabConfig.map((slot) => {
-          const Icon = slot.icon;
+          const isCurrentActive = mealStatus.currentMeal === slot.type && selectedDay === todayDay;
           const isSelected = selectedMealTab === slot.type;
-          const isOngoing = selectedDay === todayDay && mealStatus.currentMeal === slot.type && mealStatus.status === 'ongoing';
-          const isUpcoming = selectedDay === todayDay && mealStatus.currentMeal === slot.type && mealStatus.status === 'upcoming';
-          const isTaken = selectedDay === todayDay && isMealTakenToday(slot.type, currentStudent.id).isTaken;
+          const Icon = slot.icon;
+          const slotStatus = isMealTakenToday(slot.type, currentStudent.id);
 
           return (
             <button
               key={slot.type}
               id={`meal-tab-${slot.type}`}
               onClick={() => setSelectedMealTab(slot.type)}
-              className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between cursor-pointer ${
+              className={`p-3 sm:p-4 rounded-2xl border text-left transition-all relative cursor-pointer ${
                 isSelected
-                  ? 'bg-slate-900 border-amber-500 ring-2 ring-amber-500/30 shadow-xl'
-                  : 'bg-slate-900/70 hover:bg-slate-900 border-slate-800 text-slate-300'
+                  ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 border-amber-400 shadow-lg shadow-amber-500/20 scale-[1.01]'
+                  : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-850'
               }`}
             >
-              {/* Ongoing / Live Ribbon */}
-              {isOngoing && (
-                <div className="absolute top-0 right-0 bg-gradient-to-l from-emerald-600 to-emerald-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-bl-lg uppercase tracking-wider flex items-center gap-1 shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-                  Live Now
-                </div>
-              )}
-              {isUpcoming && (
-                <div className="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded-bl-lg uppercase">
-                  Upcoming
-                </div>
-              )}
-
-              <div className="flex items-center space-x-3 mb-2">
+              <div className="flex items-center justify-between mb-1.5">
                 <div
-                  className={`p-2.5 rounded-xl ${
-                    isSelected ? 'bg-amber-500 text-slate-950 shadow-sm' : 'bg-slate-800 text-slate-300'
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                    isSelected
+                      ? 'bg-slate-950 text-amber-400'
+                      : 'bg-slate-800 text-slate-300'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                 </div>
-                <div>
-                  <h3 className={`text-sm font-bold ${isSelected ? 'text-slate-100' : 'text-slate-200'}`}>
-                    {slot.label}
-                  </h3>
-                  <div className="text-xs text-slate-400 font-mono flex items-center space-x-1">
-                    <Clock className="w-3 h-3 text-slate-500" />
-                    <span>{slot.timing}</span>
-                  </div>
-                </div>
+
+                {isCurrentActive && (
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                    isSelected
+                      ? 'bg-slate-950 text-amber-300'
+                      : 'bg-amber-500 text-slate-950'
+                  }`}>
+                    Live
+                  </span>
+                )}
               </div>
 
-              {/* Status footer inside tab */}
-              <div className="mt-2 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px]">
-                <span className="text-slate-400 font-medium">
-                  {dayMenu.meals[slot.type]?.dishes?.length || 0} Dishes
-                </span>
-                {selectedDay === todayDay && isTaken && (
-                  <span className="text-emerald-400 font-bold flex items-center gap-0.5">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Taken
+              <div className="font-black text-sm leading-tight mb-0.5">
+                {slot.label}
+              </div>
+              <div className={`text-[11px] font-mono ${isSelected ? 'text-slate-900 font-semibold' : 'text-slate-400'}`}>
+                {slot.timing}
+              </div>
+
+              {/* Check-in badge indicator */}
+              <div className="mt-2 pt-2 border-t border-black/10 flex items-center justify-between text-[10px]">
+                {slotStatus.isTaken ? (
+                  <span className={`font-semibold flex items-center gap-1 ${isSelected ? 'text-slate-950' : 'text-emerald-400'}`}>
+                    <CheckCircle2 className="w-3 h-3" /> Attended
+                  </span>
+                ) : (
+                  <span className={isSelected ? 'text-slate-800' : 'text-slate-500'}>
+                    Not Attended
                   </span>
                 )}
               </div>
@@ -264,54 +220,18 @@ export const MenuDisplay: React.FC = () => {
         
         {/* Banner Header */}
         <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white border-b border-slate-800">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center space-x-2 mb-1">
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-[11px] uppercase tracking-wider">
-                  {selectedDay}'s {currentSlot.name}
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  {currentSlot.timing}
-                </span>
-              </div>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-100 font-serif tracking-tight">
-                {currentSlot.name} Spread & Nutrition
-              </h2>
-              {currentSlot.specialNote && (
-                <p className="text-xs text-amber-300 mt-1 flex items-center gap-1.5 font-medium">
-                  <Award className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>{currentSlot.specialNote}</span>
-                </p>
-              )}
+          <div>
+            <div className="flex items-center space-x-2 mb-1">
+              <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-bold text-[11px] uppercase tracking-wider">
+                {selectedDay}'s {currentSlot.name}
+              </span>
+              <span className="text-xs text-slate-400 font-mono">
+                {currentSlot.timing}
+              </span>
             </div>
-
-            {/* Quick Actions in Header */}
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => setEditingSlot({ day: selectedDay, mealType: selectedMealTab })}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center space-x-1.5 cursor-pointer"
-                title="Edit this meal slot (Admin/Staff)"
-              >
-                <Edit3 className="w-3.5 h-3.5 text-amber-400" />
-                <span>Edit Items & Allergens</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('feedback')}
-                className="px-3 py-1.5 rounded-xl bg-teal-900/60 hover:bg-teal-800 text-teal-200 text-xs font-bold border border-teal-700 transition-all flex items-center space-x-1.5 cursor-pointer"
-              >
-                <MessageSquareHeart className="w-3.5 h-3.5 text-teal-400" />
-                <span>Rate Meals</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('parcel')}
-                className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm cursor-pointer"
-              >
-                <span>Pack for Academic Block</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-100 font-serif tracking-tight">
+              {currentSlot.name} Spread & Nutrition
+            </h2>
           </div>
 
           {/* Quick Metrics Strip */}
@@ -330,7 +250,7 @@ export const MenuDisplay: React.FC = () => {
             <div className="bg-slate-950/60 border border-slate-800/80 p-2.5 rounded-xl">
               <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Your Meal Status</span>
               <span className={`text-xs font-bold ${checkStatus.isTaken ? 'text-emerald-400' : 'text-amber-400'}`}>
-                {checkStatus.isTaken ? '✅ Marked Attended' : '⏳ Pending Check-in'}
+                {checkStatus.isTaken ? 'Marked Attended' : 'Pending Check-in'}
               </span>
             </div>
             <div className="bg-slate-950/60 border border-slate-800/80 p-2.5 rounded-xl">
@@ -340,42 +260,10 @@ export const MenuDisplay: React.FC = () => {
           </div>
         </div>
 
-        {/* Dietary Filters & Allergen Bar */}
-        <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1">
-            <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mr-1">
-              <Filter className="w-3.5 h-3.5" /> Filter:
-            </span>
-            {[
-              { id: 'all', label: 'All Pure Veg Items 🌿' },
-              { id: 'safe-for-me', label: '🛡️ Safe for My Allergies' },
-              { id: 'high-protein', label: 'High Protein 💪' },
-              { id: 'special', label: 'Chef Specials ⭐' },
-              { id: 'sweet', label: 'Desserts & Sweets 🍮' }
-            ].map((f) => (
-              <button
-                key={f.id}
-                onClick={() => setDietFilter(f.id)}
-                className={`text-xs px-3 py-1.5 rounded-full font-semibold transition-all whitespace-nowrap cursor-pointer ${
-                  dietFilter === f.id
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
-                    : 'bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="text-xs text-slate-400 font-medium">
-            Showing <strong className="text-slate-200">{filteredDishes.length}</strong> items
-          </div>
-        </div>
-
         {/* Dish Items Grid */}
         <div className="p-5 sm:p-6 bg-slate-900">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredDishes.map((dish) => {
+            {dishes.map((dish) => {
               // Allergen matching
               const clashingAllergens = (dish.allergens || []).filter(da =>
                 studentAllergies.some(sa => sa.toLowerCase() === da.toLowerCase())
@@ -444,7 +332,6 @@ export const MenuDisplay: React.FC = () => {
                               : 'bg-slate-800 text-slate-300 border border-slate-700'
                           }`}
                         >
-                          {tag === 'high-protein' && '💪 '}
                           {tag}
                         </span>
                       ))}
@@ -525,31 +412,12 @@ export const MenuDisplay: React.FC = () => {
             })}
           </div>
 
-          {filteredDishes.length === 0 && (
+          {dishes.length === 0 && (
             <div className="text-center py-10 bg-slate-950/60 rounded-2xl border border-dashed border-slate-800">
               <Info className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-slate-300">No dishes match the selected filter.</p>
-              <button
-                onClick={() => setDietFilter('all')}
-                className="mt-2 text-xs font-bold text-amber-400 hover:underline cursor-pointer"
-              >
-                Clear Filter
-              </button>
+              <p className="text-sm font-semibold text-slate-300">No dishes listed for this meal slot.</p>
             </div>
           )}
-        </div>
-
-        {/* Dietary & Kitchen Quality Assurance Note */}
-        <div className="px-6 py-4 bg-slate-950/90 border-t border-slate-800 text-xs text-slate-400 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <div className="flex items-center space-x-2">
-            <ShieldAlert className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>
-              100% RO Filtered Water used in cooking. Separate Sattvic cookware & cross-contamination allergen protocols maintained.
-            </span>
-          </div>
-          <div className="text-[11px] text-slate-400 font-medium">
-            Mess Safety Head: Chef Suresh Nair & Student Mess Committee
-          </div>
         </div>
 
       </div>
@@ -560,15 +428,6 @@ export const MenuDisplay: React.FC = () => {
           dish={ratingModalDish.dish}
           mealName={ratingModalDish.mealName}
           onClose={() => setRatingModalDish(null)}
-        />
-      )}
-
-      {/* Admin Menu Editor Modal */}
-      {editingSlot && (
-        <MenuEditorModal
-          day={editingSlot.day}
-          mealType={editingSlot.mealType}
-          onClose={() => setEditingSlot(null)}
         />
       )}
     </section>

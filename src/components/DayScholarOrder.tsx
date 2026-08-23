@@ -360,7 +360,7 @@ export const DayScholarOrder: React.FC = () => {
                           : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
                       }`}
                     >
-                      <span>{isSelected ? '⚠️' : '•'}</span>
+                      <span>•</span>
                       <span>{allergen}</span>
                     </button>
                   );
@@ -487,10 +487,10 @@ export const DayScholarOrder: React.FC = () => {
                             {/* Nutrition & Allergens preview */}
                             <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 font-mono pt-0.5">
                               {dish.protein && (
-                                <span className="text-blue-300">⚡ Protein: {dish.protein}</span>
+                                <span className="text-blue-300">Protein: {dish.protein}</span>
                               )}
                               {dish.calories && (
-                                <span>🔥 {dish.calories} kcal</span>
+                                <span>{dish.calories} kcal</span>
                               )}
                               {dish.allergens && dish.allergens.length > 0 && (
                                 <span className="text-slate-400">
@@ -990,17 +990,17 @@ export const DayScholarOrder: React.FC = () => {
                     Dispatch & Contact Details
                   </span>
                   <div className="space-y-1 text-slate-300 pt-1">
-                    <div>👤 <strong>Student:</strong> {activeTrackedOrder.name} ({activeTrackedOrder.phoneNumber})</div>
-                    <div>🏛️ <strong>Department:</strong> {activeTrackedOrder.department}</div>
+                    <div><strong>Student:</strong> {activeTrackedOrder.name} ({activeTrackedOrder.phoneNumber})</div>
+                    <div><strong>Department:</strong> {activeTrackedOrder.department}</div>
                     <div>
-                      📍 <strong>Fulfillment:</strong>{' '}
+                      <strong>Fulfillment:</strong>{' '}
                       {activeTrackedOrder.preference === 'delivery'
-                        ? `🚚 ${activeTrackedOrder.blockName} (${activeTrackedOrder.roomFloor})`
-                        : '🏃 Self-Pickup from Counter 3 (Day Scholar Express)'}
+                        ? `${activeTrackedOrder.blockName} (${activeTrackedOrder.roomFloor})`
+                        : 'Self-Pickup from Counter 3 (Day Scholar Express)'}
                     </div>
                     {activeTrackedOrder.specialNotes && (
                       <div className="text-slate-400 italic">
-                        📝 "{activeTrackedOrder.specialNotes}"
+                        "{activeTrackedOrder.specialNotes}"
                       </div>
                     )}
                   </div>
@@ -1057,7 +1057,7 @@ export const DayScholarOrder: React.FC = () => {
                       {ord.items.map(i => `${i.dishName} x${i.quantity}`).join(', ')}
                     </div>
                     <div className="text-[11px] text-slate-400">
-                      {ord.preference === 'delivery' ? `🚚 ${ord.blockName}` : '🏃 Self-Pickup'} • {ord.timestamp}
+                      {ord.preference === 'delivery' ? ord.blockName : 'Self-Pickup'} • {ord.timestamp}
                     </div>
                   </div>
 

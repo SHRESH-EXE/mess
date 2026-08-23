@@ -410,7 +410,7 @@ export const AcademicBlockOrder: React.FC = () => {
                       <div className="text-xs font-bold text-slate-100">{item.dishName}</div>
                       <div className="text-[10px] text-slate-400">
                         {item.isIncludedInMessPass && useMessPass
-                          ? '✅ Included in Monthly Mess Pass'
+                          ? 'Included in Monthly Mess Pass'
                           : `₹${item.price} each`}
                       </div>
                     </div>
@@ -476,7 +476,7 @@ export const AcademicBlockOrder: React.FC = () => {
                   <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5 animate-bounce" />
                   <div className="space-y-1">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-red-300">
-                      ⚠️ Allergy Advisory Notice
+                      Allergy Advisory Notice
                     </h4>
                     <p className="text-xs text-red-200/90 leading-relaxed">
                       Your parcel order contains items with allergens matching your registered student profile:

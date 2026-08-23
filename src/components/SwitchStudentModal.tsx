@@ -32,24 +32,24 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-orange-950/25 backdrop-blur-md animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-150">
       <div
         id="switch-student-modal"
-        className="w-full max-w-md glassmorphism-card text-[#2e170d] rounded-3xl shadow-2xl border border-white/80 overflow-hidden flex flex-col"
+        className="w-full max-w-md glassmorphism-card text-slate-900 rounded-3xl shadow-2xl border border-white/95 overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="px-6 py-4 bg-white/40 border-b border-orange-200/60 flex items-center justify-between">
+        <div className="px-6 py-4 bg-white/80 border-b border-orange-200/80 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-[#2e170d] leading-tight">
+            <h3 className="text-base font-black text-slate-900 leading-tight">
               Student Profile Switcher
             </h3>
-            <p className="text-xs text-[#9a3412] font-medium">
+            <p className="text-xs text-slate-600 font-semibold">
               Enter Roll Number in the text box below
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-[#9a3412] hover:text-[#2e170d] hover:bg-white/60 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -58,14 +58,14 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
         {/* Content */}
         <div className="p-6 space-y-4">
           {/* Current Active Info */}
-          <div className="p-3.5 rounded-2xl bg-white/55 border border-white/80 flex items-center justify-between text-xs shadow-xs">
+          <div className="p-3.5 rounded-2xl bg-white/90 border border-orange-200/80 flex items-center justify-between text-xs shadow-xs">
             <div className="flex items-center space-x-2.5">
               <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                <UserCheck className="w-4 h-4" />
+                <UserCheck className="w-4 h-4 text-white" />
               </div>
               <div>
-                <span className="text-[#9a3412] text-[10px] block font-semibold">Current Active Roll:</span>
-                <span className="font-mono font-bold text-[#2e170d]">{currentStudent.rollNo}</span>
+                <span className="text-slate-600 text-[10px] block font-bold">Current Active Roll:</span>
+                <span className="font-mono font-black text-slate-900">{currentStudent.rollNo}</span>
               </div>
             </div>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
@@ -76,7 +76,7 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
           {/* Text Box Input Form */}
           <form onSubmit={handleSearchAndSwitch} className="space-y-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#2e170d]">
+              <label className="text-xs font-black text-slate-900">
                 Enter Roll Number / Student ID:
               </label>
               <div className="relative">
@@ -88,52 +88,71 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
                     setErrorMsg(null);
                   }}
                   placeholder="e.g. 22CS0142, 23ME0088..."
-                  className="w-full glassmorphism-input rounded-xl px-4 py-3 text-xs text-[#2e170d] placeholder-[#c2410c]/50 font-mono focus:outline-none"
+                  className="w-full glassmorphism-input rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 font-mono focus:outline-none"
                   autoFocus
                 />
               </div>
             </div>
 
             {errorMsg && (
-              <div className="p-3 rounded-xl bg-red-500/10 border border-red-400/40 text-red-900 text-xs flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
-                <span>{errorMsg}</span>
+              <div className="p-3 rounded-xl bg-red-100 border border-red-300 text-red-900 text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                <span className="font-bold">{errorMsg}</span>
               </div>
             )}
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl shadow-[0_4px_16px_rgba(255,122,48,0.3)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 px-4 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl shadow-md shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
-              <span>Switch Profile</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>Switch Active Student</span>
+              <ArrowRight className="w-4 h-4 text-white" />
             </button>
           </form>
 
-          {/* Quick Click Demo Roll Numbers */}
-          <div className="space-y-2 pt-2 border-t border-orange-200/60">
-            <span className="text-[11px] font-bold text-[#9a3412] uppercase tracking-wider block">
-              Quick Pick Demo Students
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              {students.slice(0, 4).map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => {
-                    switchStudentById(s.id);
-                    onClose();
-                  }}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer shadow-xs ${
-                    currentStudent.id === s.id
-                      ? 'bg-orange-500/15 border-orange-400 text-[#ea580c]'
-                      : 'bg-white/45 hover:bg-white/70 border-white/80 text-[#2e170d]'
-                  }`}
-                >
-                  <div className="font-bold text-xs truncate">{s.name}</div>
-                  <div className="text-[10px] font-mono text-[#9a3412] font-semibold">{s.rollNo}</div>
-                </button>
-              ))}
+          {/* Quick List of Demo Students */}
+          <div className="space-y-2 pt-2 border-t border-orange-200/80">
+            <div className="text-[11px] font-black text-slate-700 uppercase tracking-wider">
+              Or Select From Available Profiles:
+            </div>
+            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+              {students.map((student) => {
+                const isSelected = student.id === currentStudent.id;
+                return (
+                  <button
+                    key={student.id}
+                    type="button"
+                    onClick={() => {
+                      switchStudentById(student.id);
+                      onClose();
+                    }}
+                    className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-orange-100 border-orange-400 text-slate-900'
+                        : 'bg-white/80 hover:bg-white border-orange-200/80 text-slate-900'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <img
+                        src={student.photoUrl}
+                        alt={student.name}
+                        className="w-7 h-7 rounded-full object-cover border border-orange-300"
+                      />
+                      <div>
+                        <div className="text-xs font-black text-slate-900 leading-tight">
+                          {student.name}
+                        </div>
+                        <div className="text-[10px] text-slate-600 font-mono">
+                          {student.rollNo} • {student.hostel} ({student.roomNo})
+                        </div>
+                      </div>
+                    </div>
+                    {isSelected && (
+                      <span className="text-[10px] font-bold text-[#ea580c]">Current</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

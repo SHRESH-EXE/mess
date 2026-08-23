@@ -109,37 +109,37 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-orange-950/25 backdrop-blur-md animate-in fade-in duration-150 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-150 overflow-y-auto">
       <div
         id="qr-scanner-modal"
-        className="w-full max-w-md glassmorphism-card text-[#2e170d] rounded-3xl shadow-2xl border border-white/80 overflow-hidden flex flex-col my-auto max-h-[92vh]"
+        className="w-full max-w-md glassmorphism-card text-slate-900 rounded-3xl shadow-2xl border border-white/95 overflow-hidden flex flex-col my-auto max-h-[92vh]"
       >
         {/* Header */}
-        <div className="px-5 py-4 border-b border-orange-200/60 flex items-center justify-between bg-white/45">
+        <div className="px-5 py-4 border-b border-orange-200/80 flex items-center justify-between bg-white/80">
           <div className="flex items-center space-x-2.5">
             <div className="p-2 rounded-xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] text-white shadow-xs">
-              <QrCode className="w-5 h-5" />
+              <QrCode className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[#2e170d]">
+              <h3 className="text-base font-black text-slate-900">
                 QR Scanner
               </h3>
-              <p className="text-xs text-[#9a3412] font-semibold">
+              <p className="text-xs text-slate-600 font-semibold">
                 Scan pass QR or enter token below
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-[#9a3412] hover:text-[#2e170d] hover:bg-white/60 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Meal Session Selector */}
-        <div className="px-5 py-2.5 bg-white/30 border-b border-orange-200/60 flex items-center justify-between gap-1.5">
-          <span className="text-[10px] font-bold text-[#9a3412] uppercase tracking-wider">
+        <div className="px-5 py-2.5 bg-orange-50/60 border-b border-orange-200/80 flex items-center justify-between gap-1.5">
+          <span className="text-[10px] font-black text-slate-700 uppercase tracking-wider">
             Meal:
           </span>
           <div className="grid grid-cols-4 gap-1.5 flex-1 max-w-xs">
@@ -149,10 +149,10 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
                 <button
                   key={meal}
                   onClick={() => handleMealChange(meal)}
-                  className={`py-1.5 px-2 rounded-xl text-xs capitalize transition-all cursor-pointer text-center font-bold ${
+                  className={`py-1.5 px-2 rounded-xl text-xs capitalize transition-all cursor-pointer text-center font-black ${
                     isCurrent
                       ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-xs'
-                      : 'bg-white/50 text-[#6c2e11] hover:bg-white/80'
+                      : 'bg-white/90 text-slate-700 hover:bg-white border border-orange-200/70'
                   }`}
                 >
                   {meal}
@@ -170,8 +170,8 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
             <div
               className={`p-4 rounded-2xl border flex items-start space-x-3 animate-in slide-in-from-top-2 duration-150 ${
                 scanResult.status === 'success'
-                  ? 'bg-emerald-100/90 border-emerald-300 text-emerald-900'
-                  : 'bg-rose-100/90 border-rose-300 text-rose-900'
+                  ? 'bg-emerald-100 border-emerald-300 text-emerald-950'
+                  : 'bg-rose-100 border-rose-300 text-rose-950'
               }`}
             >
               {scanResult.status === 'success' ? (
@@ -180,15 +180,15 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
                 <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
               )}
               <div className="text-xs space-y-1 flex-1">
-                <div className="font-bold flex items-center justify-between">
+                <div className="font-black flex items-center justify-between">
                   <span>{scanResult.status === 'success' ? 'ACCESS GRANTED' : 'ENTRY BLOCKED'}</span>
                   {scanResult.timestamp && (
-                    <span className="font-mono text-[10px] text-emerald-700 font-bold">{scanResult.timestamp}</span>
+                    <span className="font-mono text-[10px] text-emerald-800 font-bold">{scanResult.timestamp}</span>
                   )}
                 </div>
-                <p className="opacity-90 leading-relaxed font-semibold">{scanResult.message}</p>
+                <p className="font-bold leading-relaxed">{scanResult.message}</p>
                 {scanResult.decodedText && (
-                  <div className="pt-1 font-mono text-[11px] text-emerald-800 bg-white/60 p-2 rounded-lg break-all font-bold">
+                  <div className="pt-1 font-mono text-[11px] text-emerald-900 bg-white p-2 rounded-lg break-all font-bold border border-emerald-200">
                     {scanResult.decodedText}
                   </div>
                 )}
@@ -206,7 +206,7 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
 
           {/* Direct Text Box for Manual Roll / Code Entry */}
           <form onSubmit={handleManualCheckIn} className="space-y-1.5 pt-1">
-            <label className="text-[11px] font-bold text-[#2e170d] block">
+            <label className="text-[11px] font-black text-slate-900 block">
               Quick Text Box:
             </label>
             <div className="flex items-center space-x-2">
@@ -215,14 +215,14 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
                 value={manualInput}
                 onChange={(e) => setManualInput(e.target.value)}
                 placeholder="Type Roll No or Pass Token..."
-                className="flex-1 glassmorphism-input text-xs px-3.5 py-2.5 rounded-xl text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none font-mono"
+                className="flex-1 glassmorphism-input text-xs px-3.5 py-2.5 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none font-mono font-semibold"
               />
               <button
                 type="submit"
                 className="px-4 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer flex items-center gap-1 shrink-0"
               >
-                <Send className="w-3.5 h-3.5" />
-                <span>Verify</span>
+                <Send className="w-3.5 h-3.5 text-white" />
+                <span className="text-white">Verify</span>
               </button>
             </div>
           </form>
@@ -230,14 +230,14 @@ export const QRScannerModal: React.FC<QRScannerModalProps> = ({ onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-orange-200/60 bg-white/40 flex items-center justify-between text-xs text-[#9a3412]">
-          <div className="flex items-center space-x-1.5 font-semibold">
+        <div className="px-5 py-3 border-t border-orange-200/80 bg-orange-50/50 flex items-center justify-between text-xs text-slate-600">
+          <div className="flex items-center space-x-1.5 font-bold">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Anti-Duplicate QR Token Check</span>
+            <span className="text-slate-800">Anti-Duplicate QR Token Check</span>
           </div>
           <button
             onClick={onClose}
-            className="px-3.5 py-1.5 bg-white/70 hover:bg-white text-[#2e170d] font-bold rounded-xl border border-orange-200 transition-all cursor-pointer text-xs"
+            className="px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-900 font-bold rounded-xl border border-orange-200 shadow-xs transition-all cursor-pointer text-xs"
           >
             Close
           </button>

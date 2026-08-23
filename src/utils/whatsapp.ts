@@ -7,25 +7,25 @@ export function formatWhatsAppOrderMessage(order: Omit<AcademicBlockOrder, 'id' 
     .join('\n');
 
   const lines = [
-    `🍱 *CAMPUS MESS HUB - ACADEMIC PARCEL ORDER* 🍱`,
-    order.orderId ? `🔖 *Order ID:* \`#${order.orderId}\`` : '',
+    `*MESS - ACADEMIC PARCEL ORDER*`,
+    order.orderId ? `*Order ID:* \`#${order.orderId}\`` : '',
     `----------------------------------------`,
-    `👤 *Student Name:* ${order.studentName}`,
-    order.rollNo ? `🎓 *Roll No:* ${order.rollNo}` : '',
-    `📞 *Phone:* ${order.phone}`,
-    `🏢 *Delivery Location:* ${order.blockName}`,
-    `📍 *Room / Floor / Desk:* ${order.roomFloor}`,
-    `⏰ *Requested Batch:* ${order.deliverySlot}`,
-    `📦 *Packaging:* ${order.packingType}`,
-    `💳 *Payment/Billing:* ${order.useMessPass ? '✅ Active Mess Pass (Meal Count Deducted)' : `💵 Direct Pay on Delivery (Total: ₹${order.totalAmount})`}`,
+    `*Student Name:* ${order.studentName}`,
+    order.rollNo ? `*Roll No:* ${order.rollNo}` : '',
+    `*Phone:* ${order.phone}`,
+    `*Delivery Location:* ${order.blockName}`,
+    `*Room / Floor / Desk:* ${order.roomFloor}`,
+    `*Requested Batch:* ${order.deliverySlot}`,
+    `*Packaging:* ${order.packingType}`,
+    `*Payment/Billing:* ${order.useMessPass ? 'Active Mess Pass (Meal Count Deducted)' : `Direct Pay on Delivery (Total: ₹${order.totalAmount})`}`,
     ``,
-    `📋 *ORDERED ITEMS:*`,
+    `*ORDERED ITEMS:*`,
     itemsText || '• 1x Full Standard Thali / Snack Pack',
     ``,
-    order.notes ? `📝 *Special Instructions:* ${order.notes}\n` : '',
+    order.notes ? `*Special Instructions:* ${order.notes}\n` : '',
     `----------------------------------------`,
-    `📍 *Mess Kitchen:* Campus Central Dining Hall, Ground Floor`,
-    `_Sent via CampusMess Hub Portal_`
+    `*Mess Kitchen:* Campus Central Dining Hall, Ground Floor`,
+    `_Sent via MESS Portal_`
   ].filter(Boolean);
 
   return lines.join('\n');
@@ -49,23 +49,23 @@ export function formatDayScholarWhatsAppMessage(order: DayScholarOrder): string 
     .join('\n');
 
   const lines = [
-    `🥗 *CAMPUS MESS HUB - DAY SCHOLAR ORDER* 🥗`,
-    `🔖 *Order ID:* \`#${order.id}\``,
+    `*MESS - DAY SCHOLAR ORDER*`,
+    `*Order ID:* \`#${order.id}\``,
     `----------------------------------------`,
-    `👤 *Student Name:* ${order.name}`,
-    `📞 *Phone:* ${order.phoneNumber}`,
-    `🏛️ *Department / Course:* ${order.department || 'Day Scholar Student'}`,
-    `🍽️ *Meal Slot:* ${order.mealSlot.toUpperCase()}`,
-    `🛵 *Fulfillment:* ${order.preference === 'delivery' ? `🚚 Deliver to ${order.blockName} (${order.roomFloor})` : '🏃 Self-Pickup from Counter 3 (Day Scholar Express)'}`,
-    `💵 *Pay-Per-Order Bill:* *₹${order.totalAmount}* (Pay at Counter / UPI on Delivery)`,
+    `*Student Name:* ${order.name}`,
+    `*Phone:* ${order.phoneNumber}`,
+    `*Department / Course:* ${order.department || 'Day Scholar Student'}`,
+    `*Meal Slot:* ${order.mealSlot.toUpperCase()}`,
+    `*Fulfillment:* ${order.preference === 'delivery' ? `Deliver to ${order.blockName} (${order.roomFloor})` : 'Self-Pickup from Counter 3 (Day Scholar Express)'}`,
+    `*Pay-Per-Order Bill:* *₹${order.totalAmount}* (Pay at Counter / UPI on Delivery)`,
     ``,
-    `📋 *ORDERED ITEMS:*`,
+    `*ORDERED ITEMS:*`,
     itemsText || '• 1x Custom Day Scholar Selection',
     ``,
-    order.specialNotes ? `📝 *Special Notes:* ${order.specialNotes}\n` : '',
+    order.specialNotes ? `*Special Notes:* ${order.specialNotes}\n` : '',
     `----------------------------------------`,
-    `📍 *Mess Kitchen:* Campus Central Dining Complex`,
-    `_Sent via CampusMess Hub Day Scholar Portal_`
+    `*Mess Kitchen:* Campus Central Dining Complex`,
+    `_Sent via MESS Day Scholar Portal_`
   ].filter(Boolean);
 
   return lines.join('\n');

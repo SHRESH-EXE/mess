@@ -141,86 +141,83 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
         });
       }
 
-      if (html5QrCodeRef.current.isScanning) {
-        await html5QrCodeRef.current.stop();
-      }
+      const qrCodeSuccessCallback = (decodedText: string) => {
+        handleDecodedCode(decodedText);
+      };
 
-      const qrBoxSize = Math.min(250, Math.floor(window.innerWidth * 0.7));
+      const qrCodeErrorCallback = () => {
+        // quiet background frame drops
+      };
+
+      const config = {
+        fps: 15,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0
+      };
 
       await html5QrCodeRef.current.start(
         { facingMode: facing },
-        {
-          fps: 15,
-          qrbox: { width: qrBoxSize, height: qrBoxSize },
-          aspectRatio: 1.0
-        },
-        (decodedText) => {
-          handleDecodedCode(decodedText);
-        },
-        () => {
-          // scanning frames
-        }
+        config,
+        qrCodeSuccessCallback,
+        qrCodeErrorCallback
       );
 
       setIsScannerRunning(true);
+      setIsLoadingCamera(false);
+      setCameraFacing(facing);
 
-      // Check flashlight/torch capability
       try {
-        const capabilities = html5QrCodeRef.current.getRunningTrackCapabilities();
-        if (capabilities && 'torch' in capabilities) {
-          setTorchAvailable(true);
-        }
+        const hasTorch = html5QrCodeRef.current.getRunningTrackCapabilities?.()?.torch;
+        setTorchAvailable(Boolean(hasTorch));
       } catch {
         setTorchAvailable(false);
       }
-    } catch (err) {
-      console.warn('Camera launch error:', err);
-      setIsScannerRunning(false);
-      setCameraError('Unable to start live video stream. You can use the text box below or upload a QR image.');
-    } finally {
+    } catch (err: unknown) {
+      console.warn('Camera initiation failed:', err);
       setIsLoadingCamera(false);
+      setIsScannerRunning(false);
+      
+      const errorMsg = (err instanceof Error) ? err.message : String(err);
+      if (errorMsg.includes('NotAllowedError') || errorMsg.includes('Permission')) {
+        setCameraError('Camera access was denied. Please allow camera permissions in your browser, or enter the code in the text box below.');
+      } else if (errorMsg.includes('NotFoundError') || errorMsg.includes('DevicesNotFoundError')) {
+        setCameraError('No camera found on this device. Please use the text box below to enter your code or Roll number.');
+      } else {
+        setCameraError('Unable to start live camera stream. You can enter your code in the text box below or upload a QR image.');
+      }
     }
   }, [cameraFacing, handleDecodedCode, scannerElementId]);
 
-  // Handle Manual Submit
-  const handleManualSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualCodeInput.trim()) return;
-    handleDecodedCode(manualCodeInput.trim());
-    setManualCodeInput('');
-  };
-
-  // Switch between front and rear camera
+  // Switch between Rear and Front cameras
   const handleSwitchFacing = async () => {
+    await stopScanner();
     const nextFacing = cameraFacing === 'environment' ? 'user' : 'environment';
-    setCameraFacing(nextFacing);
-    if (isScannerRunning) {
-      await stopScanner();
+    setTimeout(() => {
       startScanner(nextFacing);
-    }
+    }, 200);
   };
 
-  // Flashlight toggle
+  // Toggle Torch
   const handleToggleTorch = async () => {
     if (!html5QrCodeRef.current || !torchAvailable) return;
     try {
       const nextTorch = !torchOn;
       await html5QrCodeRef.current.applyVideoConstraints({
-        advanced: [{ torch: nextTorch }]
+        advanced: [{ torch: nextTorch } as MediaTrackConstraintSet]
       });
       setTorchOn(nextTorch);
     } catch (err) {
-      console.warn('Torch toggle not supported:', err);
+      console.warn('Torch toggle not supported on this track:', err);
     }
   };
 
-  // Upload image fallback
+  // Handle Image File Upload for QR Decoding
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setCameraError(null);
     setIsLoadingCamera(true);
+    setCameraError(null);
 
     try {
       if (!html5QrCodeRef.current) {
@@ -230,23 +227,35 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
         });
       }
 
-      const decodedResult = await html5QrCodeRef.current.scanFile(file, true);
-      if (decodedResult) {
-        handleDecodedCode(decodedResult);
+      if (html5QrCodeRef.current.isScanning) {
+        await html5QrCodeRef.current.stop();
       }
+
+      const decodedText = await html5QrCodeRef.current.scanFile(file, true);
+      handleDecodedCode(decodedText);
     } catch (err) {
-      console.warn('Image scan failed:', err);
-      setCameraError('No QR code detected in the selected image.');
+      console.warn('QR file decoding error:', err);
+      setCameraError('Could not decode a valid QR code from this uploaded image. Please try another image or type the code in the text box.');
     } finally {
       setIsLoadingCamera(false);
-      e.target.value = '';
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
-  // Auto-start camera when opened on mobile/tablet or with bypass
+  // Handle Manual Text Box Submission
+  const handleManualSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualCodeInput.trim()) return;
+
+    handleDecodedCode(manualCodeInput.trim());
+    setManualCodeInput('');
+  };
+
+  // Auto-start on mount for mobile devices
   useEffect(() => {
-    const effectiveIsMobile = isMobileOrTablet || desktopBypass;
-    if (autoStart && effectiveIsMobile && !scannedResult) {
+    if (autoStart && (isMobileOrTablet || desktopBypass) && !scannedResult) {
       const timer = setTimeout(() => {
         startScanner();
       }, 150);
@@ -303,23 +312,23 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
     return (
       <div
         id="desktop-device-notice"
-        className="w-full max-w-md mx-auto glassmorphism-card text-[#2e170d] rounded-3xl border border-white/80 p-6 shadow-2xl space-y-5 animate-in fade-in duration-150"
+        className="w-full max-w-md mx-auto glassmorphism-card text-slate-900 rounded-3xl border border-white/95 p-6 shadow-xl space-y-5 animate-in fade-in duration-150"
       >
         <div className="text-center space-y-2">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] text-white flex items-center justify-center mx-auto shadow-md shadow-orange-500/20">
-            <QrCode className="w-7 h-7" />
+            <QrCode className="w-7 h-7 text-white" />
           </div>
-          <h3 className="text-base font-bold text-[#2e170d]">
+          <h3 className="text-base font-black text-slate-900">
             {title}
           </h3>
-          <p className="text-xs text-[#9a3412] font-semibold">
-            Scan via mobile camera or enter the QR code / Roll number below.
+          <p className="text-xs text-slate-600 font-semibold">
+            Scan via camera or enter the QR code / Roll number below.
           </p>
         </div>
 
         {/* Text Box Input for instant code entry */}
         <form onSubmit={handleManualSubmit} className="space-y-2">
-          <label className="text-[11px] font-bold text-[#2e170d] block">
+          <label className="text-[11px] font-black text-slate-900 block">
             Enter QR Code / Roll Number:
           </label>
           <div className="flex items-center space-x-2">
@@ -328,37 +337,37 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
               value={manualCodeInput}
               onChange={(e) => setManualCodeInput(e.target.value)}
               placeholder="e.g. 22CS0142 or QR Token..."
-              className="flex-1 glassmorphism-input text-xs px-3.5 py-2.5 rounded-xl text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none font-mono"
+              className="flex-1 glassmorphism-input text-xs px-3.5 py-2.5 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none font-mono font-semibold"
             />
             <button
               type="submit"
               className="px-4 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer flex items-center gap-1 shrink-0"
             >
-              <Send className="w-3.5 h-3.5" />
-              <span>Verify</span>
+              <Send className="w-3.5 h-3.5 text-white" />
+              <span className="text-white">Verify</span>
             </button>
           </div>
         </form>
 
-        <div className="pt-2 border-t border-orange-200/60 flex flex-col sm:flex-row gap-2">
+        <div className="pt-2 border-t border-orange-200/80 flex flex-col sm:flex-row gap-2">
           {allowDesktopOverride && (
             <button
               onClick={() => {
                 setDesktopBypass(true);
                 setTimeout(() => startScanner(), 100);
               }}
-              className="flex-1 py-2.5 px-3 bg-white/60 hover:bg-white text-[#2e170d] text-xs font-bold rounded-xl border border-orange-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              className="flex-1 py-2.5 px-3 bg-white hover:bg-orange-50 text-slate-900 text-xs font-bold rounded-xl border border-orange-200 shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <Camera className="w-3.5 h-3.5 text-[#ff7a30]" />
+              <Camera className="w-3.5 h-3.5 text-[#ea580c]" />
               <span>Open Webcam</span>
             </button>
           )}
 
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex-1 py-2.5 px-3 bg-white/60 hover:bg-white text-[#2e170d] text-xs font-bold rounded-xl border border-orange-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+            className="flex-1 py-2.5 px-3 bg-white hover:bg-orange-50 text-slate-900 text-xs font-bold rounded-xl border border-orange-200 shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <Upload className="w-3.5 h-3.5 text-[#ff7a30]" />
+            <Upload className="w-3.5 h-3.5 text-[#ea580c]" />
             <span>Upload Image</span>
           </button>
           <input
@@ -373,7 +382,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
         {onClose && (
           <button
             onClick={onClose}
-            className="w-full py-2 bg-white/45 hover:bg-white text-[#9a3412] hover:text-[#2e170d] text-xs font-bold rounded-xl transition-colors cursor-pointer border border-orange-200/60"
+            className="w-full py-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-950 text-xs font-bold rounded-xl transition-colors cursor-pointer border border-orange-200"
           >
             Close
           </button>
@@ -388,7 +397,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
   return (
     <div
       id="mobile-qr-scanner-card"
-      className="w-full max-w-md mx-auto glassmorphism-card text-[#2e170d] rounded-3xl border border-white/80 shadow-2xl overflow-hidden flex flex-col animate-in fade-in duration-150"
+      className="w-full max-w-md mx-auto glassmorphism-card text-slate-900 rounded-3xl border border-white/95 shadow-xl overflow-hidden flex flex-col animate-in fade-in duration-150"
     >
       <input
         ref={fileInputRef}
@@ -400,19 +409,19 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
       />
 
       {/* Header */}
-      <div className="px-5 py-3.5 bg-white/45 border-b border-orange-200/60 flex items-center justify-between">
+      <div className="px-5 py-3.5 bg-white/80 border-b border-orange-200/80 flex items-center justify-between">
         <div className="flex items-center space-x-2.5">
           <div className="p-2 rounded-xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] text-white shadow-xs">
-            <QrCode className="w-5 h-5" />
+            <QrCode className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#2e170d] flex items-center gap-1.5">
+            <h3 className="text-sm font-black text-slate-900 flex items-center gap-1.5">
               <span>{title}</span>
               <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-mono font-bold uppercase">
                 {isScannerRunning ? 'Live' : 'Ready'}
               </span>
             </h3>
-            <p className="text-[11px] text-[#9a3412] font-semibold">{description}</p>
+            <p className="text-[11px] text-slate-600 font-semibold">{description}</p>
           </div>
         </div>
 
@@ -422,7 +431,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
               stopScanner();
               onClose();
             }}
-            className="p-1.5 rounded-xl text-[#9a3412] hover:text-[#2e170d] hover:bg-white/60 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -436,22 +445,22 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
         {scannedResult ? (
           <div
             id="scan-result-card"
-            className="bg-white/60 rounded-2xl p-4 sm:p-5 border border-emerald-300 shadow-md space-y-4 animate-in zoom-in-95 duration-150"
+            className="bg-white/95 rounded-2xl p-4 sm:p-5 border border-emerald-300 shadow-md space-y-4 animate-in zoom-in-95 duration-150 text-slate-900"
           >
             <div className="flex items-center space-x-3 text-emerald-700">
               <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center border border-emerald-300 shrink-0">
-                <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+                <CheckCircle2 className="w-6 h-6 text-emerald-700" />
               </div>
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-800">
                   QR Code Verified
                 </span>
-                <div className="text-[11px] text-[#9a3412] font-medium">Decoded successfully</div>
+                <div className="text-[11px] text-slate-600 font-bold">Decoded successfully</div>
               </div>
             </div>
 
             {/* Decoded Content Display Box */}
-            <div className="bg-white/70 p-3.5 rounded-xl border border-orange-200 font-mono text-xs text-[#2e170d] font-bold break-all select-all max-h-36 overflow-y-auto">
+            <div className="bg-orange-50/80 p-3.5 rounded-xl border border-orange-200 font-mono text-xs text-slate-900 font-bold break-all select-all max-h-36 overflow-y-auto">
               {scannedResult}
             </div>
 
@@ -463,17 +472,17 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
                   className={`flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     hasCopied
                       ? 'bg-emerald-600 text-white shadow-md'
-                      : 'bg-white/70 hover:bg-white text-[#2e170d] border border-orange-200'
+                      : 'bg-white hover:bg-slate-50 text-slate-900 border border-orange-200 shadow-xs'
                   }`}
                 >
                   {hasCopied ? (
                     <>
                       <Check className="w-4 h-4 text-white" />
-                      <span>Copied!</span>
+                      <span className="text-white">Copied!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-4 h-4 text-[#6c2e11]" />
+                      <Copy className="w-4 h-4 text-[#ea580c]" />
                       <span>Copy Text</span>
                     </>
                   )}
@@ -486,16 +495,16 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
                     rel="noopener noreferrer"
                     className="flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white transition-all shadow-md cursor-pointer"
                   >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>Open Link</span>
+                    <ExternalLink className="w-4 h-4 text-white" />
+                    <span className="text-white">Open Link</span>
                   </a>
                 ) : (
                   <button
                     onClick={() => startScanner()}
                     className="flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white transition-all shadow-md cursor-pointer"
                   >
-                    <RotateCcw className="w-4 h-4" />
-                    <span>Scan Again</span>
+                    <RotateCcw className="w-4 h-4 text-white" />
+                    <span className="text-white">Scan Again</span>
                   </button>
                 )}
               </div>
@@ -503,9 +512,9 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
               {isUrl(scannedResult) && (
                 <button
                   onClick={() => startScanner()}
-                  className="w-full flex items-center justify-center space-x-1.5 py-2 bg-white/60 hover:bg-white text-[#6c2e11] text-xs font-bold rounded-xl border border-orange-200 transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-center space-x-1.5 py-2 bg-white hover:bg-slate-50 text-slate-900 text-xs font-bold rounded-xl border border-orange-200 transition-colors cursor-pointer"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-3.5 h-3.5 text-[#ea580c]" />
                   <span>Scan Another Code</span>
                 </button>
               )}
@@ -515,7 +524,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
           /* 2. CAMERA VIEWFINDER AND TEXT BOX INPUT */
           <div className="space-y-4">
             {/* Viewfinder Frame */}
-            <div className="relative w-full aspect-square max-h-72 bg-orange-950/20 rounded-2xl overflow-hidden border-2 border-orange-300 shadow-xl flex items-center justify-center">
+            <div className="relative w-full aspect-square max-h-72 bg-black rounded-2xl overflow-hidden border-2 border-orange-500 shadow-xl flex items-center justify-center">
               
               <div
                 id={scannerElementId}
@@ -523,9 +532,9 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
               />
 
               {isLoadingCamera && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-xs flex flex-col items-center justify-center space-y-3 z-30">
+                <div className="absolute inset-0 bg-black/80 backdrop-blur-xs flex flex-col items-center justify-center space-y-3 z-30">
                   <RefreshCw className="w-8 h-8 text-[#ff7a30] animate-spin" />
-                  <div className="text-xs font-bold text-[#2e170d]">
+                  <div className="text-xs font-bold text-white">
                     Opening camera...
                   </div>
                 </div>
@@ -533,7 +542,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
 
               {isScannerRunning && (
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-20">
-                  <div className="absolute inset-0 bg-orange-950/10" />
+                  <div className="absolute inset-0 bg-black/20" />
 
                   {/* Target QR Reticle Box */}
                   <div className="relative w-48 h-48 sm:w-56 sm:h-56">
@@ -546,9 +555,9 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
                   </div>
 
                   <div className="absolute top-3 inset-x-0 flex justify-center">
-                    <div className="px-3 py-1 rounded-full bg-white/85 backdrop-blur-xs border border-orange-200 text-[10px] font-mono text-[#ea580c] font-bold flex items-center gap-1.5 shadow-md">
-                      <Zap className="w-3 h-3 animate-spin" />
-                      <span>Align QR inside frame</span>
+                    <div className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-xs border border-white/20 text-[10px] font-mono text-[#ff9248] font-bold flex items-center gap-1.5 shadow-md">
+                      <Zap className="w-3 h-3 animate-spin text-[#ff7a30]" />
+                      <span className="text-white">Align QR inside frame</span>
                     </div>
                   </div>
                 </div>
@@ -559,10 +568,10 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
                 <div className="absolute bottom-3 right-3 flex items-center space-x-2 z-30">
                   <button
                     onClick={handleSwitchFacing}
-                    className="p-2.5 rounded-xl bg-white/85 hover:bg-white text-[#2e170d] backdrop-blur-md border border-orange-200 transition-all cursor-pointer shadow-lg"
+                    className="p-2.5 rounded-xl bg-black/70 hover:bg-black/90 text-white backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-lg"
                     title="Switch Camera (Front / Back)"
                   >
-                    <SwitchCamera className="w-4 h-4" />
+                    <SwitchCamera className="w-4 h-4 text-white" />
                   </button>
 
                   {torchAvailable && (
@@ -571,11 +580,11 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
                       className={`p-2.5 rounded-xl backdrop-blur-md border transition-all cursor-pointer shadow-lg ${
                         torchOn
                           ? 'bg-[#ff7a30] text-white border-orange-400 shadow-orange-500/30'
-                          : 'bg-white/85 text-[#2e170d] border-orange-200 hover:bg-white'
+                          : 'bg-black/70 text-white border-white/20 hover:bg-black/90'
                       }`}
                       title="Toggle Flashlight"
                     >
-                      <Flashlight className="w-4 h-4" />
+                      <Flashlight className="w-4 h-4 text-white" />
                     </button>
                   )}
                 </div>
@@ -584,18 +593,18 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
 
             {/* Error Message if camera failed */}
             {cameraError && (
-              <div className="p-3 rounded-xl bg-rose-100/90 border border-rose-300 text-rose-900 text-xs space-y-1">
-                <div className="font-bold flex items-center gap-1.5 text-rose-700">
-                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+              <div className="p-3 rounded-xl bg-rose-100 border border-rose-300 text-rose-950 text-xs space-y-1">
+                <div className="font-bold flex items-center gap-1.5 text-rose-900">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-600" />
                   <span>Camera Notice</span>
                 </div>
-                <p className="text-[11px] opacity-90">{cameraError}</p>
+                <p className="text-[11px] opacity-90 font-medium">{cameraError}</p>
               </div>
             )}
 
             {/* Text Box Input for instant typing/pasting */}
-            <div className="bg-white/45 p-3.5 rounded-2xl border border-white/80 space-y-2 shadow-xs">
-              <label className="text-[11px] font-bold text-[#2e170d] flex items-center justify-between">
+            <div className="bg-white/90 p-3.5 rounded-2xl border border-orange-200 space-y-2 shadow-xs">
+              <label className="text-[11px] font-black text-slate-900 flex items-center justify-between">
                 <span>Or Enter Code in Text Box:</span>
                 <button
                   type="button"
@@ -613,14 +622,14 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
                   value={manualCodeInput}
                   onChange={(e) => setManualCodeInput(e.target.value)}
                   placeholder="Type QR Token or Roll No..."
-                  className="flex-1 glassmorphism-input text-xs px-3 py-2 rounded-xl text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none font-mono"
+                  className="flex-1 glassmorphism-input text-xs px-3 py-2 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none font-mono font-semibold"
                 />
                 <button
                   type="submit"
                   className="px-4 py-2 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer flex items-center gap-1 shrink-0"
                 >
-                  <Send className="w-3 h-3" />
-                  <span>Verify</span>
+                  <Send className="w-3 h-3 text-white" />
+                  <span className="text-white">Verify</span>
                 </button>
               </form>
             </div>
@@ -629,13 +638,13 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
             <div className="flex items-center justify-between text-xs pt-0.5">
               {isScannerRunning ? (
                 <>
-                  <span className="text-[#9a3412] font-mono text-[11px] font-bold flex items-center gap-1">
-                    <Camera className="w-3.5 h-3.5 text-[#ff7a30]" />
+                  <span className="text-slate-700 font-mono text-[11px] font-bold flex items-center gap-1">
+                    <Camera className="w-3.5 h-3.5 text-[#ea580c]" />
                     <span>{cameraFacing === 'environment' ? 'Rear Camera' : 'Front Camera'}</span>
                   </span>
                   <button
                     onClick={stopScanner}
-                    className="px-3 py-1 rounded-xl bg-white/70 hover:bg-white text-[#2e170d] font-bold text-xs border border-orange-200 transition-colors cursor-pointer"
+                    className="px-3 py-1 rounded-xl bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs border border-orange-200 transition-colors cursor-pointer shadow-xs"
                   >
                     Pause Camera
                   </button>
@@ -646,8 +655,8 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
                   disabled={isLoadingCamera}
                   className="w-full py-2.5 px-3 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                 >
-                  <Camera className="w-3.5 h-3.5" />
-                  <span>Start Camera</span>
+                  <Camera className="w-3.5 h-3.5 text-white" />
+                  <span className="text-white">Start Camera</span>
                 </button>
               )}
             </div>
@@ -656,10 +665,10 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="px-5 py-3 bg-white/40 border-t border-orange-200/60 flex items-center justify-between text-[11px] text-[#9a3412] font-medium">
-        <div className="flex items-center space-x-1.5 font-semibold">
+      <div className="px-5 py-3 bg-orange-50/60 border-t border-orange-200/80 flex items-center justify-between text-[11px] text-slate-600 font-semibold">
+        <div className="flex items-center space-x-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Real-time QR Token Verification</span>
+          <span className="text-slate-800">Real-time QR Token Verification</span>
         </div>
         {onClose && (
           <button
@@ -667,7 +676,7 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
               stopScanner();
               onClose();
             }}
-            className="hover:text-[#2e170d] font-bold transition-colors cursor-pointer"
+            className="text-slate-700 hover:text-slate-950 font-bold transition-colors cursor-pointer"
           >
             Close
           </button>

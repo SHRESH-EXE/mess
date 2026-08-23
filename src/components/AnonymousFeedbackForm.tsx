@@ -172,7 +172,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                       <option value="">-- Choose from today's {selectedSlot} menu --</option>
                       {currentSlotDishes.map((dish) => (
                         <option key={dish.id} value={dish.name}>
-                          {dish.name} {dish.isChefSpecial ? '⭐ (Special)' : ''}
+                          {dish.name} {dish.isChefSpecial ? '(Chef Special)' : ''}
                         </option>
                       ))}
                       <option value="__other__">Other (Type custom item)</option>

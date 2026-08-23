@@ -216,14 +216,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
             <ShieldCheck className="w-6 h-6 text-slate-950" />
           </div>
           <div>
-            <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider">
-                Mess Staff & Warden Control
-              </span>
-              <span className="text-xs text-slate-400 font-mono">Realtime Hub</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white font-serif tracking-tight">
-              CampusMess Operations Console
+            <h2 className="text-xl sm:text-2xl font-black text-white font-['Outfit'] tracking-tight">
+              MESS Operations Console
             </h2>
           </div>
         </div>
@@ -461,18 +455,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
           {/* Day Scholar Summary Banner */}
           <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
-              <div className="flex items-center space-x-2">
+              <div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider">
                   À La Carte Pay-Per-Order
                 </span>
-                <span className="text-xs text-slate-400 font-mono">Live Day Scholar Queue</span>
               </div>
               <h3 className="text-xl font-bold text-slate-100">
                 Day Scholar Orders & Kitchen Expeditor
               </h3>
-              <p className="text-xs text-slate-400">
-                Direct meals ordered by non-hostel day scholars. Update prep statuses and manage counter collection / delivery dispatch.
-              </p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -802,7 +792,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
                 <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
                   <span>{fb.timestamp}</span>
-                  <span className="text-teal-400 font-bold">🔒 Anonymous Verified Student</span>
+                  <span className="text-teal-400 font-bold">Anonymous Verified Student</span>
                 </div>
               </div>
             ))}

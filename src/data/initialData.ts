@@ -1516,7 +1516,7 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
       breakfast: {
         id: 'sun-bf',
         type: 'breakfast',
-        name: 'Breakfast (Lazy Sunday Special)',
+        name: 'Breakfast',
         timing: '08:00 AM - 10:30 AM',
         startHour: 8,
         startMin: 0,
@@ -1564,7 +1564,7 @@ export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
       lunch: {
         id: 'sun-lu',
         type: 'lunch',
-        name: 'Lunch (Sunday Special Feast)',
+        name: 'Lunch',
         timing: '12:30 PM - 03:00 PM',
         startHour: 12,
         startMin: 30,

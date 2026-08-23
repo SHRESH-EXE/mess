@@ -349,7 +349,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                       key={alg}
                       className="px-2 py-0.5 rounded-md bg-red-950/60 text-red-300 border border-red-800/60 text-xs font-bold"
                     >
-                      ⚠️ {alg}
+                      {alg}
                     </span>
                   ))
                 ) : (
@@ -532,17 +532,17 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                   <td className="py-2.5 font-mono text-slate-400">{rec.timestamp}</td>
                   <td className="py-2.5 text-slate-300">
                     <span className="px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 font-mono text-[10px] text-slate-300">
-                      {rec.method === 'qr_scanner' ? '📸 QR Camera' : rec.method === 'pass_tap' ? '💳 Pass Tap' : '✍️ Staff Manual'}
+                      {rec.method === 'qr_scanner' ? 'QR Camera' : rec.method === 'pass_tap' ? 'Pass Tap' : 'Staff Manual'}
                     </span>
                   </td>
                   <td className="py-2.5">
                     {rec.status === 'attended' ? (
                       <span className="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 font-semibold text-[10px] border border-emerald-800">
-                        ✅ Eaten
+                        Eaten
                       </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-full bg-blue-950 text-blue-300 font-semibold text-[10px] border border-blue-800">
-                        ℹ️ Rebate Applied
+                        Rebate Applied
                       </span>
                     )}
                   </td>
