@@ -1,29 +1,12 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
-import { MealType, STANDARD_ALLERGENS } from '../types/mess';
+import { MealType } from '../types/mess';
 import {
   MessageSquareHeart,
   Star,
-  ShieldCheck,
   Send,
-  Sparkles,
-  Utensils,
-  Clock,
-  ThumbsUp,
-  AlertCircle,
-  CheckCircle2,
-  Filter
+  CheckCircle2
 } from 'lucide-react';
-import { formatTimeAmPm } from '../utils/time';
-
-const RATING_DESCRIPTIONS: Record<number, { label: string; color: string; bg: string }> = {
-  1: { label: 'Needs Big Improvement', color: 'text-red-400', bg: 'bg-red-950/40 border-red-800/50' },
-  2: { label: 'Below Average / Bland', color: 'text-orange-400', bg: 'bg-orange-950/40 border-orange-800/50' },
-  3: { label: 'Decent / Standard Taste', color: 'text-amber-400', bg: 'bg-amber-950/40 border-amber-800/50' },
-  4: { label: 'Very Tasty & Fresh', color: 'text-emerald-400', bg: 'bg-emerald-950/40 border-emerald-800/50' },
-  5: { label: 'Outstanding Chef Perfection!', color: 'text-teal-300', bg: 'bg-teal-950/40 border-teal-800/50' }
-};
-
 interface AnonymousFeedbackFormProps {
   initialSlot?: MealType;
   initialDish?: string;
@@ -92,10 +75,6 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
       {/* Header Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-teal-950/80 via-slate-900 to-indigo-950/80 border border-teal-700/40 p-6 sm:p-8 shadow-xl">
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-300 text-xs font-semibold mb-3">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>100% Anonymous & Identity-Protected</span>
-          </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Rate Today's Campus Meals
           </h1>
@@ -216,14 +195,6 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                       );
                     })}
                   </div>
-
-                  {/* Rating Label badge */}
-                  {RATING_DESCRIPTIONS[hoverRating || rating] && (
-                    <div className={`mt-2 inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold border ${RATING_DESCRIPTIONS[hoverRating || rating].bg} ${RATING_DESCRIPTIONS[hoverRating || rating].color}`}>
-                      <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                      <span>{RATING_DESCRIPTIONS[hoverRating || rating].label}</span>
-                    </div>
-                  )}
                 </div>
 
                 {/* 4. Constructive Comment */}

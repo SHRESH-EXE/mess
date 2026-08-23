@@ -137,27 +137,15 @@ export const MenuDisplay: React.FC = () => {
 
       {/* Top Day Selector Bar */}
       <div className="dark-glass-card p-4 sm:p-5 border border-white/10 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3.5">
-          <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
-              <Calendar className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-sm sm:text-base font-bold text-slate-100">
-                Weekly Hostel Mess Schedule
-              </h2>
-            </div>
+        <div className="flex items-center space-x-2.5 mb-3.5">
+          <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            <Calendar className="w-4 h-4" />
           </div>
-
-          {/* Quick jump to Today */}
-          {selectedDay !== todayDay && (
-            <button
-              onClick={() => setSelectedDay(todayDay)}
-              className="text-xs px-4 py-1.5 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-all self-start sm:self-auto cursor-pointer shadow-md shadow-amber-500/20"
-            >
-              Jump to Today ({todayDay})
-            </button>
-          )}
+          <div>
+            <h2 className="text-sm sm:text-base font-bold text-slate-100">
+              Weekly Hostel Mess Schedule
+            </h2>
+          </div>
         </div>
 
         {/* Day Pills Carousel */}

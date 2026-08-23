@@ -355,9 +355,6 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
             <h3 className="text-base font-bold text-slate-100">
               Today's Meal Check-Off Status ({todayDateStr})
             </h3>
-            <p className="text-xs text-slate-400">
-              Instant meal attendance validation for {currentStudent.name}
-            </p>
           </div>
           <div className="text-xs font-medium text-slate-300 bg-slate-800/90 px-3.5 py-1.5 rounded-full border border-slate-700">
             Active Meal: <strong className="text-amber-400 capitalize">{mealStatus.currentMeal}</strong>
@@ -479,9 +476,6 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               <h3 className="text-sm font-bold text-slate-100">
                 Recent Attendance & Gate Verification Logs
               </h3>
-              <p className="text-xs text-slate-400">
-                Audit trail for {currentStudent.name} ({currentStudent.rollNo})
-              </p>
             </div>
           </div>
           <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-800 text-slate-300">{studentAttendance.length} records</span>

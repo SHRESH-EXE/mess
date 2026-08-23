@@ -6,20 +6,12 @@ import {
   Phone,
   Clock,
   Package,
-  FileText,
   CheckCircle2,
   AlertTriangle,
-  ExternalLink,
-  Sparkles,
   Plus,
   Minus,
   Trash2,
-  Utensils,
-  CreditCard,
-  History,
-  ChefHat,
-  ShieldAlert,
-  ShieldCheck
+  Utensils
 } from 'lucide-react';
 import { ACADEMIC_BLOCKS, DEFAULT_MESS_WHATSAPP_NUMBER } from '../data/initialData';
 import { generateWhatsAppLink } from '../utils/whatsapp';
@@ -30,8 +22,7 @@ export const AcademicBlockOrder: React.FC = () => {
   const {
     currentStudent,
     weeklyMenu,
-    createAcademicOrder,
-    orders
+    createAcademicOrder
   } = useMess();
 
   const todayDay = getCurrentDayOfWeek();
@@ -71,12 +62,6 @@ export const AcademicBlockOrder: React.FC = () => {
 
   // Custom item adding
   const [customItemName, setCustomItemName] = useState('');
-
-  // Available dishes from active menu
-  const availableDishes = [
-    ...(todayMenu.meals[mealStatus.currentMeal]?.dishes || []),
-    ...(todayMenu.meals.snacks?.dishes || [])
-  ];
 
   // Helper to find dish allergens in current weekly menu
   const allDishesInMenu = useMemo(() => {
@@ -209,9 +194,6 @@ export const AcademicBlockOrder: React.FC = () => {
     window.open(waUrl, '_blank', 'noopener,noreferrer');
   };
 
-  // Filter student's past parcel orders
-  const myOrders = orders.filter(o => o.phone === phone || o.rollNo === rollNo || o.studentName === studentName);
-
   return (
     <section id="academic-block-order-section" className="space-y-6 animate-in fade-in duration-200">
       
@@ -261,11 +243,9 @@ export const AcademicBlockOrder: React.FC = () => {
         </div>
       )}
 
-      {/* Main Grid: Order Form (7 Cols) & WhatsApp Live Preview + Tracking (5 Cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Order Form Card (Left 7 Cols) */}
-        <div className="lg:col-span-7 bg-slate-900 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl space-y-6">
+      {/* Order Form Card */}
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-slate-900 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl space-y-6">
           <div className="flex items-center space-x-2.5 pb-3 border-b border-slate-800">
             <div className="p-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
               <Utensils className="w-5 h-5" />
@@ -274,9 +254,6 @@ export const AcademicBlockOrder: React.FC = () => {
               <h3 className="text-base font-bold text-slate-100">
                 1. Delivery Location & Student Details
               </h3>
-              <p className="text-xs text-slate-400">
-                Fill delivery location in campus academic complex
-              </p>
             </div>
           </div>
 
@@ -357,40 +334,6 @@ export const AcademicBlockOrder: React.FC = () => {
                 <span className="text-[11px] text-slate-400">
                   {selectedItems.length} items in box
                 </span>
-              </div>
-
-              {/* Quick Add Chips from Today's Active Kitchen */}
-              <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 space-y-2">
-                <div className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Quick Add from Today's Kitchen Counter:</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => handleAddItem(`Full ${todayMenu.meals[mealStatus.currentMeal]?.name || 'Meal'} Thali Pack`, 90, true)}
-                    className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors border border-amber-500/40 cursor-pointer"
-                  >
-                    + Standard Meal Thali (Mess Pass)
-                  </button>
-                  {availableDishes.slice(0, 4).map((d) => (
-                    <button
-                      key={d.id}
-                      type="button"
-                      onClick={() => handleAddItem(d.name, 40, false)}
-                      className="text-[11px] font-medium px-2 py-1 rounded-lg bg-slate-900 text-slate-200 hover:bg-slate-800 transition-colors border border-slate-700 cursor-pointer"
-                    >
-                      + {d.name}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => handleAddItem('Cutting Chai + Veg Samosa (2 pcs)', 35, false)}
-                    className="text-[11px] font-medium px-2 py-1 rounded-lg bg-slate-900 text-slate-200 hover:bg-slate-800 transition-colors border border-slate-700 cursor-pointer"
-                  >
-                    + Samosa & Chai Pack (₹35)
-                  </button>
-                </div>
               </div>
 
               {/* Selected Items List */}
@@ -586,74 +529,6 @@ export const AcademicBlockOrder: React.FC = () => {
 
           </form>
         </div>
-
-        {/* WhatsApp Real-Time Preview & Past Orders (Right 5 Cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          
-          {/* Past Academic Block Orders Tracking */}
-          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  <History className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-100">
-                    Your Academic Parcel History
-                  </h3>
-                  <p className="text-xs text-slate-400">Live order status</p>
-                </div>
-              </div>
-              <span className="text-xs font-mono text-slate-400">{myOrders.length} orders</span>
-            </div>
-
-            <div className="space-y-3">
-              {myOrders.map((ord) => (
-                <div
-                  key={ord.id}
-                  className="p-3.5 rounded-2xl border border-slate-800 bg-slate-950/70 space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-slate-100">
-                      #{ord.id}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        ord.status === 'Delivered'
-                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                          : ord.status === 'Dispatched'
-                          ? 'bg-blue-950 text-blue-300 border border-blue-800'
-                          : ord.status === 'In Kitchen'
-                          ? 'bg-amber-950 text-amber-300 border border-amber-800'
-                          : 'bg-slate-800 text-slate-300'
-                      }`}
-                    >
-                      {ord.status}
-                    </span>
-                  </div>
-
-                  <div className="text-xs text-slate-200 font-medium">
-                    {ord.blockName} • {ord.roomFloor}
-                  </div>
-
-                  <div className="text-[11px] text-slate-400">
-                    {ord.items.map(i => `${i.dishName} (x${i.quantity})`).join(', ')}
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400 font-mono">
-                    <span>{ord.orderTime} • {ord.deliverySlot}</span>
-                    <span className="font-bold text-amber-400">
-                      {ord.useMessPass ? 'Pass Deducted' : `₹${ord.totalAmount}`}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-
-        </div>
-
       </div>
     </section>
   );

@@ -334,8 +334,8 @@ export const DayScholarOrder: React.FC = () => {
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center space-x-2">
                   <Flame className="w-4 h-4 text-amber-400" />
-                  <h2 className="text-sm font-bold text-slate-100">
-                    Select Meal Slot for Today ({menuDayKey})
+                  <h2 className="text-sm font-bold text-slate-100 font-sans tracking-normal">
+                    Select Meal
                   </h2>
                 </div>
                 <span className="text-xs text-amber-400 font-mono">100% Pure Veg</span>
