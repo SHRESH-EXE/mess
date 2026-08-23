@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
-import { X, Plus, Trash2, Check, Utensils, AlertCircle, ShieldAlert, Sparkles } from 'lucide-react';
+import { X, Plus, Trash2, Check, Utensils, AlertCircle, ShieldAlert } from 'lucide-react';
 import { MealType, MealSlot, DishItem, DietaryTag, STANDARD_ALLERGENS } from '../types/mess';
 
 interface MenuEditorModalProps {
@@ -104,29 +104,29 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-orange-950/25 backdrop-blur-md animate-in fade-in duration-150">
       <div
         id="menu-editor-modal"
-        className="w-full max-w-2xl bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 text-slate-100 overflow-hidden flex flex-col max-h-[90vh]"
+        className="w-full max-w-2xl glassmorphism-card rounded-3xl shadow-2xl border border-white/80 text-[#2e170d] overflow-hidden flex flex-col max-h-[90vh]"
       >
         {/* Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div className="px-6 py-4 bg-white/45 border-b border-orange-200/60 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-amber-500 text-slate-950 shadow-md font-bold">
-              <Utensils className="w-5 h-5 text-slate-950" />
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] text-white shadow-xs">
+              <Utensils className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-[#ea580c] uppercase tracking-wider">
                 Mess Staff & Nutritionist Editor
               </span>
-              <h3 className="text-lg font-bold text-slate-100 leading-tight">
+              <h3 className="text-lg font-bold text-[#2e170d] leading-tight">
                 Update {day} • {currentSlot.name}
               </h3>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-[#9a3412] hover:text-[#2e170d] hover:bg-white/60 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -135,8 +135,8 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
         {/* Content */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
           {isSaved && (
-            <div className="p-3.5 bg-emerald-950/80 border border-emerald-800 rounded-xl text-emerald-200 text-xs font-semibold flex items-center gap-2">
-              <Check className="w-4 h-4 text-emerald-400" />
+            <div className="p-3.5 bg-emerald-100/90 border border-emerald-300 rounded-2xl text-emerald-900 text-xs font-bold flex items-center gap-2">
+              <Check className="w-4 h-4 text-emerald-600" />
               <span>Menu and allergen tags updated successfully and synced with student dashboard!</span>
             </div>
           )}
@@ -144,23 +144,23 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
           {/* Timings & Special Note */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Meal Timings Window</label>
+              <label className="text-xs font-bold text-[#2e170d]">Meal Timings Window</label>
               <input
                 type="text"
                 value={timing}
                 onChange={(e) => setTiming(e.target.value)}
                 placeholder="e.g. 12:30 PM - 02:30 PM"
-                className="w-full text-xs p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-600 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
+                className="w-full text-xs p-2.5 rounded-xl glassmorphism-input text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Chef Announcement / Special Note</label>
+              <label className="text-xs font-bold text-[#2e170d]">Chef Announcement / Special Note</label>
               <input
                 type="text"
                 value={specialNote}
                 onChange={(e) => setSpecialNote(e.target.value)}
                 placeholder="e.g. Special Dum Biryani cooked on slow woodfire..."
-                className="w-full text-xs p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-600 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
+                className="w-full text-xs p-2.5 rounded-xl glassmorphism-input text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none"
               />
             </div>
           </div>
@@ -168,50 +168,50 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
           {/* Existing Dishes List */}
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+              <label className="text-xs font-bold text-[#2e170d] uppercase tracking-wider">
                 Configured Dishes ({dishes.length})
               </label>
-              <span className="text-[11px] text-slate-400">Tap dietary tags to toggle</span>
+              <span className="text-[11px] text-[#9a3412] font-semibold">Tap dietary tags to toggle</span>
             </div>
 
             <div className="space-y-2">
               {dishes.map((dish) => (
                 <div
                   key={dish.id}
-                  className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/70 hover:bg-slate-950 transition-colors flex flex-col sm:flex-row sm:items-start justify-between gap-3"
+                  className="p-3.5 rounded-2xl border border-white/80 bg-white/50 hover:bg-white/70 transition-colors flex flex-col sm:flex-row sm:items-start justify-between gap-3 shadow-xs"
                 >
                   <div className="flex-1 space-y-1.5">
                     <div className="flex items-center space-x-2">
-                      <span className="font-bold text-xs text-slate-100">{dish.name}</span>
+                      <span className="font-bold text-xs text-[#2e170d]">{dish.name}</span>
                       {dish.protein && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-mono font-bold">
                           {dish.protein}
                         </span>
                       )}
                     </div>
 
                     {dish.description && (
-                      <div className="text-[11px] text-slate-400">{dish.description}</div>
+                      <div className="text-[11px] text-[#9a3412] font-medium">{dish.description}</div>
                     )}
 
                     {/* Allergens on Dish */}
                     <div className="flex flex-wrap gap-1 items-center text-[10px]">
-                      <span className="text-slate-500">Allergens:</span>
+                      <span className="text-[#9a3412] font-semibold">Allergens:</span>
                       {dish.allergens && dish.allergens.length > 0 ? (
                         dish.allergens.map(a => (
-                          <span key={a} className="px-1.5 py-0.2 rounded bg-red-500/20 text-red-300 font-bold border border-red-500/30">
+                          <span key={a} className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 font-bold border border-rose-300">
                             {a}
                           </span>
                         ))
                       ) : (
-                        <span className="text-slate-500 italic">None listed</span>
+                        <span className="text-[#9a3412]/70 italic">None listed</span>
                       )}
                     </div>
 
                     {/* Ingredients */}
                     {dish.ingredients && dish.ingredients.length > 0 && (
-                      <div className="text-[10px] text-slate-400">
-                        <strong className="text-slate-400">Ingredients:</strong> {dish.ingredients.join(', ')}
+                      <div className="text-[10px] text-[#9a3412]">
+                        <strong className="text-[#2e170d]">Ingredients:</strong> {dish.ingredients.join(', ')}
                       </div>
                     )}
 
@@ -224,10 +224,10 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                             key={tag}
                             type="button"
                             onClick={() => handleToggleTag(dish.id, tag)}
-                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
                               active
-                                ? 'bg-amber-500 text-slate-950 border-amber-500 font-bold'
-                                : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-slate-500'
+                                ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white border-transparent'
+                                : 'bg-white/60 text-[#6c2e11] border-orange-200 hover:border-orange-400'
                             }`}
                           >
                             {tag}
@@ -240,7 +240,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                   <button
                     type="button"
                     onClick={() => handleRemoveDish(dish.id)}
-                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-950/50 rounded-lg transition-colors self-end sm:self-start cursor-pointer"
+                    className="p-1.5 text-[#9a3412] hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors self-end sm:self-start cursor-pointer"
                     title="Remove Dish"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -251,9 +251,9 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
           </div>
 
           {/* Add New Dish Form */}
-          <form onSubmit={handleAddDish} className="p-4 bg-slate-950/80 rounded-xl border border-slate-800 space-y-3">
-            <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-              <Plus className="w-4 h-4 text-amber-400" />
+          <form onSubmit={handleAddDish} className="p-4 bg-white/45 rounded-2xl border border-white/80 space-y-3 shadow-xs">
+            <div className="text-xs font-bold text-[#ea580c] flex items-center gap-1.5">
+              <Plus className="w-4 h-4 text-[#ea580c]" />
               <span>Add New Dish & Nutrition Profile</span>
             </div>
 
@@ -263,18 +263,18 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                 value={newDishName}
                 onChange={(e) => setNewDishName(e.target.value)}
                 placeholder="Dish Title (e.g. Malai Kofta)"
-                className="text-xs p-2.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-100 placeholder:text-slate-500 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
+                className="text-xs p-2.5 rounded-xl glassmorphism-input text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none"
               />
               <select
                 value={newDishTag}
                 onChange={(e) => setNewDishTag(e.target.value as DietaryTag)}
-                className="text-xs p-2.5 rounded-lg border border-slate-700 bg-slate-900 text-slate-100 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
+                className="text-xs p-2.5 rounded-xl glassmorphism-input text-[#2e170d] focus:outline-none font-bold"
               >
-                <option value="veg" className="bg-slate-900 text-slate-100">Pure Veg 🟢</option>
-                <option value="high-protein" className="bg-slate-900 text-slate-100">High Protein 💪</option>
-                <option value="special" className="bg-slate-900 text-slate-100">Chef Special ⭐</option>
-                <option value="sweet" className="bg-slate-900 text-slate-100">Sweet / Dessert 🍮</option>
-                <option value="jain" className="bg-slate-900 text-slate-100">Jain Friendly 🌿</option>
+                <option value="veg">Pure Veg 🟢</option>
+                <option value="high-protein">High Protein 💪</option>
+                <option value="special">Chef Special ⭐</option>
+                <option value="sweet">Sweet / Dessert 🍮</option>
+                <option value="jain">Jain Friendly 🌿</option>
               </select>
             </div>
 
@@ -284,14 +284,14 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                 value={newDishCalories}
                 onChange={(e) => setNewDishCalories(Number(e.target.value))}
                 placeholder="Calories (e.g. 240 kcal)"
-                className="text-xs p-2 rounded-lg border border-slate-700 bg-slate-900 text-slate-100 placeholder:text-slate-500 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
+                className="text-xs p-2 rounded-xl glassmorphism-input text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none font-mono"
               />
               <input
                 type="text"
                 value={newDishProtein}
                 onChange={(e) => setNewDishProtein(e.target.value)}
                 placeholder="Protein (e.g. 12g)"
-                className="text-xs p-2 rounded-lg border border-slate-700 bg-slate-900 text-slate-100 placeholder:text-slate-500 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
+                className="text-xs p-2 rounded-xl glassmorphism-input text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none font-mono"
               />
             </div>
 
@@ -300,7 +300,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
               value={newDishDesc}
               onChange={(e) => setNewDishDesc(e.target.value)}
               placeholder="Short Description..."
-              className="w-full text-xs p-2 rounded-lg border border-slate-700 bg-slate-900 text-slate-100 placeholder:text-slate-500 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
+              className="w-full text-xs p-2 rounded-xl glassmorphism-input text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none"
             />
 
             <input
@@ -308,13 +308,13 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
               value={newDishIngredients}
               onChange={(e) => setNewDishIngredients(e.target.value)}
               placeholder="Comma separated ingredients (e.g. Paneer, Cream, Tomato, Cashew Gravy, Butter)..."
-              className="w-full text-xs p-2 rounded-lg border border-slate-700 bg-slate-900 text-slate-100 placeholder:text-slate-500 focus:ring-1 focus:ring-amber-500 focus:outline-hidden"
+              className="w-full text-xs p-2 rounded-xl glassmorphism-input text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none"
             />
 
             {/* Allergen Checkbox Selection */}
             <div className="space-y-1.5 pt-1">
-              <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1">
-                <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+              <label className="text-[11px] font-bold text-[#2e170d] flex items-center gap-1">
+                <ShieldAlert className="w-3.5 h-3.5 text-[#ff7a30]" />
                 <span>Select Contained Allergens for Student Warning System:</span>
               </label>
               <div className="flex flex-wrap gap-1.5">
@@ -325,10 +325,10 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                       key={alg}
                       type="button"
                       onClick={() => toggleNewDishAllergen(alg)}
-                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
                         isChecked
-                          ? 'bg-red-500/20 text-red-300 border-red-500/50 font-bold'
-                          : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-slate-500'
+                          ? 'bg-rose-100 text-rose-800 border-rose-300'
+                          : 'bg-white/60 text-[#6c2e11] border-orange-200 hover:border-orange-400'
                       }`}
                     >
                       {isChecked ? '✓ ' : '+ '}{alg}
@@ -341,7 +341,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
             <button
               type="submit"
               disabled={!newDishName.trim()}
-              className="w-full py-2 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded-lg transition-colors shadow-md shadow-amber-500/20 cursor-pointer"
+              className="w-full py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] disabled:opacity-50 text-white font-bold text-xs rounded-xl transition-all shadow-[0_4px_16px_rgba(255,122,48,0.3)] cursor-pointer"
             >
               + Add to Menu Spread
             </button>
@@ -349,23 +349,23 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
-          <div className="text-xs text-slate-400 flex items-center gap-1.5">
-            <AlertCircle className="w-4 h-4 text-amber-400" />
+        <div className="px-6 py-4 bg-white/45 border-t border-orange-200/60 flex items-center justify-between">
+          <div className="text-xs text-[#9a3412] font-semibold flex items-center gap-1.5">
+            <AlertCircle className="w-4 h-4 text-[#ff7a30]" />
             <span>Changes persist immediately</span>
           </div>
           <div className="flex items-center space-x-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+              className="px-4 py-2 text-xs font-bold text-[#9a3412] hover:text-[#2e170d] hover:bg-white/60 rounded-xl transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={handleSave}
-              className="px-5 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+              className="px-5 py-2.5 text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white rounded-xl shadow-[0_4px_16px_rgba(255,122,48,0.3)] transition-all cursor-pointer"
             >
               Save Menu Changes
             </button>

@@ -28,22 +28,22 @@ export const RateDishModal: React.FC<RateDishModalProps> = ({ dish, mealName, on
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-orange-950/25 backdrop-blur-md animate-in fade-in duration-150">
       <div
         id="rate-dish-modal"
-        className="w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 text-slate-100 overflow-hidden"
+        className="w-full max-w-md glassmorphism-card rounded-3xl shadow-2xl border border-white/80 text-[#2e170d] overflow-hidden"
       >
         {/* Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div className="px-6 py-4 bg-white/45 border-b border-orange-200/60 flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold text-[#ea580c] uppercase tracking-wider">
               {mealName} Feedback
             </span>
-            <h3 className="text-lg font-bold text-slate-100 leading-snug">{dish.name}</h3>
+            <h3 className="text-lg font-bold text-[#2e170d] leading-snug">{dish.name}</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+            className="p-1 rounded-xl text-[#9a3412] hover:text-[#2e170d] hover:bg-white/60 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -52,11 +52,11 @@ export const RateDishModal: React.FC<RateDishModalProps> = ({ dish, mealName, on
         {/* Content */}
         {isSubmitted ? (
           <div className="p-8 text-center space-y-3">
-            <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+            <div className="w-14 h-14 mx-auto rounded-full bg-emerald-100 border border-emerald-300 text-emerald-700 flex items-center justify-center shadow-xs">
               <Check className="w-8 h-8" />
             </div>
-            <h4 className="text-lg font-bold text-slate-100">Feedback Submitted!</h4>
-            <p className="text-sm text-slate-400">
+            <h4 className="text-lg font-bold text-[#2e170d]">Feedback Submitted!</h4>
+            <p className="text-sm text-[#9a3412] font-semibold">
               Thank you {currentStudent.name}! Your rating helps the mess committee audit quality and manage kitchen procurement.
             </p>
           </div>
@@ -64,7 +64,7 @@ export const RateDishModal: React.FC<RateDishModalProps> = ({ dish, mealName, on
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
             {/* Star Picker */}
             <div className="text-center space-y-2">
-              <label className="text-xs font-semibold text-slate-400">
+              <label className="text-xs font-bold text-[#9a3412]">
                 How was the taste, freshness & temperature today?
               </label>
               <div className="flex items-center justify-center space-x-2 py-2">
@@ -75,19 +75,19 @@ export const RateDishModal: React.FC<RateDishModalProps> = ({ dish, mealName, on
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
-                    className="p-1 text-amber-400 hover:scale-125 transition-transform"
+                    className="p-1 text-[#ff7a30] hover:scale-125 transition-transform cursor-pointer"
                   >
                     <Star
                       className={`w-8 h-8 ${
                         (hoverRating || rating) >= star
-                          ? 'fill-amber-400 text-amber-400'
-                          : 'text-slate-700'
+                          ? 'fill-[#ff7a30] text-[#ff7a30]'
+                          : 'text-orange-200 fill-orange-50'
                       }`}
                     />
                   </button>
                 ))}
               </div>
-              <div className="text-xs font-bold text-amber-400">
+              <div className="text-xs font-bold text-[#ea580c]">
                 {rating === 5 && 'Outstanding Taste & Quality (5/5)'}
                 {rating === 4 && 'Good & Satisfying (4/5)'}
                 {rating === 3 && 'Average / Needs Spice Adjustment (3/5)'}
@@ -98,39 +98,31 @@ export const RateDishModal: React.FC<RateDishModalProps> = ({ dish, mealName, on
 
             {/* Comment Field */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 flex items-center space-x-1">
-                <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
-                <span>Comments / Suggestions for Kitchen Staff (Optional)</span>
+              <label className="text-xs font-bold text-[#2e170d] flex items-center justify-between">
+                <span>Specific remarks / suggestion (optional):</span>
+                <span className="text-[10px] text-[#9a3412]">Audited by Warden</span>
               </label>
               <textarea
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder="e.g. Gravy was nice and fresh, but roti could be a bit softer..."
+                placeholder="e.g., Dal was perfectly spiced, Paneer was fresh, rotis were soft..."
                 rows={3}
-                className="w-full text-xs p-3 rounded-xl bg-slate-950 border border-slate-700 focus:outline-hidden focus:ring-1 focus:ring-amber-500 focus:border-amber-500 text-slate-100 placeholder-slate-500 resize-none"
+                className="w-full glassmorphism-input rounded-xl p-3 text-xs text-[#2e170d] placeholder-[#c2410c]/50 focus:outline-none"
               />
             </div>
 
-            {/* Student Info Footer */}
-            <div className="text-[11px] text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between">
-              <span>Rating as <strong className="text-slate-200">{currentStudent.name}</strong> ({currentStudent.rollNo})</span>
-              <span className="text-emerald-400 font-medium flex items-center gap-1">
-                <ThumbsUp className="w-3 h-3" /> Anonymous to cooks
-              </span>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center justify-end space-x-2 pt-2">
+            {/* Actions */}
+            <div className="flex items-center justify-end space-x-3 pt-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-800 rounded-lg transition-colors"
+                className="px-4 py-2 text-xs font-bold text-[#9a3412] hover:text-[#2e170d] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg shadow-md shadow-amber-500/20 transition-all"
+                className="px-5 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl shadow-[0_4px_16px_rgba(255,122,48,0.3)] transition-all cursor-pointer"
               >
                 Submit Rating
               </button>

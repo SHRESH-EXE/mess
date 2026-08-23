@@ -6,7 +6,6 @@ import {
   PhoneCall,
   Mail,
   Building2,
-  CheckCircle2,
   Copy,
   Check
 } from 'lucide-react';
@@ -34,43 +33,43 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-orange-950/25 backdrop-blur-md animate-in fade-in duration-200">
       <div
         id="forgot-password-modal"
-        className="w-full max-w-lg bg-slate-900 text-slate-100 rounded-2xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col max-h-[90vh]"
+        className="w-full max-w-lg glassmorphism-card text-[#2e170d] rounded-3xl shadow-2xl border border-white/80 overflow-hidden flex flex-col max-h-[90vh]"
       >
         {/* Modal Header */}
-        <div className="px-6 py-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div className="px-6 py-4 bg-white/40 backdrop-blur-lg border-b border-orange-200/60 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20">
-              <KeyRound className="w-5 h-5 text-slate-950" />
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] text-white font-bold shadow-md shadow-orange-500/20">
+              <KeyRound className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-100 leading-tight">
+              <h3 className="text-base font-bold text-[#2e170d] leading-tight">
                 Account Recovery & Credentials Help
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#9a3412] font-semibold">
                 CampusMess Hub Identity & Access Service
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-xl text-[#9a3412] hover:text-[#2e170d] hover:bg-white/60 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab Toggle */}
-        <div className="px-6 pt-4 border-b border-slate-800 flex space-x-4">
+        <div className="px-6 pt-3 border-b border-orange-200/60 flex space-x-4 bg-white/25">
           <button
             type="button"
             onClick={() => setRoleTab('student')}
-            className={`pb-2.5 text-xs font-bold border-b-2 transition-all ${
+            className={`pb-2.5 text-xs font-bold border-b-2 transition-all cursor-pointer ${
               roleTab === 'student'
-                ? 'border-amber-400 text-amber-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[#ff7a30] text-[#ea580c]'
+                : 'border-transparent text-[#9a3412]/80 hover:text-[#ea580c]'
             }`}
           >
             Student Hosteler Help
@@ -78,10 +77,10 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
           <button
             type="button"
             onClick={() => setRoleTab('admin')}
-            className={`pb-2.5 text-xs font-bold border-b-2 transition-all ${
+            className={`pb-2.5 text-xs font-bold border-b-2 transition-all cursor-pointer ${
               roleTab === 'admin'
-                ? 'border-amber-400 text-amber-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-[#ff7a30] text-[#ea580c]'
+                : 'border-transparent text-[#9a3412]/80 hover:text-[#ea580c]'
             }`}
           >
             Mess Staff & Warden Help
@@ -92,18 +91,18 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
         <div className="p-6 overflow-y-auto space-y-4 text-xs">
           {roleTab === 'student' ? (
             <>
-              <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-1.5">
-                <div className="font-bold text-amber-300 flex items-center gap-1.5">
-                  <ShieldAlert className="w-4 h-4 text-amber-400" />
+              <div className="p-3.5 bg-orange-500/10 border border-orange-400/30 rounded-2xl space-y-1.5 backdrop-blur-sm">
+                <div className="font-bold text-[#ea580c] flex items-center gap-1.5">
+                  <ShieldAlert className="w-4 h-4 text-[#ff7a30]" />
                   <span>Hostel Default Credentials Policy</span>
                 </div>
-                <p className="text-slate-300 leading-relaxed">
-                  For this campus demo prototype, your default student password is configured as your <strong>Hostel Room Number</strong> (e.g. <code className="bg-slate-950 px-1.5 py-0.5 rounded text-amber-300 border border-slate-700">B-312</code>) or the universal test password <code className="bg-slate-950 px-1.5 py-0.5 rounded text-amber-300 border border-slate-700">student123</code>.
+                <p className="text-[#6c2e11] leading-relaxed font-medium">
+                  For this campus demo prototype, your default student password is configured as your <strong>Hostel Room Number</strong> (e.g. <code className="bg-white/60 px-1.5 py-0.5 rounded text-[#ea580c] border border-orange-200 font-bold">B-312</code>) or the universal test password <code className="bg-white/60 px-1.5 py-0.5 rounded text-[#ea580c] border border-orange-200 font-bold">student123</code>.
                 </p>
               </div>
 
               <div className="space-y-2 pt-1">
-                <div className="font-bold text-slate-200 text-xs uppercase tracking-wider">
+                <div className="font-bold text-[#2e170d] text-xs uppercase tracking-wider">
                   Available Student Demo Accounts
                 </div>
                 <div className="grid grid-cols-1 gap-2">
@@ -114,23 +113,23 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                   ].map((stu) => (
                     <div
                       key={stu.roll}
-                      className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between"
+                      className="p-3 bg-white/50 rounded-2xl border border-white/80 flex items-center justify-between shadow-xs"
                     >
                       <div>
-                        <div className="font-bold text-slate-100">{stu.name}</div>
-                        <div className="text-[11px] text-slate-400 font-mono">
-                          Roll: <strong className="text-amber-400">{stu.roll}</strong> • Room: <strong className="text-slate-200">{stu.room}</strong>
+                        <div className="font-bold text-[#2e170d]">{stu.name}</div>
+                        <div className="text-[11px] text-[#9a3412] font-mono font-medium">
+                          Roll: <strong className="text-[#ea580c]">{stu.roll}</strong> • Room: <strong className="text-[#2e170d]">{stu.room}</strong>
                         </div>
-                        <div className="text-[10px] text-slate-500">{stu.dept}</div>
+                        <div className="text-[10px] text-[#9a3412]/80">{stu.dept}</div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
                           type="button"
                           onClick={() => handleCopy(stu.roll, stu.roll)}
-                          className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg text-[11px] font-medium flex items-center gap-1 border border-slate-700 transition-colors"
+                          className="px-2.5 py-1.5 bg-white/60 hover:bg-white/90 text-[#6c2e11] rounded-xl text-[11px] font-bold flex items-center gap-1 border border-orange-200 transition-colors cursor-pointer"
                         >
                           {copiedText === stu.roll ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            <Check className="w-3.5 h-3.5 text-emerald-600" />
                           ) : (
                             <Copy className="w-3.5 h-3.5" />
                           )}
@@ -143,7 +142,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                               onSelectDemoStudent(stu.roll, stu.room);
                               onClose();
                             }}
-                            className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-[11px] transition-colors shadow-xs"
+                            className="px-3 py-1.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold rounded-xl text-[11px] transition-all shadow-xs cursor-pointer"
                           >
                             Autofill
                           </button>
@@ -154,21 +153,21 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-slate-800">
-                <div className="font-bold text-slate-200">Physical In-Person Verification</div>
+              <div className="space-y-2 pt-2 border-t border-orange-200/60">
+                <div className="font-bold text-[#2e170d]">Physical In-Person Verification</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 flex items-start space-x-2">
-                    <Building2 className="w-4 h-4 text-slate-400 mt-0.5" />
+                  <div className="p-2.5 bg-white/45 rounded-xl border border-white/70 flex items-start space-x-2">
+                    <Building2 className="w-4 h-4 text-[#ea580c] mt-0.5" />
                     <div>
-                      <div className="font-semibold text-slate-200">Hostel Caretaker Office</div>
-                      <div className="text-[10px] text-slate-400">Block-B Ground Floor, Room 102 (09:00 AM - 06:00 PM)</div>
+                      <div className="font-bold text-[#2e170d]">Hostel Caretaker Office</div>
+                      <div className="text-[10px] text-[#9a3412]">Block-B Ground Floor, Room 102 (09:00 AM - 06:00 PM)</div>
                     </div>
                   </div>
-                  <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 flex items-start space-x-2">
-                    <PhoneCall className="w-4 h-4 text-slate-400 mt-0.5" />
+                  <div className="p-2.5 bg-white/45 rounded-xl border border-white/70 flex items-start space-x-2">
+                    <PhoneCall className="w-4 h-4 text-[#ea580c] mt-0.5" />
                     <div>
-                      <div className="font-semibold text-slate-200">Mess Council Helpline</div>
-                      <div className="text-[10px] text-slate-400">+91 98765 43210 / Ext 402</div>
+                      <div className="font-bold text-[#2e170d]">Mess Council Helpline</div>
+                      <div className="text-[10px] text-[#9a3412]">+91 98765 43210 / Ext 402</div>
                     </div>
                   </div>
                 </div>
@@ -176,18 +175,18 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
             </>
           ) : (
             <>
-              <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-1.5">
-                <div className="font-bold text-amber-300 flex items-center gap-1.5">
-                  <ShieldAlert className="w-4 h-4 text-amber-400" />
+              <div className="p-3.5 bg-orange-500/10 border border-orange-400/30 rounded-2xl space-y-1.5 backdrop-blur-sm">
+                <div className="font-bold text-[#ea580c] flex items-center gap-1.5">
+                  <ShieldAlert className="w-4 h-4 text-[#ff7a30]" />
                   <span>Mess Management Authority Access</span>
                 </div>
-                <p className="text-slate-300 leading-relaxed">
+                <p className="text-[#6c2e11] leading-relaxed font-medium">
                   Mess Committee Wardens and Kitchen Operations Leads have provisioned institutional accounts. For demonstration purposes, use the credentials below.
                 </p>
               </div>
 
               <div className="space-y-2 pt-1">
-                <div className="font-bold text-slate-200 text-xs uppercase tracking-wider">
+                <div className="font-bold text-[#2e170d] text-xs uppercase tracking-wider">
                   Admin Demo Credentials
                 </div>
                 <div className="grid grid-cols-1 gap-2">
@@ -207,14 +206,14 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                   ].map((adm) => (
                     <div
                       key={adm.id}
-                      className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between"
+                      className="p-3 bg-white/50 rounded-2xl border border-white/80 flex items-center justify-between shadow-xs"
                     >
                       <div>
-                        <div className="font-bold text-slate-100">{adm.name}</div>
-                        <div className="text-[11px] text-slate-400 font-mono">
-                          ID: <strong className="text-amber-400">{adm.id}</strong> • Pass: <strong className="text-slate-200">{adm.pass}</strong>
+                        <div className="font-bold text-[#2e170d]">{adm.name}</div>
+                        <div className="text-[11px] text-[#9a3412] font-mono font-medium">
+                          ID: <strong className="text-[#ea580c]">{adm.id}</strong> • Pass: <strong className="text-[#2e170d]">{adm.pass}</strong>
                         </div>
-                        <div className="text-[10px] text-slate-500">{adm.role}</div>
+                        <div className="text-[10px] text-[#9a3412]/80">{adm.role}</div>
                       </div>
                       <div className="flex items-center space-x-2">
                         {onSelectDemoAdmin && (
@@ -224,7 +223,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                               onSelectDemoAdmin(adm.id, adm.pass);
                               onClose();
                             }}
-                            className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-[11px] transition-colors shadow-xs"
+                            className="px-3 py-1.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold rounded-xl text-[11px] transition-all shadow-xs cursor-pointer"
                           >
                             Autofill
                           </button>
@@ -235,20 +234,20 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-950 rounded-lg border border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
-                <Mail className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>Need new staff permissions? Email <strong>mess-council@campus.edu</strong> with department authorization letter.</span>
+              <div className="p-3 bg-white/45 rounded-xl border border-white/70 text-[11px] text-[#6c2e11] flex items-center gap-2 font-medium">
+                <Mail className="w-4 h-4 text-[#ea580c] shrink-0" />
+                <span>Need new staff permissions? Email <strong className="text-[#2e170d]">mess-council@campus.edu</strong> with department authorization letter.</span>
               </div>
             </>
           )}
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-950 border-t border-slate-800 flex justify-end">
+        <div className="px-6 py-4 bg-white/40 border-t border-orange-200/60 flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-lg transition-colors"
+            className="px-5 py-2 text-xs font-bold bg-white/70 hover:bg-white text-[#2e170d] border border-orange-200 rounded-xl transition-all shadow-xs cursor-pointer"
           >
             Got it, Close
           </button>

@@ -1,145 +1,271 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState } from 'react';
-import { MessProvider, useMess } from './context/MessContext';
-import { Header } from './components/Header';
+import { MessProvider, useMess, NavigationTab } from './context/MessContext';
 import { LoginPage } from './components/LoginPage';
 import { MenuDisplay } from './components/MenuDisplay';
 import { StudentPassView } from './components/StudentPassView';
 import { AcademicBlockOrder } from './components/AcademicBlockOrder';
 import { DayScholarOrder } from './components/DayScholarOrder';
-import { AdminDashboard } from './components/AdminDashboard';
 import { AnonymousFeedbackForm } from './components/AnonymousFeedbackForm';
+import { AdminDashboard } from './components/AdminDashboard';
 import { QRScannerModal } from './components/QRScannerModal';
 import { SwitchStudentModal } from './components/SwitchStudentModal';
+import { getActiveMealStatus } from './utils/time';
 import {
   UtensilsCrossed,
   QrCode,
-  Send,
+  Package,
   Store,
+  MessageSquareHeart,
   ShieldCheck,
-  MessageSquareHeart
+  LogOut,
+  AlertTriangle,
+  UserCheck
 } from 'lucide-react';
 
-const MainApp: React.FC = () => {
-  const { activeTab, setActiveTab, currentSession } = useMess();
+const LiquidGlassBackdrop: React.FC = () => (
+  <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
+    {/* Blob 1: Deep Vibrant Orange Drifting Blob */}
+    <div
+      className="absolute -top-20 -left-20 w-[450px] sm:w-[600px] h-[450px] sm:h-[600px] rounded-full blob-animation-1 pointer-events-none"
+      style={{
+        background: 'radial-gradient(circle, rgba(255, 122, 48, 0.38) 0%, rgba(255, 146, 72, 0.2) 45%, rgba(255, 247, 240, 0) 70%)',
+        filter: 'blur(75px)'
+      }}
+    />
+
+    {/* Blob 2: Warm Peachy Golden Orange Drifting Blob */}
+    <div
+      className="absolute top-1/2 -right-24 w-[480px] sm:w-[650px] h-[480px] sm:h-[650px] rounded-full blob-animation-2 pointer-events-none"
+      style={{
+        background: 'radial-gradient(circle, rgba(255, 176, 102, 0.45) 0%, rgba(255, 122, 48, 0.25) 50%, rgba(255, 237, 213, 0) 75%)',
+        filter: 'blur(80px)'
+      }}
+    />
+
+    {/* Blob 3: Light Peachy-White Luminous Center-Floating Blob */}
+    <div
+      className="absolute bottom-10 left-1/3 w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] rounded-full blob-animation-3 pointer-events-none"
+      style={{
+        background: 'radial-gradient(circle, rgba(255, 255, 255, 0.75) 0%, rgba(255, 237, 213, 0.35) 45%, rgba(255, 176, 102, 0) 70%)',
+        filter: 'blur(70px)'
+      }}
+    />
+
+    {/* Soft subtle ambient warm vignette */}
+    <div className="absolute inset-0 bg-radial from-transparent via-orange-950/[0.015] to-orange-950/[0.04] pointer-events-none" />
+  </div>
+);
+
+const MainAppContent: React.FC = () => {
+  const {
+    currentSession,
+    logout,
+    activeTab,
+    setActiveTab,
+    currentStudent
+  } = useMess();
+
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
   const [isSwitchStudentOpen, setIsSwitchStudentOpen] = useState<boolean>(false);
 
-  // If no active session, show Login Page
+  const mealStatus = getActiveMealStatus();
+
+  // If user is not logged in, render University Web Portal Login Page
   if (!currentSession) {
+    return <LoginPage />;
+  }
+
+  // Admin View
+  if (currentSession.role === 'admin') {
     return (
-      <div className="animate-in fade-in duration-300">
-        <LoginPage />
+      <div className="min-h-screen liquid-glass-bg text-[#2e170d] flex flex-col font-sans selection:bg-[#ff7a30] selection:text-white relative glass-theme-wrapper">
+        <LiquidGlassBackdrop />
+
+        {/* Top Navbar in Glassmorphism */}
+        <header className="sticky top-0 z-40 bg-white/55 backdrop-blur-xl border-b border-white/80 px-4 sm:px-6 py-3.5 flex items-center justify-between shadow-[0_4px_24px_rgba(255,122,48,0.1)]">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-white/70 border border-white/90 flex items-center justify-center text-[#ff7a30] shadow-[0_4px_16px_rgba(255,122,48,0.15)]">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-bold text-sm sm:text-base text-[#2e170d] tracking-tight">
+                  Lovely Professional University Mess Console
+                </span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
+                  100% Pure Veg
+                </span>
+              </div>
+              <p className="text-xs text-[#9a3412] font-semibold">
+                Logged in as <strong className="text-[#2e170d]">{currentSession.name}</strong> ({currentSession.designation || 'Staff'})
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => setIsScannerOpen(true)}
+              className="flex items-center space-x-1.5 px-3.5 py-2 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl shadow-[0_4px_16px_rgba(255,122,48,0.3)] transition-all cursor-pointer active:scale-95"
+            >
+              <QrCode className="w-4 h-4" />
+              <span className="hidden sm:inline">Launch QR Scanner</span>
+            </button>
+
+            <button
+              onClick={logout}
+              title="Logout session"
+              className="flex items-center space-x-1.5 px-3 py-2 bg-white/55 hover:bg-white/85 active:scale-95 text-[#6c2e11] hover:text-[#2e170d] text-xs font-bold rounded-xl border border-white/80 shadow-xs transition-all cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Admin Content */}
+        <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto relative z-10">
+          <AdminDashboard onOpenScanner={() => setIsScannerOpen(true)} />
+        </main>
+
+        {/* Modals */}
+        {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
       </div>
     );
   }
 
-  const isAdmin = currentSession.role === 'admin';
+  // Student Navigation Tabs
+  const studentNavTabs: { id: NavigationTab; label: string; icon: typeof UtensilsCrossed; badge?: string }[] = [
+    { id: 'menu', label: "Today's Menu", icon: UtensilsCrossed },
+    { id: 'pass', label: 'Digital Meal Pass', icon: QrCode },
+    { id: 'parcel', label: 'Academic Block Delivery', icon: Package },
+    { id: 'dayscholar', label: 'Day Scholar Canteen', icon: Store },
+    { id: 'feedback', label: 'Mess Feedback', icon: MessageSquareHeart }
+  ];
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      
-      {/* Top Application Header */}
-      <Header
-        onOpenScanner={() => setIsScannerOpen(true)}
-        onOpenSwitchStudent={() => setIsSwitchStudentOpen(true)}
-      />
+    <div className="min-h-screen liquid-glass-bg text-[#2e170d] flex flex-col font-sans selection:bg-[#ff7a30] selection:text-white relative glass-theme-wrapper">
+      <LiquidGlassBackdrop />
 
-      {/* Main Content View Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      {/* Top Header in Glassmorphism */}
+      <header className="sticky top-0 z-40 bg-white/55 backdrop-blur-xl border-b border-white/80 px-4 sm:px-6 py-3 shadow-[0_4px_24px_rgba(255,122,48,0.1)]">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          {/* Logo & Active Meal Indicator */}
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-white/70 border border-white/90 flex items-center justify-center text-[#ff7a30] shadow-[0_4px_16px_rgba(255,122,48,0.15)]">
+              <UtensilsCrossed className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-bold text-sm sm:text-base text-[#2e170d] tracking-tight">
+                  LPU CampusMess Hub
+                </span>
+                <span className="hidden xs:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
+                  100% Pure Veg
+                </span>
+              </div>
+              <div className="flex items-center space-x-2 text-xs text-[#9a3412] font-semibold">
+                <span className="capitalize font-bold text-[#ff7a30] flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ff7a30] animate-pulse" />
+                  {mealStatus.currentMeal} Slot Active
+                </span>
+                <span>•</span>
+                <span>{currentStudent.hostel}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Student Profile & Controls */}
+          <div className="flex items-center space-x-3">
+            {/* Allergen Warning Pill if any */}
+            {currentStudent.allergies && currentStudent.allergies.length > 0 && (
+              <div
+                title={`Allergens tracked: ${currentStudent.allergies.join(', ')}`}
+                className="hidden md:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-rose-100 border border-rose-300 text-rose-900 text-[11px] font-bold shadow-xs"
+              >
+                <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />
+                <span>{currentStudent.allergies.length} Allergens</span>
+              </div>
+            )}
+
+            {/* Student Info Pill */}
+            <div className="flex items-center space-x-2.5 bg-white/55 px-3 py-1.5 rounded-2xl border border-white/80 shadow-xs">
+              <img
+                src={currentStudent.photoUrl}
+                alt={currentStudent.name}
+                className="w-7 h-7 rounded-full object-cover border border-[#ff7a30]/50"
+              />
+              <div className="hidden sm:block text-left">
+                <div className="text-xs font-bold text-[#2e170d] leading-tight">
+                  {currentStudent.name}
+                </div>
+                <div className="text-[10px] text-[#9a3412] font-mono font-bold">
+                  {currentStudent.rollNo} • {currentStudent.roomNo}
+                </div>
+              </div>
+            </div>
+
+            {/* Switch Student (Demo Helper) */}
+            <button
+              type="button"
+              onClick={() => setIsSwitchStudentOpen(true)}
+              title="Switch Demo Student Profile"
+              className="p-2 rounded-xl bg-white/55 hover:bg-white/85 text-[#6c2e11] hover:text-[#2e170d] border border-white/80 shadow-xs transition-all cursor-pointer"
+            >
+              <UserCheck className="w-4 h-4" />
+            </button>
+
+            {/* Logout */}
+            <button
+              type="button"
+              onClick={logout}
+              title="Logout"
+              className="p-2 rounded-xl bg-white/55 hover:bg-rose-100 text-[#6c2e11] hover:text-rose-800 border border-white/80 hover:border-rose-300 shadow-xs transition-all cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Student Navigation Bar */}
+        <div className="max-w-7xl mx-auto mt-3 pt-2 border-t border-orange-200/60 flex items-center space-x-1 sm:space-x-2 overflow-x-auto">
+          {studentNavTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                  isActive
+                    ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-[0_4px_16px_rgba(255,122,48,0.28)]'
+                    : 'text-[#6c2e11] hover:text-[#2e170d] hover:bg-white/50'
+                }`}
+              >
+                <Icon className="w-4 h-4 shrink-0" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </header>
+
+      {/* Main Tab Content */}
+      <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto relative z-10">
         {activeTab === 'menu' && <MenuDisplay />}
         {activeTab === 'pass' && (
           <StudentPassView
             onOpenScanner={() => setIsScannerOpen(true)}
-            onOpenSwitchStudent={() => setIsSwitchStudentOpen(true)}
+            onOpenSwitchStudent={() => setIsSwitchStudentOpen(false)}
           />
         )}
         {activeTab === 'parcel' && <AcademicBlockOrder />}
         {activeTab === 'dayscholar' && <DayScholarOrder />}
         {activeTab === 'feedback' && <AnonymousFeedbackForm />}
-        {activeTab === 'admin' && isAdmin && (
-          <AdminDashboard onOpenScanner={() => setIsScannerOpen(true)} />
-        )}
-        {activeTab === 'admin' && !isAdmin && <MenuDisplay />}
       </main>
 
       {/* Modals */}
-      {isScannerOpen && (
-        <QRScannerModal onClose={() => setIsScannerOpen(false)} />
-      )}
-      {isSwitchStudentOpen && (
-        <SwitchStudentModal onClose={() => setIsSwitchStudentOpen(false)} />
-      )}
-
-      {/* Mobile Sticky Bottom Navigation Bar */}
-      <div className="md:hidden sticky bottom-0 z-30 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-3 py-2 flex items-center justify-around shadow-2xl">
-        {(isAdmin
-          ? [
-              { id: 'admin' as const, label: 'Admin Hub', icon: ShieldCheck },
-              { id: 'dayscholar' as const, label: 'Orders', icon: Store },
-              { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
-              { id: 'feedback' as const, label: 'Feedback', icon: MessageSquareHeart }
-            ]
-          : [
-              { id: 'menu' as const, label: 'Menu', icon: UtensilsCrossed },
-              { id: 'pass' as const, label: 'Pass', icon: QrCode },
-              { id: 'parcel' as const, label: 'Parcel', icon: Send },
-              { id: 'dayscholar' as const, label: 'Day Scholar', icon: Store },
-              { id: 'feedback' as const, label: 'Rate', icon: MessageSquareHeart }
-            ]
-        ).map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center py-1 px-2 rounded-xl transition-all cursor-pointer ${
-                isActive
-                  ? 'text-amber-400 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Icon className={`w-4 h-4 ${isActive ? 'scale-110' : ''}`} />
-              <span className="text-[9px] mt-0.5">{item.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Campus Footer */}
-      <footer className="bg-slate-950 border-t border-slate-800/80 text-slate-400 text-xs py-8 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-sm shadow-md shadow-amber-500/20">
-              CM
-            </div>
-            <div>
-              <span className="font-bold text-slate-100">CampusMess Hub</span>
-              <p className="text-[11px] text-slate-400">
-                Allergen-Safe Hostel Dining Logistics & Anonymous Student Pulse
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-400">
-            <span>Mess Helpline: <strong className="text-slate-200">+91 98765 43210</strong></span>
-            <span className="text-slate-600">•</span>
-            <span>Kitchen Timings: <strong className="text-slate-200">07:30 AM - 10:00 PM</strong></span>
-            <span className="text-slate-600">•</span>
-            <span>Hostel Committee Room 102</span>
-          </div>
-
-          <div className="text-[11px] text-slate-500">
-            © 2026 Campus Hostel Council
-          </div>
-        </div>
-      </footer>
-
+      {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
+      {isSwitchStudentOpen && <SwitchStudentModal onClose={() => setIsSwitchStudentOpen(false)} />}
     </div>
   );
 };
@@ -147,7 +273,7 @@ const MainApp: React.FC = () => {
 export default function App() {
   return (
     <MessProvider>
-      <MainApp />
+      <MainAppContent />
     </MessProvider>
   );
 }

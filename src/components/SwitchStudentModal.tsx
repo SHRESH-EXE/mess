@@ -32,24 +32,24 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-orange-950/25 backdrop-blur-md animate-in fade-in duration-150">
       <div
         id="switch-student-modal"
-        className="w-full max-w-md bg-slate-900 text-slate-100 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col"
+        className="w-full max-w-md glassmorphism-card text-[#2e170d] rounded-3xl shadow-2xl border border-white/80 overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="px-6 py-4 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between">
+        <div className="px-6 py-4 bg-white/40 border-b border-orange-200/60 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-100 leading-tight">
+            <h3 className="text-base font-bold text-[#2e170d] leading-tight">
               Student Profile Switcher
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#9a3412] font-medium">
               Enter Roll Number in the text box below
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-[#9a3412] hover:text-[#2e170d] hover:bg-white/60 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -58,17 +58,17 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
         {/* Content */}
         <div className="p-6 space-y-4">
           {/* Current Active Info */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs">
+          <div className="p-3.5 rounded-2xl bg-white/55 border border-white/80 flex items-center justify-between text-xs shadow-xs">
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xs">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                 <UserCheck className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-slate-400 text-[10px] block">Current Active Roll:</span>
-                <span className="font-mono font-bold text-slate-100">{currentStudent.rollNo}</span>
+                <span className="text-[#9a3412] text-[10px] block font-semibold">Current Active Roll:</span>
+                <span className="font-mono font-bold text-[#2e170d]">{currentStudent.rollNo}</span>
               </div>
             </div>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
               Active
             </span>
           </div>
@@ -76,7 +76,7 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
           {/* Text Box Input Form */}
           <form onSubmit={handleSearchAndSwitch} className="space-y-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300">
+              <label className="text-xs font-bold text-[#2e170d]">
                 Enter Roll Number / Student ID:
               </label>
               <div className="relative">
@@ -88,37 +88,54 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
                     setErrorMsg(null);
                   }}
                   placeholder="e.g. 22CS0142, 23ME0088..."
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-amber-500 rounded-xl px-4 py-3 text-xs text-slate-100 placeholder-slate-500 font-mono focus:outline-hidden"
+                  className="w-full glassmorphism-input rounded-xl px-4 py-3 text-xs text-[#2e170d] placeholder-[#c2410c]/50 font-mono focus:outline-none"
                   autoFocus
                 />
               </div>
             </div>
 
             {errorMsg && (
-              <div className="p-3 rounded-xl bg-red-950/80 border border-red-800 text-red-200 text-xs flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-red-400" />
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-400/40 text-red-900 text-xs flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
             <button
               type="submit"
-              className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+              className="w-full py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl shadow-[0_4px_16px_rgba(255,122,48,0.3)] transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Switch Profile</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-        </div>
 
-        {/* Footer */}
-        <div className="px-6 py-3 bg-slate-950/90 border-t border-slate-800 flex items-center justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-1.5 text-xs font-semibold text-slate-400 hover:text-slate-200 cursor-pointer"
-          >
-            Cancel
-          </button>
+          {/* Quick Click Demo Roll Numbers */}
+          <div className="space-y-2 pt-2 border-t border-orange-200/60">
+            <span className="text-[11px] font-bold text-[#9a3412] uppercase tracking-wider block">
+              Quick Pick Demo Students
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              {students.slice(0, 4).map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => {
+                    switchStudentById(s.id);
+                    onClose();
+                  }}
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer shadow-xs ${
+                    currentStudent.id === s.id
+                      ? 'bg-orange-500/15 border-orange-400 text-[#ea580c]'
+                      : 'bg-white/45 hover:bg-white/70 border-white/80 text-[#2e170d]'
+                  }`}
+                >
+                  <div className="font-bold text-xs truncate">{s.name}</div>
+                  <div className="text-[10px] font-mono text-[#9a3412] font-semibold">{s.rollNo}</div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
