@@ -323,7 +323,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                   }}
                   className="text-[11px] text-amber-400 hover:underline font-semibold cursor-pointer"
                 >
-                  Manage Tags
+                  Manage Allergies
                 </button>
               </div>
 

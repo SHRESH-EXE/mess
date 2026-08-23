@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   ExternalLink,
-  MessageSquare,
   Sparkles,
   Plus,
   Minus,
@@ -23,7 +22,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { ACADEMIC_BLOCKS, DEFAULT_MESS_WHATSAPP_NUMBER } from '../data/initialData';
-import { generateWhatsAppLink, formatWhatsAppOrderMessage } from '../utils/whatsapp';
+import { generateWhatsAppLink } from '../utils/whatsapp';
 import { getActiveMealStatus, getCurrentDayOfWeek } from '../utils/time';
 import { OrderItem, DayMenu, MealSlot } from '../types/mess';
 
@@ -177,8 +176,6 @@ export const AcademicBlockOrder: React.FC = () => {
     totalAmount
   };
 
-  const previewMessage = formatWhatsAppOrderMessage(currentOrderPayload);
-
   // Submit and open WhatsApp
   const [lastSubmittedId, setLastSubmittedId] = useState<string | null>(null);
 
@@ -234,9 +231,6 @@ export const AcademicBlockOrder: React.FC = () => {
             <h2 className="text-xl sm:text-2xl font-black text-white font-serif tracking-tight">
               Academic Block Meal & Snack Parcel Delivery
             </h2>
-            <p className="text-xs sm:text-sm text-emerald-100/90 mt-1 max-w-2xl leading-relaxed">
-              Stuck in lectures, lab research, or library study sessions? Order fresh mess food packed into eco boxes and delivered directly to your department via WhatsApp.
-            </p>
           </div>
 
           <div className="flex items-center space-x-3 bg-black/20 p-3 rounded-2xl border border-white/10 shrink-0">
@@ -596,34 +590,6 @@ export const AcademicBlockOrder: React.FC = () => {
         {/* WhatsApp Real-Time Preview & Past Orders (Right 5 Cols) */}
         <div className="lg:col-span-5 space-y-6">
           
-          {/* Live WhatsApp Message Preview Phone Mock */}
-          <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-xl text-white space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <div className="flex items-center space-x-2 text-emerald-400">
-                <MessageSquare className="w-4 h-4" />
-                <span className="text-xs font-bold">WhatsApp Ticket Live Preview</span>
-              </div>
-              <span className="text-[10px] font-mono text-slate-400">Auto-Formatted</span>
-            </div>
-
-            {/* WhatsApp Chat Bubble */}
-            <div className="bg-[#0b141a] p-3 rounded-2xl border border-slate-800 space-y-2 font-mono text-[11px] text-slate-200 overflow-hidden">
-              <div className="bg-[#005c4b] p-3 rounded-xl text-slate-100 shadow-sm whitespace-pre-wrap leading-relaxed">
-                {previewMessage}
-              </div>
-              <div className="text-right text-[9px] text-slate-400 font-sans">
-                Opens directly in WhatsApp when you tap Order
-              </div>
-            </div>
-
-            <div className="text-[11px] text-slate-400 flex items-center space-x-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-              <span>
-                Mess kitchen delivery staff reads this structured ticket for swift packaging.
-              </span>
-            </div>
-          </div>
-
           {/* Past Academic Block Orders Tracking */}
           <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
             <div className="flex items-center justify-between">

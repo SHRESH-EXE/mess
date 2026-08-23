@@ -282,9 +282,6 @@ export const DayScholarOrder: React.FC = () => {
           <h1 className="text-xl sm:text-2xl font-black text-white font-serif tracking-tight">
             Day Scholar À La Carte Ordering
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Order fresh pure veg meals directly from the Central Mess kitchen without a monthly hostel meal subscription. Pay per item, customize quantities, and choose self-pickup or academic block delivery.
-          </p>
         </div>
 
         {/* View Switcher: Place Order vs Live Tracker */}
@@ -332,42 +329,6 @@ export const DayScholarOrder: React.FC = () => {
           {/* LEFT COLUMN: Menu Selection (8 cols on lg) */}
           <div className="lg:col-span-7 space-y-6">
             
-            {/* Inline Allergy Profile & Food Safety Selector */}
-            <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-xl space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <ShieldAlert className="w-4 h-4 text-amber-400" />
-                  <h3 className="text-xs sm:text-sm font-bold text-slate-100">
-                    Day Scholar Dietary & Allergy Advisory
-                  </h3>
-                </div>
-                <span className="text-[10px] text-slate-400">Select any known allergies</span>
-              </div>
-              <p className="text-xs text-slate-400">
-                As a day scholar without a saved hostel health card, tap below to flag any allergies you have. We'll highlight matching ingredients across the menu.
-              </p>
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {STANDARD_ALLERGENS.map((allergen) => {
-                  const isSelected = selectedAllergens.includes(allergen);
-                  return (
-                    <button
-                      key={allergen}
-                      type="button"
-                      onClick={() => toggleAllergen(allergen)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center space-x-1.5 cursor-pointer ${
-                        isSelected
-                          ? 'bg-rose-500/20 text-rose-300 border border-rose-500/50 shadow-xs'
-                          : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
-                      }`}
-                    >
-                      <span>•</span>
-                      <span>{allergen}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Meal Slot Tabs Bar */}
             <div className="bg-slate-900 rounded-3xl p-4 border border-slate-800 shadow-xl space-y-4">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -462,20 +423,6 @@ export const DayScholarOrder: React.FC = () => {
                               <h4 className="text-sm sm:text-base font-bold text-slate-100">
                                 {dish.name}
                               </h4>
-                              {dish.tags?.map((tag) => (
-                                <span
-                                  key={tag}
-                                  className={`text-[10px] font-bold px-2 py-0.2 rounded-full border ${
-                                    tag === 'high-protein'
-                                      ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
-                                      : tag === 'jain'
-                                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                                      : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                                  }`}
-                                >
-                                  {tag}
-                                </span>
-                              ))}
                             </div>
 
                             {dish.description && (
@@ -486,9 +433,6 @@ export const DayScholarOrder: React.FC = () => {
 
                             {/* Nutrition & Allergens preview */}
                             <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 font-mono pt-0.5">
-                              {dish.protein && (
-                                <span className="text-blue-300">Protein: {dish.protein}</span>
-                              )}
                               {dish.calories && (
                                 <span>{dish.calories} kcal</span>
                               )}
@@ -597,9 +541,6 @@ export const DayScholarOrder: React.FC = () => {
                   </div>
                   <p className="text-xs font-medium text-slate-400">
                     Your cart is currently empty.
-                  </p>
-                  <p className="text-[11px] text-slate-400">
-                    Select meals from the left menu to build your à la carte order.
                   </p>
                 </div>
               ) : (

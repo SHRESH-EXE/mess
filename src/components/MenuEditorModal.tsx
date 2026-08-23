@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
 import { X, Plus, Trash2, Check, Utensils, AlertCircle, ShieldAlert } from 'lucide-react';
-import { MealType, MealSlot, DishItem, DietaryTag, STANDARD_ALLERGENS } from '../types/mess';
+import { MealType, MealSlot, DishItem, STANDARD_ALLERGENS } from '../types/mess';
 
 interface MenuEditorModalProps {
   day: string;
@@ -31,9 +31,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
   // New Dish Inputs
   const [newDishName, setNewDishName] = useState<string>('');
   const [newDishDesc, setNewDishDesc] = useState<string>('');
-  const [newDishTag, setNewDishTag] = useState<DietaryTag>('veg');
   const [newDishCalories, setNewDishCalories] = useState<number>(220);
-  const [newDishProtein, setNewDishProtein] = useState<string>('8g');
   const [newDishAllergens, setNewDishAllergens] = useState<string[]>([]);
   const [newDishIngredients, setNewDishIngredients] = useState<string>('');
   const [isSaved, setIsSaved] = useState<boolean>(false);
@@ -58,13 +56,11 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
       id: `dish-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       name: newDishName.trim(),
       category: 'main',
-      tags: [newDishTag],
+      tags: [],
       calories: newDishCalories || 200,
-      protein: newDishProtein.trim() || undefined,
       description: newDishDesc.trim() || 'Prepared fresh by campus mess team',
       allergens: newDishAllergens,
-      ingredients: ingArray,
-      isChefSpecial: newDishTag === 'special'
+      ingredients: ingArray
     };
 
     setDishes([...dishes, newDish]);
@@ -76,17 +72,6 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
 
   const handleRemoveDish = (id: string) => {
     setDishes(dishes.filter(d => d.id !== id));
-  };
-
-  const handleToggleTag = (dishId: string, tag: DietaryTag) => {
-    setDishes(dishes.map(d => {
-      if (d.id !== dishId) return d;
-      const exists = d.tags.includes(tag);
-      return {
-        ...d,
-        tags: exists ? d.tags.filter(t => t !== tag) : [...d.tags, tag]
-      };
-    }));
   };
 
   const handleSave = () => {
@@ -171,7 +156,6 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
               <label className="text-xs font-black text-slate-900 uppercase tracking-wider">
                 Configured Dishes ({dishes.length})
               </label>
-              <span className="text-[11px] text-slate-600 font-bold">Tap dietary tags to toggle</span>
             </div>
 
             <div className="space-y-2">
@@ -183,11 +167,6 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                   <div className="flex-1 space-y-1.5">
                     <div className="flex items-center space-x-2">
                       <span className="font-black text-xs text-slate-900">{dish.name}</span>
-                      {dish.protein && (
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 font-mono font-bold">
-                          {dish.protein}
-                        </span>
-                      )}
                     </div>
 
                     {dish.description && (
@@ -214,27 +193,6 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                         <strong className="text-slate-900">Ingredients:</strong> {dish.ingredients.join(', ')}
                       </div>
                     )}
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {(['veg', 'high-protein', 'special', 'sweet', 'jain'] as DietaryTag[]).map((tag) => {
-                        const active = dish.tags.includes(tag);
-                        return (
-                          <button
-                            key={tag}
-                            type="button"
-                            onClick={() => handleToggleTag(dish.id, tag)}
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
-                              active
-                                ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white border-transparent'
-                                : 'bg-white text-slate-700 border-orange-200 hover:border-orange-400'
-                            }`}
-                          >
-                            {tag}
-                          </button>
-                        );
-                      })}
-                    </div>
                   </div>
 
                   <button
@@ -265,33 +223,12 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                 placeholder="Dish Title (e.g. Malai Kofta)"
                 className="text-xs p-2.5 rounded-xl glassmorphism-input text-slate-900 placeholder-slate-400 focus:outline-none font-semibold"
               />
-              <select
-                value={newDishTag}
-                onChange={(e) => setNewDishTag(e.target.value as DietaryTag)}
-                className="text-xs p-2.5 rounded-xl glassmorphism-input text-slate-900 focus:outline-none font-bold"
-              >
-                <option value="veg">Pure Veg</option>
-                <option value="high-protein">High Protein</option>
-                <option value="special">Chef Special</option>
-                <option value="sweet">Sweet / Dessert</option>
-                <option value="jain">Jain Friendly</option>
-              </select>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <input
                 type="number"
                 value={newDishCalories}
                 onChange={(e) => setNewDishCalories(Number(e.target.value))}
                 placeholder="Calories (e.g. 240 kcal)"
-                className="text-xs p-2 rounded-xl glassmorphism-input text-slate-900 placeholder-slate-400 focus:outline-none font-mono font-semibold"
-              />
-              <input
-                type="text"
-                value={newDishProtein}
-                onChange={(e) => setNewDishProtein(e.target.value)}
-                placeholder="Protein (e.g. 12g)"
-                className="text-xs p-2 rounded-xl glassmorphism-input text-slate-900 placeholder-slate-400 focus:outline-none font-mono font-semibold"
+                className="text-xs p-2.5 rounded-xl glassmorphism-input text-slate-900 placeholder-slate-400 focus:outline-none font-mono font-semibold"
               />
             </div>
 

@@ -360,20 +360,9 @@ export const MenuDisplay: React.FC = () => {
 
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="w-3.5 h-3.5 rounded-xs border-2 border-emerald-500 flex items-center justify-center p-0.5" title="100% Pure Vegetarian">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        </span>
-                        <h4 className="text-sm font-bold text-slate-100 leading-snug">
-                          {dish.name}
-                        </h4>
-                      </div>
-
-                      {dish.isChefSpecial && (
-                        <span className="px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-bold text-[10px] uppercase tracking-wider shrink-0 shadow-xs flex items-center gap-1">
-                          <Sparkles className="w-3 h-3 text-slate-950" /> Special
-                        </span>
-                      )}
+                      <h4 className="text-sm font-bold text-slate-100 leading-snug">
+                        {dish.name}
+                      </h4>
                     </div>
 
                     {dish.description && (
@@ -381,31 +370,6 @@ export const MenuDisplay: React.FC = () => {
                         {dish.description}
                       </p>
                     )}
-
-                    {/* Dietary Badges & Allergen Pills - Smooth Oval Badges */}
-                    <div className="flex flex-wrap gap-1.5 mb-2.5">
-                      {dish.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full capitalize ${
-                            tag === 'high-protein'
-                              ? 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
-                              : tag === 'special'
-                              ? 'bg-amber-500/15 text-amber-300 border border-amber-500/25'
-                              : tag === 'sweet'
-                              ? 'bg-pink-500/10 text-pink-300 border border-pink-500/20'
-                              : 'bg-slate-800 text-slate-300 border border-slate-700'
-                          }`}
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                      {dish.protein && (
-                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                          {dish.protein} Protein
-                        </span>
-                      )}
-                    </div>
 
                     {/* Allergens Listed */}
                     {dish.allergens && dish.allergens.length > 0 && (

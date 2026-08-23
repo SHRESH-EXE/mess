@@ -99,10 +99,6 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             Rate Today's Campus Meals
           </h1>
-          <p className="text-sm text-slate-300 mt-2 leading-relaxed">
-            Your authentic voice helps the kitchen staff improve taste, spice levels, and hygiene. 
-            No name, roll number, or hostel data is attached to your submission.
-          </p>
         </div>
       </div>
 
@@ -172,7 +168,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                       <option value="">-- Choose from today's {selectedSlot} menu --</option>
                       {currentSlotDishes.map((dish) => (
                         <option key={dish.id} value={dish.name}>
-                          {dish.name} {dish.isChefSpecial ? '(Chef Special)' : ''}
+                          {dish.name}
                         </option>
                       ))}
                       <option value="__other__">Other (Type custom item)</option>
@@ -242,14 +238,6 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                     onChange={(e) => setComment(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-750 rounded-xl p-3 text-xs sm:text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                   />
-                </div>
-
-                {/* Privacy Reminder */}
-                <div className="rounded-xl bg-slate-950/70 border border-slate-800 p-3 flex items-start space-x-2.5 text-[11px] text-slate-400">
-                  <ShieldCheck className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
-                  <span>
-                    <strong>Zero Tracking Enforced:</strong> No cookie, session ID, or user profile is attached.
-                  </span>
                 </div>
 
                 {/* Submit CTA */}
