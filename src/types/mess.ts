@@ -1,4 +1,4 @@
-export type UserRole = 'student' | 'admin';
+export type UserRole = 'student' | 'admin' | 'vendor';
 
 export const STANDARD_ALLERGENS = [
   'Peanuts',
@@ -23,6 +23,8 @@ export interface UserSession {
   roomNo?: string;
   avatarUrl?: string;
   designation?: string;
+  stallId?: string;
+  stallName?: string;
   allergies?: string[];
   loginTime: string;
 }
@@ -188,6 +190,130 @@ export interface DayScholarOrder {
   timestamp: string;
   totalAmount: number;
   targetWhatsAppNumber?: string;
+}
+
+// Food Court Types
+export type FoodCourtRushLevel = 'Low' | 'Moderate' | 'High' | 'Peak';
+
+export interface FoodCourtCustomization {
+  spiceLevel?: 'Mild' | 'Medium' | 'Extra Spicy';
+  addCheese?: boolean;
+  jainPrep?: boolean;
+  specialNotes?: string;
+}
+
+export interface FoodCourtItem {
+  id: string;
+  stallId: string;
+  stallName: string;
+  name: string;
+  category: 'Rolls & Wraps' | 'South Indian' | 'Chai & Snacks' | 'Pizza & Burgers' | 'Chinese & Noodles' | 'Beverages & Shakes' | 'Healthy Bowls' | 'Desserts';
+  price: number;
+  basePrepMins: number;
+  description: string;
+  isVeg: boolean;
+  isChefSpecial?: boolean;
+  isBestSeller?: boolean;
+  calories?: number;
+  allergens?: string[];
+  imageUrl?: string;
+  available: boolean;
+}
+
+export interface FoodCourtStall {
+  id: string;
+  name: string;
+  tagline: string;
+  cuisine: string;
+  location: string;
+  stallNumber: string;
+  rating: number;
+  ratingCount: number;
+  isOpen: boolean;
+  rushLevel: FoodCourtRushLevel;
+  activeQueueCount: number;
+  estimatedWaitMins: number;
+  iconEmoji: string;
+  accentColor: string;
+  bannerImage: string;
+  popularItems: string[];
+  openingHours: string;
+}
+
+export type FoodCourtOrderStatus = 'Placed' | 'Preparing' | 'Ready' | 'Completed' | 'Cancelled';
+
+export interface FoodCourtCartItem {
+  item: FoodCourtItem;
+  quantity: number;
+  customization?: FoodCourtCustomization;
+  itemTotal: number;
+}
+
+export interface FoodCourtOrder {
+  id: string;
+  tokenNumber: string;
+  studentId?: string;
+  studentName: string;
+  phoneNumber: string;
+  rollNo?: string;
+  stallId: string;
+  stallName: string;
+  items: {
+    itemId: string;
+    name: string;
+    quantity: number;
+    price: number;
+    customization?: FoodCourtCustomization;
+  }[];
+  totalAmount: number;
+  pickupMethod: 'counter_pickup' | 'dine_in' | 'express_takeaway';
+  status: FoodCourtOrderStatus;
+  rushLevelAtOrder: FoodCourtRushLevel;
+  queuePosition: number;
+  estimatedPrepMins: number;
+  estimatedReadyTime: string;
+  placedAt: string;
+  paymentMethod: 'UPI / Hostel Pay' | 'Mess Wallet' | 'Cash at Counter';
+  targetWhatsAppNumber: string;
+  specialInstructions?: string;
+}
+
+// Food Court Anonymous Feedback Structure
+export type FoodCourtFeedbackCategory =
+  | 'Taste & Quality'
+  | 'Hygiene & Cleanliness'
+  | 'Speed & Waiting Time'
+  | 'Portion & Pricing'
+  | 'General Suggestion';
+
+export interface FoodCourtFeedback {
+  id: string;
+  stallId: string;
+  stallName: string;
+  dishName?: string;
+  rating: number; // 1 to 5
+  hygieneRating?: number; // 1 to 5
+  speedRating?: number; // 1 to 5
+  comment: string;
+  category: FoodCourtFeedbackCategory;
+  timestamp: string;
+  date: string;
+  sentiment: 'positive' | 'neutral' | 'negative';
+  status: 'Reviewed' | 'Pending' | 'Action Taken';
+  ownerNote?: string;
+}
+
+// Guided Tour Types
+export interface TourStep {
+  id: string;
+  tabId?: 'menu' | 'pass' | 'foodcourt' | 'parcel' | 'dayscholar' | 'feedback';
+  title: string;
+  tagline: string;
+  description: string;
+  elementId?: string;
+  highlightText?: string;
+  tip?: string;
+  iconName: string;
 }
 
 

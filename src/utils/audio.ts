@@ -92,6 +92,22 @@ class SoundEffects {
       // ignore
     }
   }
+
+  playClick() {
+    this.playTap();
+  }
+
+  playTrash() {
+    this.playTap();
+  }
+
+  playMealTap() {
+    this.playSuccessBeep();
+  }
+
+  playChime() {
+    this.playSuccessBeep();
+  }
 }
 
 export const soundEffects = new SoundEffects();

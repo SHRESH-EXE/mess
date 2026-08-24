@@ -12,19 +12,21 @@ import {
 } from 'lucide-react';
 
 interface ForgotPasswordModalProps {
-  initialRole?: 'student' | 'admin';
+  initialRole?: 'student' | 'admin' | 'vendor';
   onClose: () => void;
   onSelectDemoStudent?: (rollNo: string, roomNo: string) => void;
   onSelectDemoAdmin?: (email: string, pass: string) => void;
+  onSelectDemoVendor?: (stallIdOrEmail: string, pass: string) => void;
 }
 
 export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
   initialRole = 'student',
   onClose,
   onSelectDemoStudent,
-  onSelectDemoAdmin
+  onSelectDemoAdmin,
+  onSelectDemoVendor
 }) => {
-  const [roleTab, setRoleTab] = useState<'student' | 'admin'>(initialRole);
+  const [roleTab, setRoleTab] = useState<'student' | 'admin' | 'vendor'>(initialRole);
   const [copiedText, setCopiedText] = useState<string | null>(null);
 
   const handleCopy = (text: string, label: string) => {
@@ -50,7 +52,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 Account Recovery &amp; Credentials Help
               </h3>
               <p className="text-xs text-slate-600 font-semibold">
-                CampusMess Hub Identity &amp; Access Service
+                Campus Mess and Food Court Identity &amp; Access Service
               </p>
             </div>
           </div>
@@ -73,7 +75,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
-            Student Hosteler Help
+            Student Hosteler
           </button>
           <button
             type="button"
@@ -84,7 +86,18 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 : 'border-transparent text-slate-600 hover:text-slate-900'
             }`}
           >
-            Mess Staff &amp; Warden Help
+            Mess Authority &amp; Staff
+          </button>
+          <button
+            type="button"
+            onClick={() => setRoleTab('vendor')}
+            className={`pb-2.5 text-xs font-bold border-b-2 transition-all cursor-pointer ${
+              roleTab === 'vendor'
+                ? 'border-[#ff7a30] text-[#ea580c]'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Food Court Owner
           </button>
         </div>
 
@@ -121,7 +134,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                           onSelectDemoStudent('22CS0142', 'B-312');
                           onClose();
                         }}
-                        className="mt-2 text-left text-[11px] font-bold text-[#ea580c] hover:underline"
+                        className="mt-2 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
                       >
                         Use this account &rarr;
                       </button>
@@ -141,7 +154,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                           onSelectDemoStudent('23ME0088', 'G-104');
                           onClose();
                         }}
-                        className="mt-2 text-left text-[11px] font-bold text-[#ea580c] hover:underline"
+                        className="mt-2 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
                       >
                         Use this account &rarr;
                       </button>
@@ -160,14 +173,14 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                   <button
                     type="button"
                     onClick={() => handleCopy('+91 9335568951', 'phone')}
-                    className="p-1 text-slate-500 hover:text-slate-900"
+                    className="p-1 text-slate-500 hover:text-slate-900 cursor-pointer"
                   >
                     {copiedText === 'phone' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               </div>
             </>
-          ) : (
+          ) : roleTab === 'admin' ? (
             <>
               <div className="p-3.5 bg-amber-100/70 border border-amber-300 rounded-2xl space-y-1.5 backdrop-blur-sm">
                 <div className="font-bold text-amber-900 flex items-center gap-1.5">
@@ -192,11 +205,70 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                       onSelectDemoAdmin('admin@campus.edu', 'admin123');
                       onClose();
                     }}
-                    className="w-full py-2 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold rounded-xl text-xs shadow-xs"
+                    className="w-full py-2 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold rounded-xl text-xs shadow-xs cursor-pointer"
                   >
                     Fill Admin Credentials
                   </ChromeButton>
                 )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="p-3.5 bg-orange-100/70 border border-orange-200 rounded-2xl space-y-1.5 backdrop-blur-sm">
+                <div className="font-bold text-[#c2410c] flex items-center gap-1.5">
+                  <Building2 className="w-4 h-4 text-[#ea580c]" />
+                  <span>Food Court Stall Owner Portal</span>
+                </div>
+                <p className="text-slate-800 leading-relaxed font-medium">
+                  Food court franchise operators can log in to update and control their stall menu, live rush meters, and view anonymous student reviews.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <span className="font-black text-slate-900 text-xs block">
+                  Quick Select Food Court Stalls:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="p-3 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
+                    <div>
+                      <div className="font-black text-slate-900">Rolls &amp; Frankie Hub</div>
+                      <div className="text-[11px] text-slate-600 font-mono font-bold">Stall #FC-01</div>
+                      <div className="text-[11px] text-slate-600 font-mono">ID: stall-rolls</div>
+                    </div>
+                    {onSelectDemoVendor && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onSelectDemoVendor('stall-rolls', 'vendor123');
+                          onClose();
+                        }}
+                        className="mt-2 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
+                      >
+                        Sign in as Rolls Owner &rarr;
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
+                    <div>
+                      <div className="font-black text-slate-900">South Hub Express</div>
+                      <div className="text-[11px] text-slate-600 font-mono font-bold">Stall #FC-02</div>
+                      <div className="text-[11px] text-slate-600 font-mono">ID: stall-south</div>
+                    </div>
+                    {onSelectDemoVendor && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onSelectDemoVendor('stall-south', 'vendor123');
+                          onClose();
+                        }}
+                        className="mt-2 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
+                      >
+                        Sign in as South Hub Owner &rarr;
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             </>
           )}

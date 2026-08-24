@@ -5,8 +5,10 @@ import { MenuDisplay } from './components/MenuDisplay';
 import { StudentPassView } from './components/StudentPassView';
 import { AcademicBlockOrder } from './components/AcademicBlockOrder';
 import { DayScholarOrder } from './components/DayScholarOrder';
+import { FoodCourtOrder } from './components/FoodCourtOrder';
 import { AnonymousFeedbackForm } from './components/AnonymousFeedbackForm';
 import { AdminDashboard } from './components/AdminDashboard';
+import { FoodCourtOwnerDashboard } from './components/FoodCourtOwnerDashboard';
 import { QRScannerModal } from './components/QRScannerModal';
 import { SwitchStudentModal } from './components/SwitchStudentModal';
 import ChromeButton from './components/ui/chrome-button';
@@ -17,10 +19,13 @@ import {
   Package,
   Store,
   MessageSquareHeart,
-  ShieldCheck,
   LogOut,
   AlertTriangle,
-  UserCheck
+  UserCheck,
+  Phone,
+  Building2,
+  ChefHat,
+  Sparkles
 } from 'lucide-react';
 
 const LiquidGlassBackdrop: React.FC = () => (
@@ -60,11 +65,17 @@ const MainAppContent: React.FC = () => {
     logout,
     activeTab,
     setActiveTab,
-    currentStudent
+    currentStudent,
+    foodCourtStalls,
+    switchVendorStall,
+    loginVendor,
+    loginAdmin,
+    loginStudent
   } = useMess();
 
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
   const [isSwitchStudentOpen, setIsSwitchStudentOpen] = useState<boolean>(false);
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false);
 
   const mealStatus = getActiveMealStatus();
 
@@ -73,7 +84,85 @@ const MainAppContent: React.FC = () => {
     return <LoginPage />;
   }
 
-  // Admin View
+  // =========================================================================
+  // VIEW 1: FOOD COURT OWNER / VENDOR DASHBOARD (THIRD PAGE)
+  // =========================================================================
+  if (currentSession.role === 'vendor') {
+    const currentStall = foodCourtStalls.find(s => s.id === currentSession.stallId) || foodCourtStalls[0];
+
+    return (
+      <div className="min-h-screen liquid-glass-bg text-slate-900 flex flex-col font-sans selection:bg-[#ff7a30] selection:text-white relative glass-theme-wrapper">
+        <LiquidGlassBackdrop />
+
+        {/* Top Navbar in Clean Light Liquid Glassmorphism */}
+        <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-2xl border-b border-white/90 px-4 sm:px-6 py-3 flex items-center justify-between shadow-[0_10px_30px_rgba(249,115,22,0.06)]">
+          {/* Brand & Portal Title */}
+          <div className="flex items-center space-x-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-md shadow-orange-500/25 border border-white/40">
+              <Store className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-['Outfit'] font-black text-lg sm:text-xl text-slate-900 tracking-wider leading-none">
+                  FOOD COURT OWNER
+                </span>
+                <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-wider">
+                  Partner Portal
+                </span>
+              </div>
+              <p className="text-[11px] text-[#ea580c] font-bold">
+                {currentSession.stallName || currentStall?.name} ({currentStall?.stallNumber || 'Stall'})
+              </p>
+            </div>
+          </div>
+
+          {/* Controls: QR Scanner, Helpline & Logout */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Helpline */}
+            <a
+              href="tel:9335568951"
+              title="Campus Food Court Supervisor Desk"
+              className="hidden lg:flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-500/15 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold font-mono"
+            >
+              <Phone className="w-3.5 h-3.5 text-emerald-600" />
+              <span>+91 9335568951</span>
+            </a>
+
+            {/* QR Scanner for Token Verification */}
+            <ChromeButton
+              onClick={() => setIsScannerOpen(true)}
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-full shadow-lg shadow-orange-500/25 transition-all cursor-pointer active:scale-95 border border-white/30"
+            >
+              <QrCode className="w-4 h-4 text-white" />
+              <span className="hidden sm:inline">Scan Token QR</span>
+            </ChromeButton>
+
+            {/* Logout button */}
+            <button
+              onClick={logout}
+              title="Logout vendor session"
+              className="flex items-center space-x-1.5 px-3.5 py-2 bg-white/80 backdrop-blur-xl hover:bg-emerald-50/90 active:scale-95 text-slate-700 hover:text-emerald-800 text-xs font-bold rounded-full border border-orange-200/70 shadow-xs transition-all cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Main Food Court Owner Dashboard Content */}
+        <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto relative z-10">
+          <FoodCourtOwnerDashboard onOpenScanner={() => setIsScannerOpen(true)} />
+        </main>
+
+        {/* Modals */}
+        {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
+      </div>
+    );
+  }
+
+  // =========================================================================
+  // VIEW 2: MESS ADMIN / WARDEN DASHBOARD
+  // =========================================================================
   if (currentSession.role === 'admin') {
     return (
       <div className="min-h-screen liquid-glass-bg text-slate-900 flex flex-col font-sans selection:bg-[#ff7a30] selection:text-white relative glass-theme-wrapper">
@@ -87,12 +176,24 @@ const MainAppContent: React.FC = () => {
             </div>
             <div>
               <span className="font-['Outfit'] font-black text-xl sm:text-2xl text-slate-900 tracking-wider leading-none">
-                MESS
+                CAMPUS MESS AND FOOD COURT
+              </span>
+              <span className="block text-[11px] font-bold text-[#ea580c]">
+                Authority &amp; Warden Portal
               </span>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
+            {/* 24x7 Helpline Support */}
+            <a
+              href="tel:9335568951"
+              className="hidden md:flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-500/15 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold font-mono"
+            >
+              <Phone className="w-3.5 h-3.5 text-emerald-600" />
+              <span>+91 9335568951</span>
+            </a>
+
             <ChromeButton
               onClick={() => setIsScannerOpen(true)}
               className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-full shadow-lg shadow-orange-500/25 transition-all cursor-pointer active:scale-95 border border-white/30"
@@ -123,13 +224,16 @@ const MainAppContent: React.FC = () => {
     );
   }
 
-  // Student Navigation Tabs
+  // =========================================================================
+  // VIEW 3: STUDENT HOSTELER PORTAL
+  // =========================================================================
   const studentNavTabs: { id: NavigationTab; label: string; icon: typeof UtensilsCrossed; badge?: string }[] = [
     { id: 'menu', label: "Today's Menu", icon: UtensilsCrossed },
     { id: 'pass', label: 'Digital Meal Pass', icon: QrCode },
     { id: 'parcel', label: 'Academic Block Delivery', icon: Package },
     { id: 'dayscholar', label: 'Day Scholar Canteen', icon: Store },
-    { id: 'feedback', label: 'Mess Feedback', icon: MessageSquareHeart }
+    { id: 'foodcourt', label: 'Food Court & Rush', icon: Store },
+    { id: 'feedback', label: 'Mess & Food Court Feedback', icon: MessageSquareHeart }
   ];
 
   return (
@@ -146,14 +250,24 @@ const MainAppContent: React.FC = () => {
             </div>
             <div>
               <span className="font-['Outfit'] font-black text-xl sm:text-2xl text-slate-900 tracking-wider leading-none">
-                MESS
+                CAMPUS MESS AND FOOD COURT
               </span>
             </div>
           </div>
 
-          {/* Right: Student Profile & Controls */}
-          <div className="flex items-center space-x-2.5 sm:space-x-3">
-            {/* Allergen Warning Pill if any - Light Green Glassmorphism */}
+          {/* Right: Helpline, Role Switcher, Student Profile & Controls */}
+          <div className="flex items-center space-x-2 sm:space-x-2.5">
+            {/* Helpline Phone Number Badge */}
+            <a
+              href="tel:9335568951"
+              title="Call Campus Mess Helpline & Food Court: +91 9335568951"
+              className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-500/30 text-xs font-bold font-mono shadow-xs hover:bg-emerald-500/25 transition-all"
+            >
+              <Phone className="w-3.5 h-3.5 text-emerald-600" />
+              <span>+91 9335568951</span>
+            </a>
+
+            {/* Allergen Warning Pill if any */}
             {currentStudent.allergies && currentStudent.allergies.length > 0 && (
               <div
                 title={`Allergens tracked: ${currentStudent.allergies.join(', ')}`}
@@ -165,7 +279,7 @@ const MainAppContent: React.FC = () => {
             )}
 
             {/* Student Info Oval Pill */}
-            <div className="flex items-center space-x-2.5 bg-white/80 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 shadow-sm">
+            <div className="flex items-center space-x-2.5 bg-white/80 backdrop-blur-xl px-3 py-1.5 rounded-full border border-white/90 shadow-sm">
               <img
                 src={currentStudent.photoUrl}
                 alt={currentStudent.name}
@@ -183,7 +297,7 @@ const MainAppContent: React.FC = () => {
               type="button"
               onClick={() => setIsSwitchStudentOpen(true)}
               title="Switch Demo Student Profile"
-              className="p-2.5 rounded-full bg-white/75 backdrop-blur-xl hover:bg-white text-slate-700 hover:text-slate-950 border border-orange-200/70 shadow-xs transition-all cursor-pointer"
+              className="p-2 rounded-full bg-white/75 backdrop-blur-xl hover:bg-white text-slate-700 hover:text-slate-950 border border-orange-200/70 shadow-xs transition-all cursor-pointer"
             >
               <UserCheck className="w-4 h-4" />
             </button>
@@ -193,7 +307,7 @@ const MainAppContent: React.FC = () => {
               type="button"
               onClick={logout}
               title="Logout"
-              className="p-2.5 rounded-full bg-white/75 backdrop-blur-xl hover:bg-emerald-50/90 text-slate-700 hover:text-emerald-800 border border-orange-200/70 shadow-xs transition-all cursor-pointer"
+              className="p-2 rounded-full bg-white/75 backdrop-blur-xl hover:bg-emerald-50/90 text-slate-700 hover:text-emerald-800 border border-orange-200/70 shadow-xs transition-all cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -217,6 +331,11 @@ const MainAppContent: React.FC = () => {
               >
                 <Icon className="w-4 h-4 shrink-0" />
                 <span>{tab.label}</span>
+                {tab.badge && (
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-white/20 text-white font-mono">
+                    {tab.badge}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -234,10 +353,11 @@ const MainAppContent: React.FC = () => {
         )}
         {activeTab === 'parcel' && <AcademicBlockOrder />}
         {activeTab === 'dayscholar' && <DayScholarOrder />}
+        {activeTab === 'foodcourt' && <FoodCourtOrder />}
         {activeTab === 'feedback' && <AnonymousFeedbackForm />}
       </main>
 
-      {/* Modals */}
+      {/* Modals & Overlays */}
       {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
       {isSwitchStudentOpen && <SwitchStudentModal onClose={() => setIsSwitchStudentOpen(false)} />}
     </div>

@@ -263,13 +263,14 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                       key={alg}
                       type="button"
                       onClick={() => toggleNewDishAllergen(alg)}
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer inline-flex items-center space-x-1 ${
                         isChecked
                           ? 'bg-emerald-500/20 text-emerald-800 border-emerald-400'
                           : 'bg-white text-slate-700 border-orange-200 hover:border-orange-400'
                       }`}
                     >
-                      {isChecked ? '✓ ' : '+ '}{alg}
+                      {isChecked ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                      <span>{alg}</span>
                     </button>
                   );
                 })}

@@ -13,7 +13,14 @@ import {
   MealSlot,
   UserSession,
   AnonymousFeedback,
-  DishItem
+  DishItem,
+  FoodCourtStall,
+  FoodCourtItem,
+  FoodCourtOrder,
+  FoodCourtOrderStatus,
+  FoodCourtRushLevel,
+  FoodCourtFeedback,
+  TourStep
 } from '../types/mess';
 import {
   INITIAL_WEEKLY_MENU,
@@ -23,10 +30,17 @@ import {
   INITIAL_ANNOUNCEMENTS,
   INITIAL_ANONYMOUS_FEEDBACK
 } from '../data/initialData';
+import {
+  FOOD_COURT_STALLS,
+  FOOD_COURT_MENU_ITEMS,
+  INITIAL_FOOD_COURT_ORDERS,
+  INITIAL_FOOD_COURT_FEEDBACK
+} from '../data/foodCourtData';
+import { CAMPUS_TOUR_STEPS } from '../data/tourData';
 import { soundEffects } from '../utils/audio';
 import { getCurrentDayOfWeek, getTodayDateString, formatTimeAmPm } from '../utils/time';
 
-export type NavigationTab = 'menu' | 'pass' | 'parcel' | 'dayscholar' | 'feedback' | 'admin';
+export type NavigationTab = 'menu' | 'pass' | 'foodcourt' | 'parcel' | 'dayscholar' | 'feedback' | 'admin' | 'vendor';
 
 interface MessContextType {
   activeTab: NavigationTab;
@@ -34,6 +48,7 @@ interface MessContextType {
   currentSession: UserSession | null;
   loginStudent: (rollNo: string, roomNoOrPass: string) => Promise<{ success: boolean; error?: string }>;
   loginAdmin: (emailOrId: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginVendor: (stallIdOrEmail: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   currentStudent: StudentProfile;
   setCurrentStudent: (student: StudentProfile) => void;
@@ -42,6 +57,10 @@ interface MessContextType {
   attendanceRecords: MealAttendanceRecord[];
   orders: AcademicBlockOrder[];
   dayScholarOrders: DayScholarOrder[];
+  foodCourtStalls: FoodCourtStall[];
+  foodCourtMenuItems: FoodCourtItem[];
+  foodCourtOrders: FoodCourtOrder[];
+  foodCourtFeedbacks: FoodCourtFeedback[];
   announcements: MessAnnouncement[];
   dishRatings: DishRating[];
   anonymousFeedbacks: AnonymousFeedback[];
@@ -49,6 +68,30 @@ interface MessContextType {
   selectedDay: string;
   setSelectedDay: (day: string) => void;
   
+  // Food Court Actions
+  createFoodCourtOrder: (order: Omit<FoodCourtOrder, 'id' | 'tokenNumber' | 'placedAt' | 'status'>) => FoodCourtOrder;
+  updateFoodCourtOrderStatus: (orderId: string, status: FoodCourtOrderStatus) => void;
+  updateStallRushLevel: (stallId: string, rushLevel: FoodCourtRushLevel, queueDelta?: number) => void;
+  updateFoodCourtStallDetails: (stallId: string, updates: Partial<FoodCourtStall>) => void;
+  addFoodCourtItem: (item: Omit<FoodCourtItem, 'id'>) => FoodCourtItem;
+  updateFoodCourtItem: (item: FoodCourtItem) => void;
+  deleteFoodCourtItem: (itemId: string) => void;
+  toggleFoodCourtItemAvailability: (itemId: string) => void;
+  submitFoodCourtFeedback: (feedback: Omit<FoodCourtFeedback, 'id' | 'timestamp' | 'date' | 'status'>) => void;
+  updateFoodCourtFeedbackStatus: (id: string, status: FoodCourtFeedback['status'], ownerNote?: string) => void;
+  switchVendorStall: (stallId: string) => void;
+
+  // Guided Tour Actions
+  isTourActive: boolean;
+  currentTourStepIndex: number;
+  tourSteps: TourStep[];
+  startTour: (stepIndex?: number) => void;
+  nextTourStep: () => void;
+  prevTourStep: () => void;
+  skipTour: () => void;
+  isCheatSheetOpen: boolean;
+  setIsCheatSheetOpen: (open: boolean) => void;
+
   // Actions
   markMealAttendance: (mealType: MealType, studentId?: string, method?: 'qr_scanner' | 'manual_admin' | 'pass_tap') => { success: boolean; message: string };
   skipMealForRebate: (mealType: MealType, studentId?: string, reason?: string) => { success: boolean; message: string };
@@ -81,6 +124,10 @@ const STORAGE_KEYS = {
   ATTENDANCE: 'campusmess_attendance_v3',
   ORDERS: 'campusmess_orders_v3',
   DAY_SCHOLAR_ORDERS: 'campusmess_dayscholar_orders_v3',
+  FOOD_COURT_STALLS: 'campusmess_foodcourt_stalls_v3',
+  FOOD_COURT_ITEMS: 'campusmess_foodcourt_items_v3',
+  FOOD_COURT_ORDERS: 'campusmess_foodcourt_orders_v3',
+  FOOD_COURT_FEEDBACK: 'campusmess_foodcourt_feedback_v3',
   ANNOUNCEMENTS: 'campusmess_announcements_v3',
   RATINGS: 'campusmess_ratings_v3',
   FEEDBACK: 'campusmess_anonymous_feedback_v3',
@@ -174,6 +221,42 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return INITIAL_DAY_SCHOLAR_ORDERS;
   });
 
+  // 5c. Food Court Stalls
+  const [foodCourtStalls, setFoodCourtStalls] = useState<FoodCourtStall[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.FOOD_COURT_STALLS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return FOOD_COURT_STALLS;
+  });
+
+  // 5d. Food Court Menu Items
+  const [foodCourtMenuItems, setFoodCourtMenuItems] = useState<FoodCourtItem[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.FOOD_COURT_ITEMS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return FOOD_COURT_MENU_ITEMS;
+  });
+
+  // 5e. Food Court Orders
+  const [foodCourtOrders, setFoodCourtOrders] = useState<FoodCourtOrder[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.FOOD_COURT_ORDERS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return INITIAL_FOOD_COURT_ORDERS;
+  });
+
+  // 5f. Food Court Feedbacks
+  const [foodCourtFeedbacks, setFoodCourtFeedbacks] = useState<FoodCourtFeedback[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.FOOD_COURT_FEEDBACK);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return INITIAL_FOOD_COURT_FEEDBACK;
+  });
+
   // 6. Announcements
   const [announcements] = useState<MessAnnouncement[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.ANNOUNCEMENTS);
@@ -215,6 +298,12 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   });
 
+  // 10. Guided Tour state
+  const [isTourActive, setIsTourActive] = useState<boolean>(false);
+  const [currentTourStepIndex, setCurrentTourStepIndex] = useState<number>(0);
+  const [isCheatSheetOpen, setIsCheatSheetOpen] = useState<boolean>(false);
+  const tourSteps = CAMPUS_TOUR_STEPS;
+
   // LocalStorage sync effects
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.MENU, JSON.stringify(weeklyMenu));
@@ -227,6 +316,46 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.CURRENT_STUDENT_ID, currentStudentId);
   }, [currentStudentId]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(attendanceRecords));
+  }, [attendanceRecords]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
+  }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.DAY_SCHOLAR_ORDERS, JSON.stringify(dayScholarOrders));
+  }, [dayScholarOrders]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.FOOD_COURT_STALLS, JSON.stringify(foodCourtStalls));
+  }, [foodCourtStalls]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.FOOD_COURT_ITEMS, JSON.stringify(foodCourtMenuItems));
+  }, [foodCourtMenuItems]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.FOOD_COURT_ORDERS, JSON.stringify(foodCourtOrders));
+  }, [foodCourtOrders]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.FOOD_COURT_FEEDBACK, JSON.stringify(foodCourtFeedbacks));
+  }, [foodCourtFeedbacks]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.RATINGS, JSON.stringify(dishRatings));
+  }, [dishRatings]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.FEEDBACK, JSON.stringify(anonymousFeedbacks));
+  }, [anonymousFeedbacks]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.TODAY_COUNTS, JSON.stringify(todayCounts));
+  }, [todayCounts]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(attendanceRecords));
@@ -606,6 +735,216 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setStudents(prev => prev.map(s => s.id === updated.id ? updated : s));
   }, []);
 
+  // Food Court Actions
+  const createFoodCourtOrder = useCallback((orderData: Omit<FoodCourtOrder, 'id' | 'tokenNumber' | 'placedAt' | 'status'>): FoodCourtOrder => {
+    const tokenNum = `#FC-${Math.floor(100 + Math.random() * 900)}`;
+    const newOrder: FoodCourtOrder = {
+      ...orderData,
+      id: `FC-${Math.floor(1000 + Math.random() * 9000)}`,
+      tokenNumber: tokenNum,
+      placedAt: formatTimeAmPm(new Date()),
+      status: 'Placed',
+      targetWhatsAppNumber: orderData.targetWhatsAppNumber || '919335568951'
+    };
+
+    setFoodCourtOrders(prev => [newOrder, ...prev]);
+
+    // Increase stall active queue count slightly
+    setFoodCourtStalls(prev =>
+      prev.map(s => {
+        if (s.id === orderData.stallId) {
+          const newQueue = s.activeQueueCount + 1;
+          const newWait = Math.max(3, newQueue * 3 + 2);
+          const newRush: FoodCourtRushLevel = newQueue >= 8 ? 'Peak' : newQueue >= 5 ? 'High' : newQueue >= 3 ? 'Moderate' : 'Low';
+          return {
+            ...s,
+            activeQueueCount: newQueue,
+            estimatedWaitMins: newWait,
+            rushLevel: newRush
+          };
+        }
+        return s;
+      })
+    );
+
+    soundEffects.playSuccess();
+    confetti({
+      particleCount: 60,
+      spread: 70,
+      origin: { y: 0.7 },
+      colors: ['#ea580c', '#f97316', '#fbbf24', '#10b981']
+    });
+
+    return newOrder;
+  }, []);
+
+  const updateFoodCourtOrderStatus = useCallback((orderId: string, status: FoodCourtOrderStatus) => {
+    setFoodCourtOrders(prev =>
+      prev.map(ord => {
+        if (ord.id === orderId) {
+          return { ...ord, status };
+        }
+        return ord;
+      })
+    );
+    soundEffects.playSuccessBeep();
+  }, []);
+
+  const updateStallRushLevel = useCallback((stallId: string, rushLevel: FoodCourtRushLevel, queueDelta?: number) => {
+    setFoodCourtStalls(prev =>
+      prev.map(stall => {
+        if (stall.id === stallId) {
+          const newQueue = Math.max(0, queueDelta !== undefined ? stall.activeQueueCount + queueDelta : (rushLevel === 'Peak' ? 10 : rushLevel === 'High' ? 7 : rushLevel === 'Moderate' ? 4 : 1));
+          const waitMins = rushLevel === 'Peak' ? 18 : rushLevel === 'High' ? 14 : rushLevel === 'Moderate' ? 9 : 4;
+          return {
+            ...stall,
+            rushLevel,
+            activeQueueCount: newQueue,
+            estimatedWaitMins: waitMins
+          };
+        }
+        return stall;
+      })
+    );
+  }, []);
+
+  // Update Food Court Stall Details (Owner control)
+  const updateFoodCourtStallDetails = useCallback((stallId: string, updates: Partial<FoodCourtStall>) => {
+    setFoodCourtStalls(prev =>
+      prev.map(s => (s.id === stallId ? { ...s, ...updates } : s))
+    );
+    soundEffects.playSuccess();
+  }, []);
+
+  // Add Food Court Menu Item (Owner control)
+  const addFoodCourtItem = useCallback((itemData: Omit<FoodCourtItem, 'id'>): FoodCourtItem => {
+    const newItem: FoodCourtItem = {
+      ...itemData,
+      id: `fc-item-${Date.now()}`
+    };
+    setFoodCourtMenuItems(prev => [...prev, newItem]);
+    soundEffects.playSuccess();
+    return newItem;
+  }, []);
+
+  // Update Food Court Menu Item (Owner control)
+  const updateFoodCourtItem = useCallback((itemData: FoodCourtItem) => {
+    setFoodCourtMenuItems(prev =>
+      prev.map(item => (item.id === itemData.id ? itemData : item))
+    );
+    soundEffects.playSuccess();
+  }, []);
+
+  // Delete Food Court Menu Item (Owner control)
+  const deleteFoodCourtItem = useCallback((itemId: string) => {
+    setFoodCourtMenuItems(prev => prev.filter(item => item.id !== itemId));
+    soundEffects.playTrash();
+  }, []);
+
+  // Toggle Food Court Menu Item Availability (In stock / Sold out)
+  const toggleFoodCourtItemAvailability = useCallback((itemId: string) => {
+    setFoodCourtMenuItems(prev =>
+      prev.map(item => (item.id === itemId ? { ...item, available: !item.available } : item))
+    );
+    soundEffects.playTap();
+  }, []);
+
+  // Submit Food Court Anonymous Feedback (Strict Anonymity)
+  const submitFoodCourtFeedback = useCallback((feedbackData: Omit<FoodCourtFeedback, 'id' | 'timestamp' | 'date' | 'status'>) => {
+    const newFeedback: FoodCourtFeedback = {
+      ...feedbackData,
+      id: `fcfb-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      timestamp: `Today, ${formatTimeAmPm(new Date())}`,
+      date: todayDateStr,
+      status: 'Pending'
+    };
+    setFoodCourtFeedbacks(prev => [newFeedback, ...prev]);
+    soundEffects.playSuccess();
+    confetti({
+      particleCount: 50,
+      spread: 70,
+      origin: { y: 0.7 },
+      colors: ['#ea580c', '#10b981', '#fbbf24']
+    });
+  }, [todayDateStr]);
+
+  // Update Food Court Feedback Status (Owner review / note)
+  const updateFoodCourtFeedbackStatus = useCallback((id: string, status: FoodCourtFeedback['status'], ownerNote?: string) => {
+    setFoodCourtFeedbacks(prev =>
+      prev.map(fb => (fb.id === id ? { ...fb, status, ...(ownerNote !== undefined ? { ownerNote } : {}) } : fb))
+    );
+    soundEffects.playSuccessBeep();
+  }, []);
+
+  // Switch Active Stall for Vendor Session
+  const switchVendorStall = useCallback((stallId: string) => {
+    const stall = foodCourtStalls.find(s => s.id === stallId);
+    if (!stall) return;
+    setCurrentSession(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        stallId: stall.id,
+        stallName: stall.name,
+        name: `${stall.name} Manager`,
+        designation: `${stall.stallNumber} Head Operator`
+      };
+    });
+    soundEffects.playTap();
+  }, [foodCourtStalls]);
+
+  // Guided Tour Actions
+  const startTour = useCallback((stepIndex: number = 0) => {
+    const validIndex = Math.max(0, Math.min(stepIndex, CAMPUS_TOUR_STEPS.length - 1));
+    setCurrentTourStepIndex(validIndex);
+    setIsTourActive(true);
+    const targetTab = CAMPUS_TOUR_STEPS[validIndex]?.tabId;
+    if (targetTab) {
+      setActiveTab(targetTab);
+    }
+    soundEffects.playTap();
+  }, []);
+
+  const nextTourStep = useCallback(() => {
+    setCurrentTourStepIndex(prev => {
+      const nextIndex = prev + 1;
+      if (nextIndex >= CAMPUS_TOUR_STEPS.length) {
+        setIsTourActive(false);
+        soundEffects.playSuccess();
+        confetti({
+          particleCount: 80,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#f97316', '#10b981', '#6366f1', '#ec4899']
+        });
+        return 0;
+      }
+      const targetTab = CAMPUS_TOUR_STEPS[nextIndex]?.tabId;
+      if (targetTab) {
+        setActiveTab(targetTab);
+      }
+      soundEffects.playTap();
+      return nextIndex;
+    });
+  }, []);
+
+  const prevTourStep = useCallback(() => {
+    setCurrentTourStepIndex(prev => {
+      const prevIndex = Math.max(0, prev - 1);
+      const targetTab = CAMPUS_TOUR_STEPS[prevIndex]?.tabId;
+      if (targetTab) {
+        setActiveTab(targetTab);
+      }
+      soundEffects.playTap();
+      return prevIndex;
+    });
+  }, []);
+
+  const skipTour = useCallback(() => {
+    setIsTourActive(false);
+    soundEffects.playTap();
+  }, []);
+
   // Reset to default
   const resetToDefaultData = useCallback(() => {
     localStorage.removeItem(STORAGE_KEYS.MENU);
@@ -614,6 +953,9 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem(STORAGE_KEYS.ATTENDANCE);
     localStorage.removeItem(STORAGE_KEYS.ORDERS);
     localStorage.removeItem(STORAGE_KEYS.DAY_SCHOLAR_ORDERS);
+    localStorage.removeItem(STORAGE_KEYS.FOOD_COURT_STALLS);
+    localStorage.removeItem(STORAGE_KEYS.FOOD_COURT_ITEMS);
+    localStorage.removeItem(STORAGE_KEYS.FOOD_COURT_ORDERS);
     localStorage.removeItem(STORAGE_KEYS.RATINGS);
     localStorage.removeItem(STORAGE_KEYS.FEEDBACK);
     localStorage.removeItem(STORAGE_KEYS.TODAY_COUNTS);
@@ -622,6 +964,9 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCurrentStudentId('stu-1');
     setOrders(INITIAL_ORDERS);
     setDayScholarOrders(INITIAL_DAY_SCHOLAR_ORDERS);
+    setFoodCourtStalls(FOOD_COURT_STALLS);
+    setFoodCourtMenuItems(FOOD_COURT_MENU_ITEMS);
+    setFoodCourtOrders(INITIAL_FOOD_COURT_ORDERS);
     setAttendanceRecords([]);
     setDishRatings([]);
     setAnonymousFeedbacks(INITIAL_ANONYMOUS_FEEDBACK);
@@ -722,6 +1067,55 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   }, []);
 
+  // Authentication: Vendor / Food Court Owner Login
+  const loginVendor = useCallback(async (stallIdOrEmail: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    const cleanInput = stallIdOrEmail.trim().toLowerCase();
+    const cleanPass = passwordInput.trim();
+
+    // Match by stallId, stallName, or email
+    const matchedStall = foodCourtStalls.find(s =>
+      s.id.toLowerCase() === cleanInput ||
+      s.stallNumber.toLowerCase() === cleanInput ||
+      s.name.toLowerCase().includes(cleanInput) ||
+      cleanInput.includes(s.id.replace('stall-', '')) ||
+      (cleanInput.includes('rolls') && s.id === 'stall-rolls') ||
+      (cleanInput.includes('south') && s.id === 'stall-south') ||
+      (cleanInput.includes('chai') && s.id === 'stall-chai') ||
+      (cleanInput.includes('pizza') && s.id === 'stall-pizza') ||
+      (cleanInput.includes('wok') && s.id === 'stall-wok') ||
+      (cleanInput.includes('nutri') && s.id === 'stall-nutrifit')
+    ) || foodCourtStalls[0];
+
+    const validPasswords = ['vendor123', 'foodcourt123', 'owner123', 'fc123', '123456', 'admin123', 'campus2026'];
+    const isPassValid = validPasswords.includes(cleanPass.toLowerCase()) || cleanPass === 'password';
+
+    if (!isPassValid) {
+      soundEffects.playError();
+      return {
+        success: false,
+        error: 'Invalid Food Court Stall Owner password. Use demo password "vendor123".'
+      };
+    }
+
+    const newSession: UserSession = {
+      role: 'vendor',
+      name: `${matchedStall.name} Owner / Manager`,
+      id: `VENDOR-${matchedStall.stallNumber.replace('#', '')}`,
+      email: `${matchedStall.id.replace('stall-', '')}@foodcourt.campus.edu`,
+      stallId: matchedStall.id,
+      stallName: matchedStall.name,
+      designation: `${matchedStall.stallNumber} Head Franchise Owner`,
+      loginTime: formatTimeAmPm(new Date())
+    };
+
+    setCurrentSession(newSession);
+    setActiveTab('vendor');
+    soundEffects.playSuccess();
+    return { success: true };
+  }, [foodCourtStalls]);
+
   // Authentication: Logout
   const logout = useCallback(() => {
     setCurrentSession(null);
@@ -737,6 +1131,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         currentSession,
         loginStudent,
         loginAdmin,
+        loginVendor,
         logout,
         currentStudent,
         setCurrentStudent: updateStudentProfile,
@@ -745,12 +1140,36 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         attendanceRecords,
         orders,
         dayScholarOrders,
+        foodCourtStalls,
+        foodCourtMenuItems,
+        foodCourtOrders,
+        foodCourtFeedbacks,
         announcements,
         dishRatings,
         anonymousFeedbacks,
         todayCounts,
         selectedDay,
         setSelectedDay,
+        createFoodCourtOrder,
+        updateFoodCourtOrderStatus,
+        updateStallRushLevel,
+        updateFoodCourtStallDetails,
+        addFoodCourtItem,
+        updateFoodCourtItem,
+        deleteFoodCourtItem,
+        toggleFoodCourtItemAvailability,
+        submitFoodCourtFeedback,
+        updateFoodCourtFeedbackStatus,
+        switchVendorStall,
+        isTourActive,
+        currentTourStepIndex,
+        tourSteps,
+        startTour,
+        nextTourStep,
+        prevTourStep,
+        skipTour,
+        isCheatSheetOpen,
+        setIsCheatSheetOpen,
         markMealAttendance,
         skipMealForRebate,
         createAcademicOrder,

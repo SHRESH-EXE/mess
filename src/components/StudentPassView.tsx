@@ -559,7 +559,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                   >
                     <span>{alg}</span>
                     <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${isChecked ? 'bg-emerald-600 text-white font-bold' : 'border border-slate-300'}`}>
-                      {isChecked ? '✓' : ''}
+                      {isChecked ? <Check className="w-2.5 h-2.5" /> : null}
                     </span>
                   </button>
                 );
