@@ -229,7 +229,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
             className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-sm cursor-pointer"
           >
             <QrCode className="w-4 h-4" />
-            <span>Open Gate QR Scanner</span>
+            <span>QR Scanner</span>
           </button>
 
           <button
@@ -255,7 +255,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
         {[
           { id: 'headcount', label: 'Live Headcount & Attendance', icon: Users, badge: `${totalHeadcountToday}` },
           { id: 'dayscholar', label: 'Day Scholar Orders', icon: Store, badge: `${pendingDayScholarOrders.length} New` },
-          { id: 'feedback', label: 'Anonymous Student Feedback', icon: MessageSquareHeart, badge: `${anonymousFeedbacks.length}` },
+          { id: 'feedback', label: 'Student Feedback', icon: MessageSquareHeart, badge: `${anonymousFeedbacks.length}` },
           { id: 'allergies', label: 'Allergens & Food Safety', icon: HeartPulse, badge: `${Object.values(allergyDistribution).reduce((a: number, b: number) => a + b, 0)} Profiles` },
           { id: 'menu', label: 'Menu & Recipe Manager', icon: UtensilsCrossed },
           { id: 'parcels', label: 'Academic Parcel Deliveries', icon: PackageCheck, badge: `${pendingOrders.length} Pending` }
@@ -649,7 +649,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
         </div>
       )}
 
-      {/* SUB-VIEW 2: ANONYMOUS STUDENT FEEDBACK ANALYTICS */}
+      {/* SUB-VIEW 2: STUDENT FEEDBACK ANALYTICS */}
       {adminActiveSubTab === 'feedback' && (
         <div className="space-y-6 animate-in fade-in duration-150">
           
@@ -680,7 +680,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                 </div>
               </div>
               <div className="text-xs text-slate-400 pt-3 border-t border-slate-800">
-                Calculated from <strong className="text-slate-200">{feedbackStats.count}</strong> anonymous student reviews
+                Calculated from <strong className="text-slate-200">{feedbackStats.count}</strong> student reviews
               </div>
             </div>
 
@@ -755,7 +755,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
             </div>
 
             <div className="text-xs text-slate-400">
-              Showing <strong className="text-slate-200">{filteredFeedbacks.length}</strong> anonymous reviews
+              Showing <strong className="text-slate-200">{filteredFeedbacks.length}</strong> student reviews
             </div>
           </div>
 
@@ -792,7 +792,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
                 <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
                   <span>{fb.timestamp}</span>
-                  <span className="text-teal-400 font-bold">Anonymous Verified Student</span>
+                  <span className="text-teal-400 font-bold">Verified Student</span>
                 </div>
               </div>
             ))}
@@ -800,7 +800,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
           {filteredFeedbacks.length === 0 && (
             <div className="text-center py-10 bg-slate-900 rounded-2xl border border-dashed border-slate-800">
-              <p className="text-sm text-slate-400">No anonymous feedback matches your current filter.</p>
+              <p className="text-sm text-slate-400">No student feedback matches your current filter.</p>
             </div>
           )}
         </div>

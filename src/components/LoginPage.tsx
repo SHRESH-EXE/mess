@@ -207,7 +207,7 @@ export const LoginPage: React.FC = () => {
                     htmlFor="password-field"
                     className="block text-xs font-black text-slate-900"
                   >
-                    Password / Room No
+                    Password
                   </label>
                   <button
                     type="button"

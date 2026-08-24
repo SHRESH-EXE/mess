@@ -99,7 +99,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                 <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-400 text-emerald-700 flex items-center justify-center mx-auto shadow-xs">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">Review Submitted Anonymously!</h3>
+                <h3 className="text-xl font-bold text-slate-900">Review Submitted!</h3>
                 <p className="text-sm text-slate-600 max-w-md mx-auto">
                   Thank you for keeping our mess accountable. Your rating has been added to the public campus dashboard.
                 </p>
@@ -225,7 +225,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                   className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 active:scale-98 flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
-                  <span>Post Anonymous Review</span>
+                  <span>Post Review</span>
                 </button>
 
               </form>
