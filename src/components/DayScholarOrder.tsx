@@ -341,8 +341,8 @@ export const DayScholarOrder: React.FC = () => {
                 <span className="text-xs text-orange-600 font-semibold font-mono">100% Pure Veg</span>
               </div>
 
-              {/* Slot Selector Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {/* Slot Selector Grid - Horizontally scrollable on mobile */}
+              <div className="flex sm:grid sm:grid-cols-4 gap-2 sm:gap-2.5 overflow-x-auto pb-2 sm:pb-0 pt-1 px-1 -mx-1 sm:mx-0 snap-x snap-mandatory sm:snap-none scrollbar-none">
                 {mealSlots.map((slot) => {
                   const Icon = slot.icon;
                   const isActive = selectedSlot === slot.type;
@@ -356,7 +356,7 @@ export const DayScholarOrder: React.FC = () => {
                         setSelectedSlot(slot.type);
                         soundEffects.playTap();
                       }}
-                      className={`p-3.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+                      className={`min-w-[130px] sm:min-w-0 shrink-0 sm:shrink p-3.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between cursor-pointer snap-center ${
                         isActive
                           ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white border-white/40 shadow-md shadow-orange-500/20 scale-[1.02]'
                           : 'bg-white/70 border-orange-200/70 text-slate-700 hover:bg-white'

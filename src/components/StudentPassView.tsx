@@ -360,7 +360,8 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Meal Check-off cards - Horizontally scrollable carousel on mobile */}
+        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto pb-2.5 sm:pb-0 pt-1 px-1 -mx-1 sm:mx-0 snap-x snap-mandatory sm:snap-none scrollbar-none">
           {mealTypes.map((m) => {
             const check = isMealTakenToday(m.type, currentStudent.id);
             const Icon = m.icon;
@@ -370,7 +371,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               <div
                 key={m.type}
                 id={`checkoff-card-${m.type}`}
-                className={`p-5 rounded-[28px] border transition-all flex flex-col justify-between backdrop-blur-2xl ${
+                className={`min-w-[240px] sm:min-w-0 shrink-0 sm:shrink p-5 rounded-[28px] border transition-all flex flex-col justify-between backdrop-blur-2xl snap-center ${
                   check.isTaken
                     ? check.status === 'rebate_applied'
                       ? 'bg-blue-50/70 border-blue-200 shadow-xs'

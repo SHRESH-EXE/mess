@@ -91,8 +91,8 @@ export const MenuDisplay: React.FC = () => {
           </span>
         </div>
 
-        {/* Day Pills Flow */}
-        <div className="grid grid-cols-2 xs:grid-cols-4 sm:grid-cols-7 gap-2">
+        {/* Day Pills Flow - Horizontally scrollable on mobile, 7-col grid on sm+ */}
+        <div className="flex sm:grid sm:grid-cols-7 gap-2 sm:gap-2.5 overflow-x-auto pb-2 sm:pb-0 pt-1.5 px-1 -mx-1 sm:mx-0 snap-x snap-mandatory sm:snap-none scrollbar-none">
           {daysList.map((day) => {
             const isSelected = selectedDay === day;
             const isToday = todayDay === day;
@@ -102,7 +102,7 @@ export const MenuDisplay: React.FC = () => {
                 key={day}
                 id={`day-tab-${day.toLowerCase()}`}
                 onClick={() => setSelectedDay(day)}
-                className={`py-3 px-2 rounded-2xl text-center transition-all relative font-bold cursor-pointer backdrop-blur-xl ${
+                className={`min-w-[80px] sm:min-w-0 shrink-0 sm:shrink py-3 px-2.5 rounded-2xl text-center transition-all relative font-bold cursor-pointer backdrop-blur-xl snap-center ${
                   isSelected
                     ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-lg shadow-orange-500/25 scale-[1.02] border border-white/40'
                     : isToday
@@ -128,8 +128,8 @@ export const MenuDisplay: React.FC = () => {
         </div>
       </div>
 
-      {/* Meal Slot Tabs (Breakfast, Lunch, Snacks, Dinner) - Floating Liquid Capsules */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      {/* Meal Slot Tabs (Breakfast, Lunch, Snacks, Dinner) - Horizontally scrollable on mobile, 4-col grid on md+ */}
+      <div className="flex md:grid md:grid-cols-4 gap-3 sm:gap-4 overflow-x-auto pb-2.5 pt-1 px-1 -mx-1 md:mx-0 snap-x snap-mandatory md:snap-none scrollbar-none">
         {mealTabConfig.map((slot) => {
           const isCurrentActive = mealStatus.currentMeal === slot.type && selectedDay === todayDay;
           const isSelected = selectedMealTab === slot.type;
@@ -141,7 +141,7 @@ export const MenuDisplay: React.FC = () => {
               key={slot.type}
               id={`meal-tab-${slot.type}`}
               onClick={() => setSelectedMealTab(slot.type)}
-              className={`p-4 sm:p-5 rounded-[28px] text-left transition-all relative cursor-pointer backdrop-blur-2xl ${
+              className={`min-w-[175px] sm:min-w-[200px] md:min-w-0 shrink-0 md:shrink p-4 sm:p-5 rounded-[28px] text-left transition-all relative cursor-pointer backdrop-blur-2xl snap-center ${
                 isSelected
                   ? 'bg-gradient-to-br from-[#ff7a30] via-[#ff8838] to-[#ff9b4e] text-white shadow-xl shadow-orange-500/20 scale-[1.02] border border-white/50'
                   : 'bg-white/45 text-slate-700 border border-white/80 hover:bg-white/70 hover:border-white shadow-[0_8px_24px_-8px_rgba(249,115,22,0.06)]'

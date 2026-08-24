@@ -200,7 +200,7 @@ const MainAppContent: React.FC = () => {
         </div>
 
         {/* Student Navigation Bar - Oval Pill Container */}
-        <div className="max-w-7xl mx-auto mt-2.5 pt-2 border-t border-orange-200/50 flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto pb-0.5">
+        <div className="max-w-7xl mx-auto mt-2.5 pt-2 border-t border-orange-200/50 flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none px-0.5">
           {studentNavTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -208,7 +208,7 @@ const MainAppContent: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
                   isActive
                     ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-md shadow-orange-500/25 border border-white/30 scale-[1.02]'
                     : 'text-slate-700 hover:text-slate-950 hover:bg-white/75 backdrop-blur-md'

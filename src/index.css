@@ -475,3 +475,12 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #ea580c;
 }
+
+/* Hide scrollbar for clean touch carousels */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
