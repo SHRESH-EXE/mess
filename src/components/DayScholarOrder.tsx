@@ -41,7 +41,7 @@ import { getCurrentDayOfWeek, getActiveMealStatus } from '../utils/time';
 import { soundEffects } from '../utils/audio';
 
 const ACADEMIC_BLOCKS = Array.from({ length: 30 }, (_, i) => `Academic Block ${i + 1}`);
-const DEFAULT_MESS_WHATSAPP_NUMBER = '+91 98765 43210';
+const DEFAULT_MESS_WHATSAPP_NUMBER = '+91 9335568951';
 
 export const DayScholarOrder: React.FC = () => {
   const {
@@ -671,7 +671,7 @@ export const DayScholarOrder: React.FC = () => {
                     required
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="e.g. +91 98765 43210"
+                    placeholder="e.g. +91 9335568951"
                     className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-xs font-mono"
                   />
                 </div>

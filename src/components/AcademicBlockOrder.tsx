@@ -283,7 +283,7 @@ export const AcademicBlockOrder: React.FC = () => {
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+91 98765 43210"
+                  placeholder="+91 9335568951"
                   className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-hidden font-mono shadow-xs"
                 />
               </div>

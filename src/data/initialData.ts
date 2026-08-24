@@ -35,7 +35,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     hostel: 'Aryabhatta Hostel (Block-B)',
     roomNo: 'B-312',
     email: 'aarav.sharma@campus.edu',
-    phone: '+91 98765 43210',
+    phone: '+91 9335568951',
     planName: 'Full Mess Pass (4 Meals/Day)',
     planType: 'full',
     totalMealsOpted: 120,
@@ -54,7 +54,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     hostel: 'Gargi Girls Hostel (Block-A)',
     roomNo: 'A-204',
     email: 'priya.patel@campus.edu',
-    phone: '+91 98451 23456',
+    phone: '+91 9335568951',
     planName: 'Flexi Pass (Lunch + Dinner)',
     planType: 'lunch_dinner',
     totalMealsOpted: 60,
@@ -73,7 +73,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     hostel: 'CV Raman Hostel (Block-C)',
     roomNo: 'C-108',
     email: 'rohan.verma@campus.edu',
-    phone: '+91 97112 34890',
+    phone: '+91 9335568951',
     planName: 'Full Mess Pass (4 Meals/Day)',
     planType: 'full',
     totalMealsOpted: 120,
@@ -92,7 +92,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     hostel: 'Sarojini Hostel (Block-D)',
     roomNo: 'D-118',
     email: 'ananya.d@campus.edu',
-    phone: '+91 98220 54321',
+    phone: '+91 9335568951',
     planName: 'Full Mess Pass (4 Meals/Day)',
     planType: 'full',
     totalMealsOpted: 120,
@@ -111,7 +111,7 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
     hostel: 'Aryabhatta Hostel (Block-B)',
     roomNo: 'B-105',
     email: 'vikram.rao@campus.edu',
-    phone: '+91 99001 88776',
+    phone: '+91 9335568951',
     planName: 'Full Mess Pass (4 Meals/Day)',
     planType: 'full',
     totalMealsOpted: 120,
@@ -130,7 +130,7 @@ export const ACADEMIC_BLOCKS: string[] = Array.from(
   (_, i) => `Academic Block ${i + 1}`
 );
 
-export const DEFAULT_MESS_WHATSAPP_NUMBER = '919876543210';
+export const DEFAULT_MESS_WHATSAPP_NUMBER = '919335568951';
 
 export const INITIAL_WEEKLY_MENU: Record<string, DayMenu> = {
   Monday: {
@@ -1733,7 +1733,7 @@ export const INITIAL_ORDERS: AcademicBlockOrder[] = [
     id: 'ORD-9821',
     studentId: 'stu-1',
     studentName: 'Aarav Sharma',
-    phone: '+91 98765 43210',
+    phone: '+91 9335568951',
     rollNo: '22CS0142',
     blockName: 'Academic Block 3',
     roomFloor: 'Lab 3, 2nd Floor (Systems Lab)',
@@ -1754,7 +1754,7 @@ export const INITIAL_ORDERS: AcademicBlockOrder[] = [
     id: 'ORD-9819',
     studentId: 'stu-2',
     studentName: 'Priya Patel',
-    phone: '+91 98451 23456',
+    phone: '+91 9335568951',
     rollNo: '23EE0089',
     blockName: 'Academic Block 12',
     roomFloor: 'Discussion Room 4 (1st Floor)',
@@ -1849,7 +1849,7 @@ export const INITIAL_DAY_SCHOLAR_ORDERS: DayScholarOrder[] = [
   {
     id: 'DS-4091',
     name: 'Kavya Sundaram',
-    phoneNumber: '+91 98765 11223',
+    phoneNumber: '+91 9335568951',
     department: 'B.Tech AI & Data Science (Year 3)',
     mealSlot: 'lunch',
     items: [
@@ -1866,7 +1866,7 @@ export const INITIAL_DAY_SCHOLAR_ORDERS: DayScholarOrder[] = [
   {
     id: 'DS-4088',
     name: 'Vikramaditya Roy',
-    phoneNumber: '+91 98450 77889',
+    phoneNumber: '+91 9335568951',
     department: 'M.Tech Robotics & Automation',
     mealSlot: 'lunch',
     items: [
@@ -1885,7 +1885,7 @@ export const INITIAL_DAY_SCHOLAR_ORDERS: DayScholarOrder[] = [
   {
     id: 'DS-4075',
     name: 'Sneha Kulkarni',
-    phoneNumber: '+91 97654 33445',
+    phoneNumber: '+91 9335568951',
     department: 'B.Des Industrial Design',
     mealSlot: 'snacks',
     items: [

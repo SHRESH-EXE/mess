@@ -155,11 +155,11 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/80 border border-orange-200">
                   <div className="flex items-center space-x-2">
                     <PhoneCall className="w-4 h-4 text-[#ea580c]" />
-                    <span className="font-mono text-slate-800 font-bold">+91 1824 517000</span>
+                    <span className="font-mono text-slate-800 font-bold">+91 9335568951</span>
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleCopy('+91 1824 517000', 'phone')}
+                    onClick={() => handleCopy('+91 9335568951', 'phone')}
                     className="p-1 text-slate-500 hover:text-slate-900"
                   >
                     {copiedText === 'phone' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
