@@ -79,7 +79,6 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
             <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-xs">
               Student Voice
             </span>
-            <span className="text-xs text-slate-500 font-mono">100% Anonymous & Direct to Head Chef</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-serif">
             Rate Today's Campus Meals
