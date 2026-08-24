@@ -197,29 +197,31 @@ export const AcademicBlockOrder: React.FC = () => {
   return (
     <section id="academic-block-order-section" className="space-y-6 animate-in fade-in duration-200">
       
-      {/* Top Hero Banner */}
-      <div className="bg-gradient-to-r from-emerald-800 via-teal-800 to-emerald-900 text-white rounded-3xl p-6 sm:p-7 shadow-lg relative overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-emerald-500/20 blur-2xl pointer-events-none" />
+      {/* Top Hero Banner - Liquid Glass Surface */}
+      <div className="rounded-[36px] bg-white/50 backdrop-blur-3xl border border-white/80 p-6 sm:p-8 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)] relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
             <div className="flex items-center space-x-2 mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-white font-bold text-[10px] uppercase tracking-wider">
+              <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-bold text-[10px] uppercase tracking-wider shadow-xs">
                 Direct Kitchen Dispatch
               </span>
-              <span className="text-xs text-emerald-200 font-mono">
-                WhatsApp Express Service
+              <span className="text-xs text-orange-600 font-mono font-semibold">
+                WhatsApp Express Delivery
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white font-serif tracking-tight">
-              Academic Block Meal & Snack Parcel Delivery
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 font-serif tracking-tight">
+              Academic Block Meal & Snack Delivery
             </h2>
+            <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
+              Hot meals and refreshments delivered straight to your lab, department, or study cubicle.
+            </p>
           </div>
 
-          <div className="flex items-center space-x-3 bg-black/20 p-3 rounded-2xl border border-white/10 shrink-0">
-            <Phone className="w-5 h-5 text-emerald-300 animate-pulse" />
+          <div className="flex items-center space-x-3 bg-white/70 backdrop-blur-xl p-3.5 rounded-2xl border border-white/90 shrink-0 shadow-xs">
+            <Phone className="w-5 h-5 text-orange-600" />
             <div className="text-xs">
-              <div className="text-emerald-200 text-[10px] uppercase font-bold">Kitchen WhatsApp Desk</div>
-              <div className="font-mono font-bold text-white">+{targetWhatsAppNumber}</div>
+              <div className="text-slate-500 text-[10px] uppercase font-bold">Kitchen WhatsApp Desk</div>
+              <div className="font-mono font-bold text-slate-900">+{targetWhatsAppNumber}</div>
             </div>
           </div>
         </div>
@@ -227,31 +229,31 @@ export const AcademicBlockOrder: React.FC = () => {
 
       {/* Success Notification */}
       {lastSubmittedId && (
-        <div className="p-4 bg-emerald-950/60 border border-emerald-800 rounded-2xl text-emerald-200 text-xs font-semibold flex items-center justify-between shadow-xl animate-in slide-in-from-top-2">
+        <div className="p-4 bg-emerald-50/80 backdrop-blur-xl border border-emerald-300 rounded-2xl text-emerald-950 text-xs font-semibold flex items-center justify-between shadow-xs animate-in slide-in-from-top-2">
           <div className="flex items-center space-x-2.5">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <span>
               Order <strong>#{lastSubmittedId}</strong> generated! WhatsApp opened with your formatted ticket. Mess kitchen is preparing your parcel.
             </span>
           </div>
           <button
             onClick={() => setLastSubmittedId(null)}
-            className="text-[11px] font-bold text-emerald-300 hover:text-emerald-100 hover:underline ml-2 cursor-pointer"
+            className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 hover:underline ml-2 cursor-pointer"
           >
             Dismiss
           </button>
         </div>
       )}
 
-      {/* Order Form Card */}
+      {/* Order Form Surface - Liquid Glass */}
       <div className="max-w-3xl mx-auto">
-        <div className="bg-slate-900 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl space-y-6">
-          <div className="flex items-center space-x-2.5 pb-3 border-b border-slate-800">
-            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
-              <Utensils className="w-5 h-5" />
+        <div className="bg-white/55 backdrop-blur-3xl rounded-[36px] p-6 sm:p-8 border border-white/90 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.08)] space-y-6">
+          <div className="flex items-center space-x-2.5 pb-3.5 border-b border-orange-200/50">
+            <div className="w-9 h-9 rounded-2xl bg-orange-500/15 text-orange-600 flex items-center justify-center border border-orange-200">
+              <Utensils className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-100">
+              <h3 className="text-base font-bold text-slate-900">
                 1. Delivery Location & Student Details
               </h3>
             </div>
@@ -262,26 +264,26 @@ export const AcademicBlockOrder: React.FC = () => {
             {/* Student Name & Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300">Student Name *</label>
+                <label className="text-xs font-bold text-slate-700">Student Name *</label>
                 <input
                   type="text"
                   required
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
                   placeholder="e.g. Aarav Sharma"
-                  className="w-full text-xs p-3 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
+                  className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-hidden shadow-xs"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300">WhatsApp Phone Number *</label>
+                <label className="text-xs font-bold text-slate-700">WhatsApp Phone Number *</label>
                 <input
                   type="tel"
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+91 98765 43210"
-                  className="w-full text-xs p-3 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-hidden font-mono"
+                  className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-hidden font-mono shadow-xs"
                 />
               </div>
             </div>
@@ -289,21 +291,21 @@ export const AcademicBlockOrder: React.FC = () => {
             {/* Academic Block Building & Room / Floor */}
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <Building className="w-3.5 h-3.5 text-slate-400" />
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5 text-orange-500" />
                   <span>Academic Block / Building Name *</span>
                 </label>
                 <select
                   required
                   value={blockName}
                   onChange={(e) => setBlockName(e.target.value)}
-                  className="w-full text-xs p-3 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:outline-hidden cursor-pointer"
+                  className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-hidden cursor-pointer shadow-xs"
                 >
-                  <option value="" disabled className="bg-slate-900 text-slate-500">
+                  <option value="" disabled className="text-slate-400">
                     -- Select Academic Block --
                   </option>
                   {ACADEMIC_BLOCKS.map((block) => (
-                    <option key={block} value={block} className="bg-slate-900 text-slate-100">
+                    <option key={block} value={block} className="text-slate-800">
                       {block}
                     </option>
                   ))}
@@ -311,7 +313,7 @@ export const AcademicBlockOrder: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300">
+                <label className="text-xs font-bold text-slate-700">
                   Floor & Specific Room / Lab / Study Desk No *
                 </label>
                 <input
@@ -320,19 +322,19 @@ export const AcademicBlockOrder: React.FC = () => {
                   value={roomFloor}
                   onChange={(e) => setRoomFloor(e.target.value)}
                   placeholder="e.g. 2nd Floor, AI Research Lab (Room 214) or Library Cubicle 12"
-                  className="w-full text-xs p-3 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
+                  className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-hidden shadow-xs"
                 />
               </div>
             </div>
 
             {/* Meal Items Selection */}
-            <div className="space-y-3 pt-3 border-t border-slate-800">
+            <div className="space-y-3 pt-3 border-t border-orange-200/50">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-100 uppercase tracking-wider">
+                <label className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                   2. Select Items to Pack
                 </label>
-                <span className="text-[11px] text-slate-400">
-                  {selectedItems.length} items in box
+                <span className="text-[11px] text-slate-500 font-medium">
+                  {selectedItems.length} items in parcel
                 </span>
               </div>
 
@@ -341,13 +343,13 @@ export const AcademicBlockOrder: React.FC = () => {
                 {selectedItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-xl border border-slate-800 bg-slate-950/70 flex items-center justify-between gap-2"
+                    className="p-3.5 rounded-2xl border border-white/90 bg-white/70 backdrop-blur-md flex items-center justify-between gap-2 shadow-xs"
                   >
                     <div className="flex-1">
-                      <div className="text-xs font-bold text-slate-100">{item.dishName}</div>
-                      <div className="text-[10px] text-slate-400">
+                      <div className="text-xs font-bold text-slate-900">{item.dishName}</div>
+                      <div className="text-[10px] text-slate-500 font-medium">
                         {item.isIncludedInMessPass && useMessPass
-                          ? 'Included in Monthly Mess Pass'
+                          ? 'Covered by Monthly Pass'
                           : `₹${item.price} each`}
                       </div>
                     </div>
@@ -356,17 +358,17 @@ export const AcademicBlockOrder: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleUpdateQuantity(idx, -1)}
-                        className="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-colors border border-slate-700 cursor-pointer"
+                        className="w-6 h-6 rounded-lg bg-orange-100/70 hover:bg-orange-200 text-slate-700 flex items-center justify-center transition-colors border border-orange-200 cursor-pointer"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="font-mono text-xs font-bold text-slate-100 w-4 text-center">
+                      <span className="font-mono text-xs font-bold text-slate-900 w-4 text-center">
                         {item.quantity}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleUpdateQuantity(idx, 1)}
-                        className="w-6 h-6 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-colors border border-slate-700 cursor-pointer"
+                        className="w-6 h-6 rounded-lg bg-orange-100/70 hover:bg-orange-200 text-slate-700 flex items-center justify-center transition-colors border border-orange-200 cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -377,7 +379,7 @@ export const AcademicBlockOrder: React.FC = () => {
                           next.splice(idx, 1);
                           setSelectedItems(next);
                         }}
-                        className="p-1 text-slate-500 hover:text-emerald-400 rounded-md transition-colors cursor-pointer"
+                        className="p-1 text-slate-400 hover:text-emerald-700 rounded-md transition-colors cursor-pointer"
                         title="Remove item"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -394,31 +396,31 @@ export const AcademicBlockOrder: React.FC = () => {
                   value={customItemName}
                   onChange={(e) => setCustomItemName(e.target.value)}
                   placeholder="Add custom item (e.g. 2 extra rotis, curd bowl)..."
-                  className="flex-1 text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                  className="flex-1 text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-xs"
                 />
                 <button
                   type="button"
                   onClick={handleAddCustom}
-                  className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-xs rounded-xl border border-slate-700 transition-colors cursor-pointer"
+                  className="px-4 py-3 bg-white/80 hover:bg-white text-orange-600 font-bold text-xs rounded-2xl border border-orange-200 shadow-xs transition-colors cursor-pointer"
                 >
                   Add
                 </button>
               </div>
             </div>
 
-            {/* PRE-ORDER ALLERGY WARNING BANNER & MANDATORY CHECKBOX - Light Green Soft Warning */}
+            {/* PRE-ORDER ALLERGY WARNING BANNER & MANDATORY CHECKBOX */}
             {hasAllergyConflict && (
-              <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/60 space-y-3 animate-in fade-in duration-200">
-                <div className="flex items-start space-x-3 text-emerald-200">
-                  <AlertTriangle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-300 space-y-3 animate-in fade-in duration-200 shadow-xs">
+                <div className="flex items-start space-x-3 text-emerald-950">
+                  <AlertTriangle className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div className="space-y-1">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-800">
                       Allergy Advisory Notice
                     </h4>
-                    <p className="text-xs text-emerald-200/90 leading-relaxed">
+                    <p className="text-xs text-emerald-900/90 leading-relaxed">
                       Your parcel order contains items with allergens matching your registered student profile:
                     </p>
-                    <ul className="list-disc list-inside text-xs font-mono text-emerald-300 pt-1 space-y-0.5">
+                    <ul className="list-disc list-inside text-xs font-mono text-emerald-800 pt-1 space-y-0.5">
                       {detectedAllergenClashes.map((c, i) => (
                         <li key={i}>
                           <strong>{c.itemName}</strong> contains <span className="underline font-bold">{c.allergens.join(', ')}</span>
@@ -428,15 +430,15 @@ export const AcademicBlockOrder: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-emerald-900/60">
+                <div className="pt-2 border-t border-emerald-200">
                   <label className="flex items-center space-x-2.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={acknowledgedAllergy}
                       onChange={(e) => setAcknowledgedAllergy(e.target.checked)}
-                      className="w-4 h-4 text-emerald-500 rounded border-emerald-600 bg-slate-950 focus:ring-emerald-500"
+                      className="w-4 h-4 text-emerald-600 rounded border-emerald-300 focus:ring-emerald-500"
                     />
-                    <span className="text-xs font-bold text-emerald-200">
+                    <span className="text-xs font-bold text-emerald-900">
                       I acknowledge the allergy advisory and wish to proceed with this order.
                     </span>
                   </label>
@@ -445,39 +447,39 @@ export const AcademicBlockOrder: React.FC = () => {
             )}
 
             {/* Packaging & Batch Timing */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-800">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-orange-200/50">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300">Packaging Type</label>
+                <label className="text-xs font-bold text-slate-700">Packaging Type</label>
                 <select
                   value={packingType}
                   onChange={(e) => setPackingType(e.target.value as typeof packingType)}
-                  className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
+                  className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-hidden shadow-xs"
                 >
-                  <option value="Eco Paper Box" className="bg-slate-900 text-slate-100">Eco Paper Box (Disposable)</option>
-                  <option value="Steel Tiffin (Returnable)" className="bg-slate-900 text-slate-100">Steel Tiffin (Return by 6 PM)</option>
-                  <option value="Disposable Tray" className="bg-slate-900 text-slate-100">Disposable Meal Tray</option>
+                  <option value="Eco Paper Box">Eco Paper Box (Disposable)</option>
+                  <option value="Steel Tiffin (Returnable)">Steel Tiffin (Return by 6 PM)</option>
+                  <option value="Disposable Tray">Disposable Meal Tray</option>
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-300">Delivery Batch Window</label>
+                <label className="text-xs font-bold text-slate-700">Delivery Batch Window</label>
                 <select
                   value={deliverySlot}
                   onChange={(e) => setDeliverySlot(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
+                  className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-hidden shadow-xs"
                 >
-                  <option value="Immediate Batch (Next 25 mins)" className="bg-slate-900 text-slate-100">Immediate Batch (Next 25 mins)</option>
-                  <option value="1:15 PM Lunch Batch" className="bg-slate-900 text-slate-100">1:15 PM Lunch Batch</option>
-                  <option value="2:00 PM Afternoon Batch" className="bg-slate-900 text-slate-100">2:00 PM Afternoon Batch</option>
-                  <option value="5:15 PM High Tea Batch" className="bg-slate-900 text-slate-100">5:15 PM High Tea Batch</option>
-                  <option value="8:15 PM Evening Batch" className="bg-slate-900 text-slate-100">8:15 PM Evening Batch</option>
+                  <option value="Immediate Batch (Next 25 mins)">Immediate Batch (Next 25 mins)</option>
+                  <option value="1:15 PM Lunch Batch">1:15 PM Lunch Batch</option>
+                  <option value="2:00 PM Afternoon Batch">2:00 PM Afternoon Batch</option>
+                  <option value="5:15 PM High Tea Batch">5:15 PM High Tea Batch</option>
+                  <option value="8:15 PM Evening Batch">8:15 PM Evening Batch</option>
                 </select>
               </div>
             </div>
 
             {/* Special Instructions */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">
+              <label className="text-xs font-bold text-slate-700">
                 Special Notes / Allergy Requests (Optional)
               </label>
               <input
@@ -485,33 +487,33 @@ export const AcademicBlockOrder: React.FC = () => {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="e.g. Extra pickle, mild spice, please call when delivery person reaches ground reception"
-                className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
+                className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 focus:outline-hidden shadow-xs"
               />
             </div>
 
             {/* Mess Pass Deduction Toggle & Total */}
-            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-2xl bg-white/70 border border-orange-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
               <label className="flex items-center space-x-2.5 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={useMessPass}
                   onChange={(e) => setUseMessPass(e.target.checked)}
-                  className="w-4 h-4 text-amber-500 rounded border-slate-700 bg-slate-900 focus:ring-amber-500"
+                  className="w-4 h-4 text-orange-600 rounded border-orange-300 focus:ring-orange-500"
                 />
                 <div>
-                  <span className="text-xs font-bold text-slate-100 block">
+                  <span className="text-xs font-bold text-slate-900 block">
                     Deduct from Monthly Mess Pass
                   </span>
-                  <span className="text-[10px] text-slate-400">
-                    No cash required for standard thali items
+                  <span className="text-[10px] text-slate-500">
+                    Included with active hostel subscription
                   </span>
                 </div>
               </label>
 
               <div className="text-right">
-                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Extra Due</div>
-                <div className="text-base font-black text-amber-400 font-mono">
-                  {totalAmount === 0 ? '₹0 (Free on Pass)' : `₹${totalAmount}`}
+                <div className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">Extra Due</div>
+                <div className="text-base font-black text-orange-600 font-mono">
+                  {totalAmount === 0 ? '₹0 (Included)' : `₹${totalAmount}`}
                 </div>
               </div>
             </div>
@@ -521,7 +523,7 @@ export const AcademicBlockOrder: React.FC = () => {
               id="submit-whatsapp-order-btn"
               type="submit"
               disabled={selectedItems.length === 0 || (hasAllergyConflict && !acknowledgedAllergy)}
-              className="w-full py-3.5 px-6 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:opacity-50 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-orange-500/25 border border-white/20 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer"
+              className="w-full py-3.5 px-6 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] disabled:opacity-50 text-white font-extrabold text-sm rounded-full shadow-lg shadow-orange-500/25 border border-white/20 flex items-center justify-center space-x-2 transition-all active:scale-98 cursor-pointer"
             >
               <Send className="w-5 h-5" />
               <span>Order via WhatsApp Direct</span>

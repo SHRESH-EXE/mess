@@ -138,84 +138,84 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
         </div>
       )}
 
-      {/* Top Split: Digital Pass Card & Monthly Subscription Balance */}
+      {/* Top Split: Digital Pass Flow & Monthly Balance */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Digital Mess Pass ID Card (Left 7 Cols) */}
-        <div className="lg:col-span-7 dark-glass-card rounded-[32px] p-6 sm:p-7 shadow-2xl border border-white/10 relative overflow-hidden flex flex-col justify-between">
+        {/* Digital Mess Pass ID Surface (Left 7 Cols) */}
+        <div className="lg:col-span-7 rounded-[36px] bg-white/50 backdrop-blur-3xl p-6 sm:p-8 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)] border border-white/80 relative overflow-hidden flex flex-col justify-between">
           
           {/* Holographic Security Background Glow */}
-          <div className="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-amber-500/15 blur-3xl pointer-events-none" />
-          <div className="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-orange-400/20 blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-amber-400/20 blur-3xl pointer-events-none" />
 
-          {/* Pass Top Banner */}
+          {/* Pass Top Header */}
           <div className="flex items-start justify-between gap-3 relative z-10">
             <div className="flex items-center space-x-3.5">
-              <div className="w-12 h-12 rounded-[18px] bg-gradient-to-tr from-amber-500 to-amber-600 p-0.5 shadow-lg flex items-center justify-center font-serif text-slate-950 font-black text-xl border border-white/30">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#ff7a30] to-[#ff9248] p-0.5 shadow-md shadow-orange-500/20 flex items-center justify-center text-white font-black text-lg border border-white/40">
                 CM
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs font-black tracking-widest uppercase text-amber-400">
+                  <span className="text-[11px] font-black tracking-widest uppercase text-orange-600">
                     CAMPUS DINING PASS
                   </span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 text-[10px] font-mono font-bold">
                     ACTIVE 2026
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-slate-100 font-serif tracking-tight">
+                <h3 className="text-lg font-bold text-slate-900 font-serif tracking-tight">
                   Central Hostel Mess Authority
                 </h3>
               </div>
             </div>
 
-            <div className="text-[11px] px-3 py-1 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700/80 shrink-0 font-mono">
+            <div className="text-[11px] px-3.5 py-1 rounded-full bg-white/70 backdrop-blur-xl text-slate-700 border border-white/90 shrink-0 font-mono font-semibold shadow-xs">
               Verified ID
             </div>
           </div>
 
           {/* Student Profile Row */}
-          <div className="my-6 relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 p-4 sm:p-5 rounded-[24px] bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
-            <div className="w-20 h-20 rounded-[20px] bg-gradient-to-tr from-amber-500 to-amber-600 p-1 shrink-0 shadow-lg">
+          <div className="my-6 relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 p-5 rounded-[28px] bg-white/60 border border-white/90 backdrop-blur-xl shadow-xs">
+            <div className="w-20 h-20 rounded-[22px] bg-gradient-to-tr from-[#ff7a30] to-[#ff9248] p-1 shrink-0 shadow-md shadow-orange-500/15">
               <img
                 src={currentStudent.photoUrl}
                 alt={currentStudent.name}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover rounded-[16px]"
+                className="w-full h-full object-cover rounded-[18px]"
               />
             </div>
 
             <div className="flex-1 text-center sm:text-left">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
-                <h4 className="text-lg font-black text-white">{currentStudent.name}</h4>
-                <span className="font-mono text-xs px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 inline-block self-center sm:self-auto">
+                <h4 className="text-lg font-black text-slate-900">{currentStudent.name}</h4>
+                <span className="font-mono text-xs px-3 py-0.5 rounded-full bg-orange-500/15 text-orange-700 font-bold border border-orange-300/50 inline-block self-center sm:self-auto">
                   {currentStudent.rollNo}
                 </span>
               </div>
 
-              <div className="text-xs text-slate-300 space-y-0.5">
+              <div className="text-xs text-slate-600 space-y-0.5">
                 <div>{currentStudent.department} ({currentStudent.semester})</div>
-                <div className="text-slate-400 font-mono flex items-center justify-center sm:justify-start gap-1">
-                  <Building className="w-3.5 h-3.5 text-amber-400" />
+                <div className="text-slate-500 font-mono flex items-center justify-center sm:justify-start gap-1">
+                  <Building className="w-3.5 h-3.5 text-orange-500" />
                   <span>{currentStudent.hostel} • Room {currentStudent.roomNo}</span>
                 </div>
               </div>
 
               {/* Allergies Chip Summary on Pass - Light Green Glassmorphism */}
-              <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+              <div className="mt-2.5 pt-2 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-2 text-[11px]">
                 <div className="flex items-center space-x-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-slate-400">Dietary Allergies:</span>
+                  <ShieldAlert className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="text-slate-500">Dietary Allergies:</span>
                   {currentStudent.allergies && currentStudent.allergies.length > 0 ? (
                     <div className="flex flex-wrap gap-1">
                       {currentStudent.allergies.map(alg => (
-                        <span key={alg} className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 font-bold text-[10px]">
+                        <span key={alg} className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 font-bold text-[10px]">
                           {alg}
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <span className="text-emerald-400 font-semibold">None Registered</span>
+                    <span className="text-emerald-700 font-semibold">None Registered</span>
                   )}
                 </div>
 
@@ -224,7 +224,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                     setSelectedAllergens(currentStudent.allergies || []);
                     setShowAllergyEditor(true);
                   }}
-                  className="px-2.5 py-0.5 rounded-full bg-slate-800 hover:bg-slate-700 text-orange-400 text-[10px] font-bold border border-slate-700 transition flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-0.5 rounded-full bg-white/80 hover:bg-white text-orange-600 text-[10px] font-bold border border-orange-200 shadow-xs transition flex items-center gap-1 cursor-pointer"
                 >
                   <Edit2 className="w-3 h-3" />
                   <span>Edit</span>
@@ -234,13 +234,12 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
           </div>
 
           {/* Live Scanner Actions */}
-          <div className="relative z-10 pt-3 border-t border-slate-800/80 flex items-center justify-end">
-            {/* Direct Scan Actions */}
+          <div className="relative z-10 pt-3 border-t border-slate-200/60 flex items-center justify-end">
             <div className="flex items-center space-x-2.5 w-full sm:w-auto">
               <button
                 id="open-camera-scanner-btn"
                 onClick={onOpenScanner}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white text-xs font-bold rounded-full shadow-lg shadow-orange-500/25 flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer border border-white/20"
+                className="flex-1 sm:flex-none px-5 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white text-xs font-bold rounded-full shadow-lg shadow-orange-500/20 flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer border border-white/30"
               >
                 <Zap className="w-4 h-4 text-white" />
                 <span>Open QR Scanner</span>
@@ -248,7 +247,7 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
 
               <button
                 onClick={() => handleMarkMeal(mealStatus.currentMeal)}
-                className="flex-1 sm:flex-none px-4 py-2.5 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white text-xs font-bold rounded-full shadow-lg shadow-orange-500/25 flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer border border-white/30"
+                className="flex-1 sm:flex-none px-5 py-2.5 bg-gradient-to-r from-orange-600 to-[#ea580c] hover:from-orange-500 hover:to-orange-600 text-white text-xs font-bold rounded-full shadow-lg shadow-orange-500/20 flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer border border-white/30"
                 title={`Mark ${mealStatus.currentMeal.toUpperCase()} for current student`}
               >
                 <Check className="w-4 h-4" />
@@ -260,68 +259,68 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
         </div>
 
         {/* Meal Counter & Plan Balance (Right 5 Cols) */}
-        <div className="lg:col-span-5 dark-glass-card rounded-[32px] p-6 sm:p-7 border border-white/10 shadow-xl flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-5 rounded-[36px] bg-white/50 backdrop-blur-3xl p-6 sm:p-8 border border-white/80 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)] flex flex-col justify-between space-y-6">
           <div>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-orange-600 uppercase tracking-wider">
                   Monthly Subscription
                 </span>
-                <h3 className="text-lg font-bold text-slate-100">
+                <h3 className="text-lg font-bold text-slate-900">
                   Meal Counter & Balance
                 </h3>
               </div>
-              <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-bold border border-slate-700">
+              <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/70 text-slate-700 font-bold border border-white/90 shadow-xs">
                 Current Month
               </span>
             </div>
 
             {/* Consumption Progress Bar & Number */}
-            <div className="p-4 sm:p-5 rounded-[24px] bg-slate-950/70 border border-slate-800/80 space-y-3">
+            <div className="p-5 rounded-[28px] bg-white/60 border border-white/90 backdrop-blur-xl shadow-xs space-y-3">
               <div className="flex items-end justify-between">
                 <div>
-                  <span className="text-3xl font-black text-slate-100 font-mono">
+                  <span className="text-3xl font-black text-slate-900 font-mono">
                     {currentStudent.mealsConsumedMonth}
                   </span>
-                  <span className="text-xs text-slate-400 font-medium ml-1">
+                  <span className="text-xs text-slate-500 font-medium ml-1">
                     / {currentStudent.totalMealsOpted} Opted
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-bold text-emerald-400 font-mono">
+                  <span className="text-sm font-bold text-emerald-700 font-mono">
                     {mealsRemaining} Remaining
                   </span>
-                  <div className="text-[10px] text-slate-400 font-medium">Valid until Month End</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Valid until Month End</div>
                 </div>
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-3.5 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/60">
+              <div className="w-full h-3.5 bg-orange-100/80 rounded-full overflow-hidden p-0.5 border border-orange-200/60">
                 <div
-                  className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] rounded-full transition-all duration-500 shadow-sm"
                   style={{ width: `${consumptionPercentage}%` }}
                 />
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+              <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 font-medium">
                 <span>{consumptionPercentage}% Consumed</span>
-                <span className="text-amber-400">Active Mess Card</span>
+                <span className="text-orange-600 font-semibold">Active Mess Card</span>
               </div>
             </div>
 
             {/* Registered Allergies Banner */}
-            <div className="mt-4 p-4 rounded-[22px] bg-slate-950/70 border border-slate-800/80 space-y-2">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-200">
-                <div className="flex items-center space-x-1.5 text-amber-300">
-                  <HeartPulse className="w-4 h-4 text-amber-400" />
-                  <span>Your Allergy Guard:</span>
+            <div className="mt-4 p-4 sm:p-5 rounded-[26px] bg-white/60 border border-white/90 backdrop-blur-xl shadow-xs space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+                <div className="flex items-center space-x-1.5 text-orange-700">
+                  <HeartPulse className="w-4 h-4 text-orange-600" />
+                  <span>Allergy Protection:</span>
                 </div>
                 <button
                   onClick={() => {
                     setSelectedAllergens(currentStudent.allergies || []);
                     setShowAllergyEditor(true);
                   }}
-                  className="text-[11px] text-amber-400 hover:underline font-semibold cursor-pointer"
+                  className="text-[11px] text-orange-600 hover:text-orange-700 underline font-bold cursor-pointer"
                 >
                   Manage Allergies
                 </button>
@@ -332,13 +331,13 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                   currentStudent.allergies.map(alg => (
                     <span
                       key={alg}
-                      className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 text-xs font-bold"
+                      className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 text-xs font-bold"
                     >
                       {alg}
                     </span>
                   ))
                 ) : (
-                  <span className="text-xs text-slate-400 italic">No allergens declared. Tap 'Manage Tags' to add.</span>
+                  <span className="text-xs text-slate-400 italic">No allergens declared. Tap 'Manage Allergies' to configure.</span>
                 )}
               </div>
             </div>
@@ -349,15 +348,15 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
       </div>
 
       {/* Today's 4-Meal Status Check-Off Grid */}
-      <div className="dark-glass-card rounded-[32px] p-6 sm:p-7 border border-white/10 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-slate-800">
+      <div className="rounded-[36px] bg-white/50 backdrop-blur-3xl p-6 sm:p-8 border border-white/80 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)] space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3.5 border-b border-orange-200/50">
           <div>
-            <h3 className="text-base font-bold text-slate-100">
-              Today's Meal Check-Off Status ({todayDateStr})
+            <h3 className="text-base font-bold text-slate-900">
+              Today's Meal Check-Off ({todayDateStr})
             </h3>
           </div>
-          <div className="text-xs font-medium text-slate-300 bg-slate-800/90 px-3.5 py-1.5 rounded-full border border-slate-700">
-            Active Meal: <strong className="text-amber-400 capitalize">{mealStatus.currentMeal}</strong>
+          <div className="text-xs font-medium text-slate-700 bg-white/70 px-3.5 py-1.5 rounded-full border border-white/90 shadow-xs">
+            Active Meal: <strong className="text-orange-600 capitalize">{mealStatus.currentMeal}</strong>
           </div>
         </div>
 
@@ -371,38 +370,38 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               <div
                 key={m.type}
                 id={`checkoff-card-${m.type}`}
-                className={`p-4 sm:p-5 rounded-[24px] border transition-all flex flex-col justify-between ${
+                className={`p-5 rounded-[28px] border transition-all flex flex-col justify-between backdrop-blur-2xl ${
                   check.isTaken
                     ? check.status === 'rebate_applied'
-                      ? 'bg-blue-950/40 border-blue-800/80'
-                      : 'bg-emerald-950/40 border-emerald-800/80'
+                      ? 'bg-blue-50/70 border-blue-200 shadow-xs'
+                      : 'bg-emerald-50/70 border-emerald-200 shadow-xs'
                     : isOngoing
-                    ? 'bg-slate-950 border-amber-500 ring-2 ring-amber-500/30'
-                    : 'bg-slate-950/70 border-slate-800'
+                    ? 'bg-white/75 border-orange-400 ring-2 ring-orange-400/30 shadow-md'
+                    : 'bg-white/55 border-white/90 shadow-xs'
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center space-x-2.5">
                       <div
                         className={`p-2.5 rounded-2xl ${
                           check.isTaken
                             ? 'bg-emerald-600 text-white'
                             : isOngoing
-                            ? 'bg-amber-500 text-slate-950 font-bold'
-                            : 'bg-slate-800 text-slate-300'
+                            ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-xs'
+                            : 'bg-orange-500/10 text-orange-600'
                         }`}
                       >
                         <Icon className="w-4 h-4" />
                       </div>
                       <div>
-                        <h4 className="text-xs font-bold text-slate-100">{m.label}</h4>
-                        <div className="text-[10px] text-slate-400 font-mono">{m.timing}</div>
+                        <h4 className="text-sm font-bold text-slate-900">{m.label}</h4>
+                        <div className="text-[10px] text-slate-500 font-mono">{m.timing}</div>
                       </div>
                     </div>
 
                     {isOngoing && !check.isTaken && (
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 animate-pulse">
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-orange-500 text-white shadow-xs animate-pulse">
                         LIVE
                       </span>
                     )}
@@ -412,49 +411,49 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                   <div className="my-2.5">
                     {check.isTaken ? (
                       check.status === 'rebate_applied' ? (
-                        <div className="text-xs font-bold text-blue-400 flex items-center gap-1.5">
+                        <div className="text-xs font-bold text-blue-700 flex items-center gap-1.5">
                           <XCircle className="w-4 h-4" />
                           <span>Rebate Applied (Skipped)</span>
                         </div>
                       ) : (
-                        <div className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                          <span>Consumed at {check.record?.timestamp || 'Gate'}</span>
+                        <div className="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          <span>Consumed ({check.record?.timestamp || 'Gate'})</span>
                         </div>
                       )
                     ) : (
-                      <div className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-                        <Clock className="w-4 h-4 text-slate-500" />
+                      <div className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                        <Clock className="w-4 h-4 text-slate-400" />
                         <span>Pending Check-in</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Card Action Buttons */}
-                <div className="pt-3 border-t border-slate-800/80 flex items-center space-x-1.5 mt-2">
+                {/* Action Buttons */}
+                <div className="pt-3.5 border-t border-slate-200/60 flex items-center space-x-2 mt-2">
                   {!check.isTaken ? (
                     <>
                       <button
                         onClick={() => handleMarkMeal(m.type)}
                         className={`flex-1 py-2 px-3 text-xs font-bold rounded-full transition-all cursor-pointer ${
                           isOngoing
-                            ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-md shadow-amber-500/20'
-                            : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                            ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-md shadow-orange-500/20'
+                            : 'bg-white/80 hover:bg-white text-slate-800 border border-orange-200 shadow-xs'
                         }`}
                       >
                         Mark Taken
                       </button>
                       <button
                         onClick={() => setShowRebateModal(m.type)}
-                        className="py-2 px-3 text-[11px] font-semibold text-slate-300 hover:text-blue-300 hover:bg-blue-950/60 rounded-full border border-slate-700 transition-colors cursor-pointer"
+                        className="py-2 px-3 text-[11px] font-bold text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-full border border-orange-200 transition-colors cursor-pointer bg-white/70"
                         title="Skip meal for rebate credit"
                       >
                         Skip
                       </button>
                     </>
                   ) : (
-                    <div className="w-full text-center py-1.5 text-[11px] font-mono text-emerald-400 font-bold bg-emerald-950/60 rounded-full border border-emerald-800">
+                    <div className="w-full text-center py-1.5 text-[11px] font-mono text-emerald-800 font-bold bg-emerald-100/80 rounded-full border border-emerald-300/80">
                       Token Verified #{check.record?.id.slice(-4) || 'OK'}
                     </div>
                   )}
@@ -466,50 +465,50 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
       </div>
 
       {/* Student Attendance Logs History */}
-      <div className="dark-glass-card rounded-[32px] p-6 sm:p-7 border border-white/10 shadow-xl space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="rounded-[36px] bg-white/50 backdrop-blur-3xl p-6 sm:p-8 border border-white/80 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)] space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-orange-200/50">
           <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500/20 to-amber-500/20 text-orange-600 flex items-center justify-center border border-orange-300/40">
               <FileText className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-100">
-                Recent Attendance & Gate Verification Logs
+              <h3 className="text-sm font-bold text-slate-900">
+                Attendance & Verification Logs
               </h3>
             </div>
           </div>
-          <span className="text-xs font-mono px-3 py-1 rounded-full bg-slate-800 text-slate-300">{studentAttendance.length} records</span>
+          <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/70 text-slate-700 font-semibold border border-white/90 shadow-xs">{studentAttendance.length} records</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
-                <th className="pb-2">Date</th>
-                <th className="pb-2">Meal Session</th>
-                <th className="pb-2">Check-in Time</th>
-                <th className="pb-2">Verification Method</th>
-                <th className="pb-2">Status</th>
+              <tr className="border-b border-orange-200/60 text-slate-500 font-bold uppercase text-[10px]">
+                <th className="pb-2.5">Date</th>
+                <th className="pb-2.5">Meal Session</th>
+                <th className="pb-2.5">Check-in Time</th>
+                <th className="pb-2.5">Verification Method</th>
+                <th className="pb-2.5">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-orange-200/40">
               {studentAttendance.map((rec) => (
-                <tr key={rec.id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="py-2.5 font-mono text-slate-200">{rec.date}</td>
-                  <td className="py-2.5 font-bold uppercase text-slate-100">{rec.mealType}</td>
-                  <td className="py-2.5 font-mono text-slate-400">{rec.timestamp}</td>
-                  <td className="py-2.5 text-slate-300">
-                    <span className="px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 font-mono text-[10px] text-slate-300">
+                <tr key={rec.id} className="hover:bg-white/40 transition-colors">
+                  <td className="py-3 font-mono text-slate-700">{rec.date}</td>
+                  <td className="py-3 font-bold uppercase text-slate-900">{rec.mealType}</td>
+                  <td className="py-3 font-mono text-slate-500">{rec.timestamp}</td>
+                  <td className="py-3 text-slate-700">
+                    <span className="px-2.5 py-0.5 rounded-full bg-white/80 border border-orange-200 font-mono text-[10px] text-slate-700 font-medium">
                       {rec.method === 'qr_scanner' ? 'QR Camera' : rec.method === 'pass_tap' ? 'Pass Tap' : 'Staff Manual'}
                     </span>
                   </td>
-                  <td className="py-2.5">
+                  <td className="py-3">
                     {rec.status === 'attended' ? (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 font-semibold text-[10px] border border-emerald-800">
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] border border-emerald-300">
                         Eaten
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full bg-blue-950 text-blue-300 font-semibold text-[10px] border border-blue-800">
+                      <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold text-[10px] border border-blue-300">
                         Rebate Applied
                       </span>
                     )}
@@ -523,21 +522,21 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
 
       {/* Allergy Setup Modal */}
       {showAllergyEditor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="w-full max-w-lg dark-glass-card rounded-[32px] shadow-2xl border border-white/10 p-6 sm:p-7 space-y-4 text-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-xl animate-in fade-in duration-150">
+          <div className="w-full max-w-lg rounded-[36px] bg-white/80 backdrop-blur-3xl shadow-[0_24px_60px_-15px_rgba(249,115,22,0.2)] border border-white p-6 sm:p-8 space-y-4 text-slate-800">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <div className="w-10 h-10 rounded-2xl bg-orange-500/15 text-orange-600 flex items-center justify-center border border-orange-200">
                 <HeartPulse className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-100">Configure Student Allergens</h3>
-                <p className="text-xs text-slate-400">
-                  Select your known food allergies for automatic menu warnings
+                <h3 className="text-base font-bold text-slate-900">Configure Student Allergens</h3>
+                <p className="text-xs text-slate-500">
+                  Select known food allergies for automatic menu warnings
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               When any selected allergen is present in hostel recipes, you will receive highlighted alert badges on the daily menu and pre-order confirmation steps.
             </p>
 
@@ -552,12 +551,12 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                     onClick={() => handleToggleAllergen(alg)}
                     className={`p-3 rounded-2xl text-left text-xs font-semibold border transition-all flex items-center justify-between cursor-pointer ${
                       isChecked
-                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-200 shadow-sm'
-                        : 'bg-slate-950/80 border-slate-800 text-slate-400 hover:bg-slate-800'
+                        ? 'bg-emerald-500/15 border-emerald-400 text-emerald-900 shadow-xs'
+                        : 'bg-white/60 border-orange-200/70 text-slate-600 hover:bg-white'
                     }`}
                   >
                     <span>{alg}</span>
-                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${isChecked ? 'bg-emerald-500 text-slate-950 font-bold' : 'border border-slate-700'}`}>
+                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${isChecked ? 'bg-emerald-600 text-white font-bold' : 'border border-slate-300'}`}>
                       {isChecked ? '✓' : ''}
                     </span>
                   </button>
@@ -566,30 +565,30 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
             </div>
 
             {selectedAllergens.length > 0 && (
-              <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
-                <span className="text-emerald-400 font-semibold">{selectedAllergens.length} active allergens selected</span>
+              <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+                <span className="text-emerald-700 font-semibold">{selectedAllergens.length} active allergens selected</span>
                 <button
                   type="button"
                   onClick={() => setSelectedAllergens([])}
-                  className="text-emerald-400 hover:text-emerald-300 hover:underline cursor-pointer font-semibold"
+                  className="text-orange-600 hover:text-orange-700 hover:underline cursor-pointer font-semibold"
                 >
                   Clear All
                 </button>
               </div>
             )}
 
-            <div className="flex items-center justify-end space-x-2 pt-4 border-t border-slate-800/80">
+            <div className="flex items-center justify-end space-x-2 pt-4 border-t border-orange-200/50">
               <button
                 type="button"
                 onClick={() => setShowAllergyEditor(false)}
-                className="px-5 py-2.5 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-full transition cursor-pointer"
+                className="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-orange-100/50 rounded-full transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSaveAllergies}
-                className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white rounded-full transition shadow-lg shadow-orange-500/25 cursor-pointer border border-white/20"
+                className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white rounded-full transition shadow-lg shadow-orange-500/20 cursor-pointer border border-white/30"
               >
                 Save Dietary Profile
               </button>
@@ -600,30 +599,30 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
 
       {/* Rebate Confirmation Modal */}
       {showRebateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="w-full max-w-md dark-glass-card rounded-[32px] shadow-2xl border border-white/10 p-6 sm:p-7 space-y-4 text-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-xl animate-in fade-in duration-150">
+          <div className="w-full max-w-md rounded-[36px] bg-white/85 backdrop-blur-3xl shadow-[0_24px_60px_-15px_rgba(249,115,22,0.2)] border border-white p-6 sm:p-8 space-y-4 text-slate-800">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-2xl bg-orange-950 text-orange-300 border border-orange-800">
+              <div className="w-10 h-10 rounded-2xl bg-orange-500/15 text-orange-600 flex items-center justify-center border border-orange-200">
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-100">Apply Meal Skip Rebate</h3>
-                <p className="text-xs text-slate-400 capitalize">
+                <h3 className="text-base font-bold text-slate-900">Apply Meal Skip Rebate</h3>
+                <p className="text-xs text-slate-500 capitalize">
                   {showRebateModal} • {todayDateStr}
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               Skipping this meal will mark you as absent for this session. A daily meal rebate will be credited back on your monthly hostel invoice.
             </p>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300">Select Reason:</label>
+              <label className="text-xs font-bold text-slate-700">Select Reason:</label>
               <select
                 value={rebateReason}
                 onChange={(e) => setRebateReason(e.target.value)}
-                className="w-full text-xs p-3 rounded-2xl bg-slate-950 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-orange-500 focus:outline-hidden"
+                className="w-full text-xs p-3 rounded-2xl bg-white/90 border border-orange-200 text-slate-800 focus:ring-2 focus:ring-orange-500 focus:outline-hidden"
               >
                 <option value="Outstation / Home Visit">Outstation / Home Visit</option>
                 <option value="Academic Lab Work / Exam">Academic Lab Work / Exam</option>
@@ -636,14 +635,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowRebateModal(null)}
-                className="px-5 py-2.5 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-full transition-colors cursor-pointer"
+                className="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-orange-100/50 rounded-full transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => handleApplyRebate(showRebateModal)}
-                className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white rounded-full transition-colors shadow-lg shadow-orange-500/25 border border-white/20 cursor-pointer"
+                className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white rounded-full transition-colors shadow-lg shadow-orange-500/20 border border-white/30 cursor-pointer"
               >
                 Confirm Skip & Credit Rebate
               </button>

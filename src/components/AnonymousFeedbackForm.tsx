@@ -73,11 +73,20 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
     <div id="anonymous-feedback-section" className="space-y-8 animate-in fade-in duration-300">
       
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-teal-950/80 via-slate-900 to-indigo-950/80 border border-teal-700/40 p-6 sm:p-8 shadow-xl">
+      <div className="relative overflow-hidden rounded-[36px] bg-white/50 backdrop-blur-3xl border border-white/80 p-6 sm:p-8 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)]">
         <div className="relative z-10 max-w-3xl">
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <div className="flex items-center space-x-2.5 mb-2">
+            <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-xs">
+              Student Voice
+            </span>
+            <span className="text-xs text-slate-500 font-mono">100% Anonymous & Direct to Head Chef</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-serif">
             Rate Today's Campus Meals
           </h1>
+          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+            Help improve mess quality, hygiene, and portion balance. Your feedback directly guides daily menu adjustments.
+          </p>
         </div>
       </div>
 
@@ -85,20 +94,20 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
         
         {/* Form Column */}
         <div className="lg:col-span-7">
-          <div className="bg-slate-900/90 rounded-2xl border border-slate-800 p-6 sm:p-7 shadow-xl">
+          <div className="bg-white/55 backdrop-blur-3xl rounded-[36px] border border-white/90 p-6 sm:p-8 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.08)]">
             {submitted ? (
               <div className="text-center py-10 space-y-4 animate-in zoom-in-95 duration-200">
-                <div className="w-16 h-16 rounded-full bg-teal-500/20 border border-teal-400/40 text-teal-300 flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-400 text-emerald-700 flex items-center justify-center mx-auto shadow-xs">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-white">Review Submitted Anonymously!</h3>
-                <p className="text-sm text-slate-300 max-w-md mx-auto">
+                <h3 className="text-xl font-bold text-slate-900">Review Submitted Anonymously!</h3>
+                <p className="text-sm text-slate-600 max-w-md mx-auto">
                   Thank you for keeping our mess accountable. Your rating has been added to the public campus dashboard.
                 </p>
                 <div className="pt-4">
                   <button
                     onClick={resetForm}
-                    className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition shadow-lg"
+                    className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white text-xs font-bold transition shadow-lg shadow-orange-500/20 cursor-pointer"
                   >
                     Rate Another Dish
                   </button>
@@ -109,7 +118,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                 
                 {/* 1. Meal Slot Picker */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                     1. Select Meal Slot
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -120,10 +129,10 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                           key={slot}
                           type="button"
                           onClick={() => handleSlotChange(slot)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-bold capitalize transition-all border ${
+                          className={`py-2.5 px-3 rounded-2xl text-xs font-bold capitalize transition-all border cursor-pointer ${
                             isSelected
-                              ? 'bg-teal-500 text-slate-950 border-teal-400 shadow-md shadow-teal-500/20'
-                              : 'bg-slate-950/60 hover:bg-slate-800 text-slate-300 border-slate-800'
+                              ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white border-white/40 shadow-md shadow-orange-500/20 scale-[1.02]'
+                              : 'bg-white/60 hover:bg-white text-slate-700 border-orange-200/70'
                           }`}
                         >
                           {slot}
@@ -135,14 +144,14 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
 
                 {/* 2. Dish Picker */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                     2. Choose Dish / Item
                   </label>
                   <div className="space-y-2">
                     <select
                       value={selectedDish}
                       onChange={(e) => setSelectedDish(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-750 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                      className="w-full bg-white/80 border border-orange-200 rounded-2xl px-4 py-3 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 shadow-xs"
                     >
                       <option value="">-- Choose from today's {selectedSlot} menu --</option>
                       {currentSlotDishes.map((dish) => (
@@ -160,7 +169,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                         value={customDish}
                         onChange={(e) => setCustomDish(e.target.value)}
                         required
-                        className="w-full bg-slate-950 border border-slate-750 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-teal-500"
+                        className="w-full bg-white/80 border border-orange-200 rounded-2xl px-4 py-3 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-orange-500 shadow-xs"
                       />
                     )}
                   </div>
@@ -168,7 +177,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
 
                 {/* 3. Star Rating */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                     3. Star Rating & Experience
                   </label>
                   <div className="flex items-center space-x-2 py-1">
@@ -181,14 +190,14 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                           onMouseEnter={() => setHoverRating(star)}
                           onMouseLeave={() => setHoverRating(null)}
                           onClick={() => setRating(star)}
-                          className="p-1.5 focus:outline-none transition-transform hover:scale-125 active:scale-95"
+                          className="p-1.5 focus:outline-none transition-transform hover:scale-125 active:scale-95 cursor-pointer"
                           title={`Rate ${star} Stars`}
                         >
                           <Star
                             className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
                               isFilled
-                                ? 'text-amber-400 fill-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
-                                : 'text-slate-600'
+                                ? 'text-amber-400 fill-amber-400 drop-shadow-[0_2px_8px_rgba(251,191,36,0.5)]'
+                                : 'text-slate-300'
                             }`}
                           />
                         </button>
@@ -199,7 +208,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
 
                 {/* 4. Constructive Comment */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                     4. Comments & Suggestions (Optional)
                   </label>
                   <textarea
@@ -207,14 +216,14 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                     placeholder="Tell the chef about taste, spice, oiliness, warmth, or portion sizes..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-750 rounded-xl p-3 text-xs sm:text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                    className="w-full bg-white/80 border border-orange-200 rounded-2xl p-3.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 shadow-xs"
                   />
                 </div>
 
-                {/* Submit CTA - Orange Glassmorphism */}
+                {/* Submit CTA */}
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 active:scale-98 flex items-center justify-center space-x-2 cursor-pointer"
+                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 active:scale-98 flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span>Post Anonymous Review</span>
@@ -228,8 +237,8 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
         {/* Live Campus Feed Column */}
         <div className="lg:col-span-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-              <MessageSquareHeart className="w-4 h-4 text-teal-400" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+              <MessageSquareHeart className="w-4 h-4 text-orange-600" />
               <span>Campus Reviews Stream ({filteredFeedbacks.length})</span>
             </h3>
 
@@ -237,7 +246,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
             <select
               value={filterSlot}
               onChange={(e) => setFilterSlot(e.target.value)}
-              className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-slate-300 focus:outline-none"
+              className="bg-white/80 border border-orange-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 focus:outline-none shadow-xs"
             >
               <option value="all">All Meals</option>
               <option value="breakfast">Breakfast</option>
@@ -249,21 +258,21 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
 
           <div className="space-y-3 max-h-[580px] overflow-y-auto pr-1">
             {filteredFeedbacks.length === 0 ? (
-              <div className="p-8 text-center bg-slate-900/60 rounded-2xl border border-slate-800 text-slate-400 text-xs">
+              <div className="p-8 text-center bg-white/40 backdrop-blur-xl rounded-[28px] border border-dashed border-orange-200 text-slate-500 text-xs">
                 No reviews yet for this filter. Be the first to rate!
               </div>
             ) : (
               filteredFeedbacks.map((fb) => (
                 <div
                   key={fb.id}
-                  className="bg-slate-900/80 hover:bg-slate-850 border border-slate-800 rounded-xl p-4 transition-all space-y-2 shadow-sm"
+                  className="bg-white/60 hover:bg-white/80 border border-white/90 backdrop-blur-xl rounded-[26px] p-5 transition-all space-y-2.5 shadow-xs"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center space-x-2">
-                      <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-md bg-teal-500/10 text-teal-300 border border-teal-500/20">
+                      <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full bg-orange-500/15 text-orange-700 border border-orange-200">
                         {fb.mealSlot}
                       </span>
-                      <span className="text-xs font-bold text-white truncate max-w-[180px]">
+                      <span className="text-xs font-bold text-slate-900 truncate max-w-[180px]">
                         {fb.dishName}
                       </span>
                     </div>
@@ -273,21 +282,21 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                           key={i}
-                          className={`w-3 h-3 ${i < fb.rating ? 'fill-amber-400' : 'text-slate-700'}`}
+                          className={`w-3.5 h-3.5 ${i < fb.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`}
                         />
                       ))}
                     </div>
                   </div>
 
                   {fb.comment && (
-                    <p className="text-xs text-slate-300 leading-relaxed italic bg-slate-950/50 p-2.5 rounded-lg border border-slate-850">
+                    <p className="text-xs text-slate-700 leading-relaxed italic bg-orange-50/40 p-3 rounded-2xl border border-orange-100">
                       "{fb.comment}"
                     </p>
                   )}
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-1">
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono pt-1">
                     <span>{fb.timestamp}</span>
-                    <span className="text-teal-400/80">✓ Verified Dining Token</span>
+                    <span className="text-emerald-700 font-semibold">✓ Verified Dining Token</span>
                   </div>
                 </div>
               ))

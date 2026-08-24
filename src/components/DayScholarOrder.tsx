@@ -268,27 +268,36 @@ export const DayScholarOrder: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       
       {/* Top Banner / Hero Header */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-xl sm:text-2xl font-black text-white font-serif tracking-tight">
-            Day Scholar À La Carte Ordering
+      <div className="rounded-[36px] bg-white/50 backdrop-blur-3xl border border-white/80 p-6 sm:p-8 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1.5">
+          <div className="flex items-center space-x-2">
+            <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-bold text-[10px] uppercase tracking-wider shadow-xs">
+              Campus Dining Direct
+            </span>
+            <span className="text-xs text-orange-600 font-semibold font-mono">À La Carte Pay & Eat</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-serif tracking-tight">
+            Day Scholar Dining & Express Delivery
           </h1>
+          <p className="text-xs sm:text-sm text-slate-600">
+            Order fresh meals for counter pickup or fast delivery to any academic building.
+          </p>
         </div>
 
         {/* View Switcher: Place Order vs Live Tracker */}
-        <div className="flex items-center space-x-2 bg-slate-950/80 backdrop-blur-md p-1.5 rounded-2xl border border-slate-800 self-start md:self-auto shadow-inner">
+        <div className="flex items-center space-x-2 bg-white/70 backdrop-blur-xl p-1.5 rounded-2xl border border-white/90 self-start md:self-auto shadow-xs">
           <button
             onClick={() => setActiveViewTab('order')}
             className={`flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeViewTab === 'order'
-                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25 border border-white/20'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-md shadow-orange-500/20 border border-white/20'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>Order Menu</span>
             {cartItems.length > 0 && (
-              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-slate-950 text-orange-400 font-black">
+              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-white text-orange-600 font-black">
                 {totalCartItemCount}
               </span>
             )}
@@ -298,14 +307,14 @@ export const DayScholarOrder: React.FC = () => {
             onClick={() => setActiveViewTab('tracking')}
             className={`flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeViewTab === 'tracking'
-                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/25 border border-white/20'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-md shadow-orange-500/20 border border-white/20'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
             <span>Live Tracking</span>
             {dayScholarOrders.length > 0 && (
-              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-300">
+              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-orange-100 text-orange-800">
                 {dayScholarOrders.length}
               </span>
             )}
@@ -321,15 +330,15 @@ export const DayScholarOrder: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             
             {/* Meal Slot Tabs Bar */}
-            <div className="bg-slate-900 rounded-3xl p-4 border border-slate-800 shadow-xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="bg-white/55 backdrop-blur-3xl rounded-[36px] p-5 sm:p-6 border border-white/90 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.08)] space-y-4">
+              <div className="flex items-center justify-between border-b border-orange-200/50 pb-3">
                 <div className="flex items-center space-x-2">
-                  <Flame className="w-4 h-4 text-amber-400" />
-                  <h2 className="text-sm font-bold text-slate-100 font-sans tracking-normal">
-                    Select Meal
+                  <Flame className="w-4 h-4 text-orange-500" />
+                  <h2 className="text-sm font-bold text-slate-900 font-sans tracking-normal">
+                    Select Meal Slot
                   </h2>
                 </div>
-                <span className="text-xs text-amber-400 font-mono">100% Pure Veg</span>
+                <span className="text-xs text-orange-600 font-semibold font-mono">100% Pure Veg</span>
               </div>
 
               {/* Slot Selector Grid */}
@@ -347,25 +356,25 @@ export const DayScholarOrder: React.FC = () => {
                         setSelectedSlot(slot.type);
                         soundEffects.playTap();
                       }}
-                      className={`p-3 rounded-2xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+                      className={`p-3.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
                         isActive
-                          ? 'bg-amber-500/15 border-amber-500 text-slate-100 shadow-md shadow-amber-500/10'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-850'
+                          ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white border-white/40 shadow-md shadow-orange-500/20 scale-[1.02]'
+                          : 'bg-white/70 border-orange-200/70 text-slate-700 hover:bg-white'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1.5">
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : 'text-slate-500'}`} />
+                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-orange-500'}`} />
                         {isCurrent && (
-                          <span className="text-[9px] font-black px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 animate-pulse">
+                          <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-800 border border-emerald-300'} animate-pulse`}>
                             ACTIVE
                           </span>
                         )}
                       </div>
                       <div>
-                        <div className={`text-xs font-bold ${isActive ? 'text-amber-300' : 'text-slate-200'}`}>
+                        <div className={`text-xs font-bold ${isActive ? 'text-white' : 'text-slate-800'}`}>
                           {slot.label}
                         </div>
-                        <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        <div className={`text-[10px] font-mono mt-0.5 ${isActive ? 'text-white/80' : 'text-slate-500'}`}>
                           {slot.time}
                         </div>
                       </div>
@@ -378,7 +387,7 @@ export const DayScholarOrder: React.FC = () => {
             {/* Dish Cards List for Selected Slot */}
             <div className="space-y-3">
               <div className="flex items-center justify-between px-1">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Available Dishes • {mealSlots.find(s => s.type === selectedSlot)?.label}
                 </span>
                 <span className="text-xs text-slate-500 font-mono">
@@ -387,7 +396,7 @@ export const DayScholarOrder: React.FC = () => {
               </div>
 
               {slotDishes.length === 0 ? (
-                <div className="p-8 text-center bg-slate-900 rounded-3xl border border-slate-800 text-slate-400 text-xs">
+                <div className="p-8 text-center bg-white/50 backdrop-blur-xl rounded-[32px] border border-dashed border-orange-200 text-slate-500 text-xs">
                   No dishes registered for this slot in today's menu. Check other meal slots!
                 </div>
               ) : (
@@ -401,37 +410,37 @@ export const DayScholarOrder: React.FC = () => {
                     return (
                       <div
                         key={dish.id || dish.name}
-                        className={`p-4 sm:p-5 rounded-3xl border transition-all duration-150 relative ${
+                        className={`p-4 sm:p-5 rounded-[28px] border transition-all duration-150 relative ${
                           cartItem
-                            ? 'bg-slate-900 border-amber-500/50 shadow-lg shadow-amber-500/5'
-                            : 'bg-slate-900/90 hover:bg-slate-900 border-slate-800 hover:border-slate-700 shadow-md'
+                            ? 'bg-white/85 border-orange-300 shadow-md shadow-orange-500/5'
+                            : 'bg-white/60 hover:bg-white/80 border-white/90 backdrop-blur-xl shadow-xs'
                         }`}
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           {/* Dish Info */}
                           <div className="space-y-1.5 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
-                              <h4 className="text-sm sm:text-base font-bold text-slate-100">
+                              <h4 className="text-sm sm:text-base font-bold text-slate-900">
                                 {dish.name}
                               </h4>
                             </div>
 
                             {dish.description && (
-                              <p className="text-xs text-slate-400 line-clamp-2">
+                              <p className="text-xs text-slate-600 line-clamp-2">
                                 {dish.description}
                               </p>
                             )}
 
                             {/* Nutrition & Allergens preview */}
-                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400 font-mono pt-0.5">
+                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-500 font-mono pt-0.5">
                               {dish.calories && (
-                                <span className="px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-300">{dish.calories} kcal</span>
+                                <span className="px-2 py-0.5 rounded-full bg-orange-50 border border-orange-100 text-slate-700">{dish.calories} kcal</span>
                               )}
                               {dish.allergens && dish.allergens.length > 0 && (
                                 <div className="flex flex-wrap items-center gap-1">
-                                  <span className="text-slate-400">Allergens:</span>
+                                  <span className="text-slate-500">Allergens:</span>
                                   {dish.allergens.map(alg => (
-                                    <span key={alg} className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 font-medium text-[10px]">
+                                    <span key={alg} className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-300 font-medium text-[10px]">
                                       {alg}
                                     </span>
                                   ))}
@@ -439,41 +448,41 @@ export const DayScholarOrder: React.FC = () => {
                               )}
                             </div>
 
-                            {/* Allergy Conflict Alert - Light Green Soft Warning */}
+                            {/* Allergy Conflict Alert */}
                             {hasClash && (
-                              <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 text-[11px] font-semibold mt-1">
-                                <AlertTriangle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                              <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-[11px] font-semibold mt-1">
+                                <AlertTriangle className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                                 <span>Contains your flagged allergen: <strong>{dishClashes.join(', ')}</strong></span>
                               </div>
                             )}
                           </div>
 
                           {/* Price & Quantity Controls */}
-                          <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3 sm:gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+                          <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3 sm:gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-orange-200/50">
                             <div className="text-right">
-                              <div className="text-base sm:text-lg font-black text-orange-400 font-mono">
+                              <div className="text-base sm:text-lg font-black text-orange-600 font-mono">
                                 ₹{price}
                               </div>
-                              <span className="text-[10px] text-slate-400">per portion</span>
+                              <span className="text-[10px] text-slate-500">per portion</span>
                             </div>
 
                             {cartItem ? (
-                              <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-orange-500/40">
+                              <div className="flex items-center space-x-1 bg-white/90 p-1 rounded-2xl border border-orange-300 shadow-xs">
                                 <button
                                   type="button"
                                   onClick={() => handleUpdateQuantity(dish.name, -1)}
-                                  className="w-7 h-7 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                                  className="w-7 h-7 rounded-xl bg-orange-100/70 hover:bg-orange-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
                                   title="Decrease quantity"
                                 >
                                   <Minus className="w-3.5 h-3.5" />
                                 </button>
-                                <span className="w-8 text-center text-xs font-mono font-bold text-orange-300">
+                                <span className="w-8 text-center text-xs font-mono font-bold text-slate-900">
                                   {cartItem.quantity}
                                 </span>
                                 <button
                                   type="button"
                                   onClick={() => handleUpdateQuantity(dish.name, 1)}
-                                  className="w-7 h-7 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white flex items-center justify-center font-bold transition-colors cursor-pointer shadow-sm shadow-orange-500/20"
+                                  className="w-7 h-7 rounded-xl bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white flex items-center justify-center font-bold transition-colors cursor-pointer shadow-xs"
                                   title="Increase quantity"
                                 >
                                   <Plus className="w-3.5 h-3.5" />
@@ -483,7 +492,7 @@ export const DayScholarOrder: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleAddToCart(dish)}
-                                className="px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white shadow-lg shadow-orange-500/25 border border-white/20"
+                                className="px-4 py-2 rounded-full text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white shadow-md shadow-orange-500/20 border border-white/20"
                               >
                                 <Plus className="w-3.5 h-3.5" />
                                 <span>Add to Order</span>
@@ -503,13 +512,13 @@ export const DayScholarOrder: React.FC = () => {
           {/* RIGHT COLUMN: Running Cart & Checkout Form (5 cols on lg) */}
           <div className="lg:col-span-5 space-y-6 sticky top-24">
             
-            {/* Running Cart Summary Card */}
-            <div className="bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-2xl space-y-5">
+            {/* Running Cart Summary */}
+            <div className="bg-white/60 backdrop-blur-3xl rounded-[36px] p-5 sm:p-7 border border-white/90 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.08)] space-y-5">
               
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center justify-between border-b border-orange-200/50 pb-3">
                 <div className="flex items-center space-x-2">
-                  <ShoppingBag className="w-4 h-4 text-amber-400" />
-                  <h3 className="text-sm font-bold text-slate-100">
+                  <ShoppingBag className="w-4 h-4 text-orange-500" />
+                  <h3 className="text-sm font-bold text-slate-900">
                     Your Day Scholar Order Cart
                   </h3>
                 </div>
@@ -517,7 +526,7 @@ export const DayScholarOrder: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleClearCart}
-                    className="text-[11px] text-slate-400 hover:text-emerald-400 flex items-center space-x-1 transition-colors cursor-pointer"
+                    className="text-[11px] text-slate-500 hover:text-emerald-700 flex items-center space-x-1 transition-colors cursor-pointer font-medium"
                   >
                     <Trash2 className="w-3 h-3" />
                     <span>Clear All</span>
@@ -528,23 +537,23 @@ export const DayScholarOrder: React.FC = () => {
               {/* Cart Items List */}
               {cartItems.length === 0 ? (
                 <div className="py-8 text-center space-y-2">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-800 text-slate-600 flex items-center justify-center mx-auto">
+                  <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-100 text-orange-400 flex items-center justify-center mx-auto">
                     <ShoppingBag className="w-6 h-6" />
                   </div>
-                  <p className="text-xs font-medium text-slate-400">
+                  <p className="text-xs font-medium text-slate-500">
                     Your cart is currently empty.
                   </p>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
+                <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
                   {cartItems.map((item) => (
                     <div
                       key={item.dishName}
-                      className="p-3 rounded-2xl bg-slate-950 border border-slate-800/80 flex items-center justify-between gap-3 text-xs"
+                      className="p-3 rounded-2xl bg-white/80 border border-white flex items-center justify-between gap-3 text-xs shadow-xs"
                     >
                       <div className="space-y-0.5 flex-1 min-w-0">
-                        <div className="font-bold text-slate-200 truncate">{item.dishName}</div>
-                        <div className="text-[11px] text-amber-400 font-mono">
+                        <div className="font-bold text-slate-800 truncate">{item.dishName}</div>
+                        <div className="text-[11px] text-orange-600 font-mono">
                           ₹{item.price} × {item.quantity} = <strong>₹{item.price * item.quantity}</strong>
                         </div>
                       </div>
@@ -553,24 +562,24 @@ export const DayScholarOrder: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleUpdateQuantity(item.dishName, -1)}
-                          className="w-6 h-6 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-300 flex items-center justify-center font-bold"
+                          className="w-6 h-6 rounded-lg bg-orange-100/70 hover:bg-orange-200 text-slate-700 flex items-center justify-center font-bold"
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="w-5 text-center font-mono font-bold text-slate-200">
+                        <span className="w-5 text-center font-mono font-bold text-slate-900">
                           {item.quantity}
                         </span>
                         <button
                           type="button"
                           onClick={() => handleUpdateQuantity(item.dishName, 1)}
-                          className="w-6 h-6 rounded-md bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center font-bold"
+                          className="w-6 h-6 rounded-lg bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white flex items-center justify-center font-bold shadow-xs"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
                         <button
                           type="button"
                           onClick={() => handleRemoveItem(item.dishName)}
-                          className="p-1 text-slate-500 hover:text-emerald-400 transition-colors ml-1"
+                          className="p-1 text-slate-400 hover:text-emerald-700 transition-colors ml-1 cursor-pointer"
                           title="Remove item"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -583,45 +592,45 @@ export const DayScholarOrder: React.FC = () => {
 
               {/* Price Breakdown */}
               {cartItems.length > 0 && (
-                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
-                  <div className="flex justify-between text-slate-400">
+                <div className="p-4 rounded-2xl bg-white/70 border border-orange-200/70 space-y-2 text-xs shadow-xs">
+                  <div className="flex justify-between text-slate-600">
                     <span>Items Subtotal ({totalCartItemCount} portions)</span>
-                    <span className="font-mono text-slate-200">₹{cartTotal}</span>
+                    <span className="font-mono text-slate-900 font-bold">₹{cartTotal}</span>
                   </div>
-                  <div className="flex justify-between text-slate-400">
+                  <div className="flex justify-between text-slate-600">
                     <span>Fulfillment Fee</span>
-                    <span className="font-mono text-emerald-400">FREE (Campus Mess Service)</span>
+                    <span className="font-mono text-emerald-700 font-bold">FREE (Campus Mess Service)</span>
                   </div>
-                  <div className="border-t border-slate-800 pt-2 flex justify-between text-sm font-bold text-slate-100">
+                  <div className="border-t border-orange-200/50 pt-2 flex justify-between text-sm font-bold text-slate-900">
                     <span>Total Amount Payable</span>
-                    <span className="text-amber-400 font-mono text-base">₹{cartTotal}</span>
+                    <span className="text-orange-600 font-mono text-base">₹{cartTotal}</span>
                   </div>
                 </div>
               )}
 
               {/* Allergy Warning Notification if conflict detected in cart */}
               {detectedAllergenClashes.length > 0 && (
-                <div className="p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 space-y-2">
-                  <div className="flex items-center space-x-2 text-emerald-300 text-xs font-bold">
-                    <AlertTriangle className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 space-y-2">
+                  <div className="flex items-center space-x-2 text-emerald-900 text-xs font-bold">
+                    <AlertTriangle className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>Allergen Warning Detected</span>
                   </div>
-                  <p className="text-[11px] text-emerald-200 leading-relaxed">
+                  <p className="text-[11px] text-emerald-900 leading-relaxed">
                     You have selected dishes with allergens matching your preferences:
                   </p>
-                  <ul className="text-[10px] text-emerald-300 font-mono list-disc list-inside space-y-0.5">
+                  <ul className="text-[10px] text-emerald-800 font-mono list-disc list-inside space-y-0.5">
                     {detectedAllergenClashes.map((c, idx) => (
                       <li key={idx}>
                         <strong>{c.itemName}</strong>: {c.allergens.join(', ')}
                       </li>
                     ))}
                   </ul>
-                  <label className="flex items-center space-x-2 text-[11px] text-emerald-200 cursor-pointer pt-1">
+                  <label className="flex items-center space-x-2 text-[11px] text-emerald-950 cursor-pointer pt-1">
                     <input
                       type="checkbox"
                       checked={acknowledgedAllergyWarning}
                       onChange={(e) => setAcknowledgedAllergyWarning(e.target.checked)}
-                      className="rounded border-emerald-500/50 bg-slate-950 text-emerald-500 focus:ring-emerald-500"
+                      className="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500"
                     />
                     <span>I understand the ingredients and wish to proceed with this order.</span>
                   </label>
@@ -629,15 +638,15 @@ export const DayScholarOrder: React.FC = () => {
               )}
 
               {/* Day Scholar Details & Dispatch Form */}
-              <form onSubmit={handleSubmitOrder} className="space-y-4 pt-2 border-t border-slate-800">
-                <div className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+              <form onSubmit={handleSubmitOrder} className="space-y-4 pt-2 border-t border-orange-200/50">
+                <div className="text-xs font-bold text-slate-900 uppercase tracking-wider">
                   Contact & Dispatch Details
                 </div>
 
                 {/* Name */}
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-slate-400" />
+                  <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-orange-500" />
                     <span>Your Full Name *</span>
                   </label>
                   <input
@@ -646,14 +655,14 @@ export const DayScholarOrder: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Sneha Kulkarni"
-                    className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                    className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-xs"
                   />
                 </div>
 
                 {/* Phone */}
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-slate-400" />
+                  <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-orange-500" />
                     <span>Phone Number (WhatsApp Active) *</span>
                   </label>
                   <input
@@ -662,14 +671,14 @@ export const DayScholarOrder: React.FC = () => {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="e.g. +91 98765 43210"
-                    className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                    className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-xs font-mono"
                   />
                 </div>
 
                 {/* Department / Course */}
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-                    <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
+                  <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 text-orange-500" />
                     <span>Department / Branch (Optional)</span>
                   </label>
                   <input
@@ -677,30 +686,30 @@ export const DayScholarOrder: React.FC = () => {
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
                     placeholder="e.g. B.Tech CS Year 3 / Design"
-                    className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                    className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-xs"
                   />
                 </div>
 
                 {/* Fulfillment Preference Radio Toggle */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700">
                     Fulfillment Preference *
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setPreference('pickup')}
-                      className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
+                      className={`p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
                         preference === 'pickup'
-                          ? 'bg-amber-500/15 border-amber-500 text-amber-300 shadow-sm'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                          ? 'bg-orange-500/15 border-orange-400 text-orange-950 shadow-xs'
+                          : 'bg-white/70 border-orange-200/70 text-slate-700 hover:bg-white'
                       }`}
                     >
                       <div className="flex items-center space-x-1.5 font-bold text-xs">
-                        <Store className="w-3.5 h-3.5 text-amber-400" />
+                        <Store className="w-3.5 h-3.5 text-orange-600" />
                         <span>Self Pickup</span>
                       </div>
-                      <span className="text-[10px] text-slate-400 mt-1">
+                      <span className="text-[10px] text-slate-500 mt-1">
                         Mess Counter 3 Express
                       </span>
                     </button>
@@ -708,17 +717,17 @@ export const DayScholarOrder: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setPreference('delivery')}
-                      className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
+                      className={`p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
                         preference === 'delivery'
-                          ? 'bg-amber-500/15 border-amber-500 text-amber-300 shadow-sm'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                          ? 'bg-orange-500/15 border-orange-400 text-orange-950 shadow-xs'
+                          : 'bg-white/70 border-orange-200/70 text-slate-700 hover:bg-white'
                       }`}
                     >
                       <div className="flex items-center space-x-1.5 font-bold text-xs">
-                        <Truck className="w-3.5 h-3.5 text-amber-400" />
+                        <Truck className="w-3.5 h-3.5 text-orange-600" />
                         <span>Deliver to Block</span>
                       </div>
-                      <span className="text-[10px] text-slate-400 mt-1">
+                      <span className="text-[10px] text-slate-500 mt-1">
                         Academic Blocks 1–30
                       </span>
                     </button>
@@ -727,23 +736,23 @@ export const DayScholarOrder: React.FC = () => {
 
                 {/* Delivery Location Fields (Only if Delivery Selected) */}
                 {preference === 'delivery' && (
-                  <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3 animate-in fade-in">
+                  <div className="p-3.5 rounded-2xl bg-white/70 border border-orange-200 space-y-3 animate-in fade-in shadow-xs">
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                        <Building className="w-3.5 h-3.5 text-slate-400" />
+                      <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                        <Building className="w-3.5 h-3.5 text-orange-500" />
                         <span>Academic Block / Building Name *</span>
                       </label>
                       <select
                         required
                         value={blockName}
                         onChange={(e) => setBlockName(e.target.value)}
-                        className="w-full text-xs p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-amber-500 cursor-pointer"
+                        className="w-full text-xs p-3 rounded-2xl bg-white/90 border border-orange-200 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 cursor-pointer shadow-xs"
                       >
-                        <option value="" disabled className="bg-slate-900 text-slate-500">
+                        <option value="" disabled className="text-slate-400">
                           -- Select Academic Block --
                         </option>
                         {ACADEMIC_BLOCKS.map((block) => (
-                          <option key={block} value={block} className="bg-slate-900 text-slate-100">
+                          <option key={block} value={block} className="text-slate-800">
                             {block}
                           </option>
                         ))}
@@ -751,7 +760,7 @@ export const DayScholarOrder: React.FC = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-300">
+                      <label className="text-xs font-semibold text-slate-700">
                         Room / Floor / Lab Desk *
                       </label>
                       <input
@@ -760,7 +769,7 @@ export const DayScholarOrder: React.FC = () => {
                         value={roomFloor}
                         onChange={(e) => setRoomFloor(e.target.value)}
                         placeholder="e.g. Systems Lab 2, 3rd Floor"
-                        className="w-full text-xs p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                        className="w-full text-xs p-3 rounded-2xl bg-white/90 border border-orange-200 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-xs"
                       />
                     </div>
                   </div>
@@ -768,7 +777,7 @@ export const DayScholarOrder: React.FC = () => {
 
                 {/* Special Instructions */}
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-400">
+                  <label className="text-xs font-semibold text-slate-700">
                     Special Preparation Notes / Requests
                   </label>
                   <input
@@ -776,7 +785,7 @@ export const DayScholarOrder: React.FC = () => {
                     value={specialNotes}
                     onChange={(e) => setSpecialNotes(e.target.value)}
                     placeholder="e.g. Extra green chutney, less oil, pack by 1:15 PM"
-                    className="w-full text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                    className="w-full text-xs p-3 rounded-2xl bg-white/80 border border-orange-200 text-slate-800 focus:outline-hidden focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 shadow-xs"
                   />
                 </div>
 
@@ -784,7 +793,7 @@ export const DayScholarOrder: React.FC = () => {
                 <button
                   type="submit"
                   disabled={cartItems.length === 0}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
+                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
                 >
                   <Send className="w-4 h-4" />
                   <span>
@@ -804,31 +813,31 @@ export const DayScholarOrder: React.FC = () => {
       {activeViewTab === 'tracking' && (
         <div className="space-y-6">
           
-          {/* Active Tracked Order Progress Card */}
+          {/* Active Tracked Order Progress */}
           {activeTrackedOrder ? (
-            <div className="bg-slate-900 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-2xl space-y-6">
+            <div className="bg-white/60 backdrop-blur-3xl rounded-[36px] p-6 sm:p-8 border border-white/90 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.08)] space-y-6">
               
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-orange-200/50 pb-4">
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-base font-black text-white font-mono">
+                    <span className="text-base font-black text-slate-900 font-mono">
                       #{activeTrackedOrder.id}
                     </span>
                     <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border uppercase ${
                       activeTrackedOrder.status === 'Collected'
-                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                        ? 'bg-emerald-500/15 text-emerald-800 border-emerald-300'
                         : activeTrackedOrder.status === 'Ready'
-                        ? 'bg-blue-500/20 text-blue-300 border-blue-500/40 animate-pulse'
+                        ? 'bg-blue-500/15 text-blue-800 border-blue-300 animate-pulse'
                         : activeTrackedOrder.status === 'Preparing'
-                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                        : 'bg-slate-800 text-slate-300 border-slate-700'
+                        ? 'bg-orange-500/15 text-orange-800 border-orange-300'
+                        : 'bg-slate-100 text-slate-700 border-slate-200'
                     }`}>
                       {activeTrackedOrder.status === 'Ready'
                         ? (activeTrackedOrder.preference === 'delivery' ? 'Out for Delivery' : 'Ready for Counter Pickup')
                         : activeTrackedOrder.status}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     Placed for <strong>{activeTrackedOrder.name}</strong> • {activeTrackedOrder.timestamp}
                   </p>
                 </div>
@@ -842,7 +851,7 @@ export const DayScholarOrder: React.FC = () => {
                       );
                       window.open(waLink, '_blank', 'noopener,noreferrer');
                     }}
-                    className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-xs cursor-pointer"
+                    className="px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center space-x-1.5 transition-colors shadow-xs cursor-pointer"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Resend WhatsApp Ticket</span>
@@ -850,9 +859,9 @@ export const DayScholarOrder: React.FC = () => {
 
                   <button
                     onClick={() => setActiveViewTab('order')}
-                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center space-x-1.5 border border-slate-700 cursor-pointer"
+                    className="px-4 py-2 rounded-full bg-white/80 hover:bg-white text-slate-700 text-xs font-bold flex items-center space-x-1.5 border border-orange-200 shadow-xs cursor-pointer"
                   >
-                    <Plus className="w-3.5 h-3.5 text-amber-400" />
+                    <Plus className="w-3.5 h-3.5 text-orange-500" />
                     <span>Order Again</span>
                   </button>
                 </div>
@@ -877,18 +886,18 @@ export const DayScholarOrder: React.FC = () => {
 
                     return (
                       <div key={idx} className="text-center space-y-2 relative">
-                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full mx-auto flex items-center justify-center text-xs font-bold transition-all shadow-md ${
+                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full mx-auto flex items-center justify-center text-xs font-bold transition-all shadow-xs ${
                           isDone
-                            ? 'bg-amber-500 text-slate-950 shadow-amber-500/20'
-                            : 'bg-slate-950 text-slate-600 border border-slate-800'
-                        } ${isCurrent ? 'ring-4 ring-amber-500/30 animate-pulse' : ''}`}>
+                            ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-orange-500/20'
+                            : 'bg-white/80 text-slate-400 border border-orange-200'
+                        } ${isCurrent ? 'ring-4 ring-orange-400/30 animate-pulse' : ''}`}>
                           {isDone ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : idx + 1}
                         </div>
                         <div>
-                          <div className={`text-xs font-bold ${isDone ? 'text-slate-100' : 'text-slate-500'}`}>
+                          <div className={`text-xs font-bold ${isDone ? 'text-slate-900' : 'text-slate-400'}`}>
                             {s.label}
                           </div>
-                          <div className="text-[10px] text-slate-400 hidden sm:block">
+                          <div className="text-[10px] text-slate-500 hidden sm:block">
                             {s.desc}
                           </div>
                         </div>
@@ -900,29 +909,29 @@ export const DayScholarOrder: React.FC = () => {
 
               {/* Order Content Summary Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <div className="p-4 rounded-2xl bg-white/70 border border-orange-200 space-y-2 text-xs shadow-xs">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                     Ordered Dishes & Quantities
                   </span>
                   <div className="space-y-1.5 pt-1">
                     {activeTrackedOrder.items.map((it, i) => (
-                      <div key={i} className="flex justify-between text-slate-200">
+                      <div key={i} className="flex justify-between text-slate-800">
                         <span>{it.dishName} × {it.quantity}</span>
-                        <span className="font-mono text-amber-400">₹{it.price * it.quantity}</span>
+                        <span className="font-mono text-orange-600 font-bold">₹{it.price * it.quantity}</span>
                       </div>
                     ))}
-                    <div className="border-t border-slate-800 pt-1.5 flex justify-between font-bold text-sm text-slate-100">
+                    <div className="border-t border-orange-200/50 pt-1.5 flex justify-between font-bold text-sm text-slate-900">
                       <span>Total Bill</span>
-                      <span className="font-mono text-amber-400">₹{activeTrackedOrder.totalAmount}</span>
+                      <span className="font-mono text-orange-600">₹{activeTrackedOrder.totalAmount}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <div className="p-4 rounded-2xl bg-white/70 border border-orange-200 space-y-2 text-xs shadow-xs">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                     Dispatch & Contact Details
                   </span>
-                  <div className="space-y-1 text-slate-300 pt-1">
+                  <div className="space-y-1 text-slate-700 pt-1">
                     <div><strong>Student:</strong> {activeTrackedOrder.name} ({activeTrackedOrder.phoneNumber})</div>
                     <div><strong>Department:</strong> {activeTrackedOrder.department}</div>
                     <div>
@@ -932,7 +941,7 @@ export const DayScholarOrder: React.FC = () => {
                         : 'Self-Pickup from Counter 3 (Day Scholar Express)'}
                     </div>
                     {activeTrackedOrder.specialNotes && (
-                      <div className="text-slate-400 italic">
+                      <div className="text-slate-500 italic">
                         "{activeTrackedOrder.specialNotes}"
                       </div>
                     )}
@@ -942,11 +951,11 @@ export const DayScholarOrder: React.FC = () => {
 
             </div>
           ) : (
-            <div className="p-8 text-center bg-slate-900 rounded-3xl border border-slate-800 text-slate-400 space-y-3">
+            <div className="p-8 text-center bg-white/50 backdrop-blur-xl rounded-[32px] border border-orange-200 text-slate-600 space-y-3 shadow-xs">
               <p className="text-xs">No active day scholar orders yet.</p>
               <button
                 onClick={() => setActiveViewTab('order')}
-                className="px-4 py-2 bg-amber-500 text-slate-950 font-bold text-xs rounded-xl cursor-pointer"
+                className="px-5 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-bold text-xs rounded-full shadow-md shadow-orange-500/20 cursor-pointer"
               >
                 Start New Order
               </button>
@@ -954,15 +963,15 @@ export const DayScholarOrder: React.FC = () => {
           )}
 
           {/* All Day Scholar Orders History / Queue list */}
-          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-white/60 backdrop-blur-3xl rounded-[36px] p-6 sm:p-7 border border-white/90 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.08)] space-y-4">
+            <div className="flex items-center justify-between border-b border-orange-200/50 pb-3">
               <div className="flex items-center space-x-2">
-                <Receipt className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-bold text-slate-100">
+                <Receipt className="w-4 h-4 text-orange-500" />
+                <h3 className="text-sm font-bold text-slate-900">
                   Recent Day Scholar Orders Queue
                 </h3>
               </div>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-slate-500 font-mono">
                 {dayScholarOrders.length} Total
               </span>
             </div>
@@ -974,37 +983,37 @@ export const DayScholarOrder: React.FC = () => {
                   onClick={() => setSubmittedOrderId(ord.id)}
                   className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                     activeTrackedOrder?.id === ord.id
-                      ? 'bg-slate-950 border-amber-500/50 shadow-md'
-                      : 'bg-slate-950/60 hover:bg-slate-950 border-slate-800'
+                      ? 'bg-white border-orange-400 shadow-md shadow-orange-500/10'
+                      : 'bg-white/70 hover:bg-white border-white/80 shadow-xs'
                   }`}
                 >
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
-                      <span className="font-mono font-bold text-slate-100 text-xs">#{ord.id}</span>
-                      <span className="text-xs font-bold text-slate-300">{ord.name}</span>
-                      <span className="text-[10px] px-2 py-0.2 rounded-full bg-slate-800 text-slate-300 font-mono">
+                      <span className="font-mono font-bold text-slate-900 text-xs">#{ord.id}</span>
+                      <span className="text-xs font-bold text-slate-800">{ord.name}</span>
+                      <span className="text-[10px] px-2 py-0.2 rounded-full bg-orange-100 text-orange-800 font-mono">
                         {ord.mealSlot.toUpperCase()}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-400">
+                    <div className="text-xs text-slate-600">
                       {ord.items.map(i => `${i.dishName} x${i.quantity}`).join(', ')}
                     </div>
-                    <div className="text-[11px] text-slate-400">
+                    <div className="text-[11px] text-slate-500">
                       {ord.preference === 'delivery' ? ord.blockName : 'Self-Pickup'} • {ord.timestamp}
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between sm:justify-end space-x-3 shrink-0">
                     <div className="text-right">
-                      <div className="font-mono font-bold text-amber-400 text-sm">₹{ord.totalAmount}</div>
+                      <div className="font-mono font-bold text-orange-600 text-sm">₹{ord.totalAmount}</div>
                       <span className={`text-[10px] font-bold px-2 py-0.2 rounded-full border uppercase ${
                         ord.status === 'Collected'
-                          ? 'bg-emerald-950 text-emerald-300 border-emerald-800'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                           : ord.status === 'Ready'
-                          ? 'bg-blue-950 text-blue-300 border-blue-800'
+                          ? 'bg-blue-50 text-blue-800 border-blue-300'
                           : ord.status === 'Preparing'
-                          ? 'bg-amber-950 text-amber-300 border-amber-800'
-                          : 'bg-slate-800 text-slate-300 border-slate-700'
+                          ? 'bg-orange-50 text-orange-800 border-orange-300'
+                          : 'bg-slate-100 text-slate-600 border-slate-200'
                       }`}>
                         {ord.status}
                       </span>

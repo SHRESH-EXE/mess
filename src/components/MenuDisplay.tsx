@@ -70,22 +70,28 @@ export const MenuDisplay: React.FC = () => {
   };
 
   return (
-    <section id="menu-display-section" className="space-y-6 animate-in fade-in duration-200">
+    <section id="menu-display-section" className="space-y-7 animate-in fade-in duration-300">
       
-      {/* Top Day Selector Bar */}
-      <div className="dark-glass-card p-4 sm:p-5 border border-white/10 shadow-xl">
-        <div className="flex items-center space-x-2.5 mb-3.5">
-          <div className="p-2 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
-            <Calendar className="w-4 h-4" />
+      {/* Top Day Selector Bar - Floating Liquid Glass Carousel */}
+      <div className="p-4 sm:p-5 rounded-[32px] bg-white/40 backdrop-blur-3xl border border-white/70 shadow-[0_16px_40px_-12px_rgba(249,115,22,0.08)] relative overflow-hidden">
+        <div className="flex items-center justify-between gap-3 mb-3.5 px-1">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500/20 to-orange-500/20 text-orange-600 flex items-center justify-center border border-orange-300/40">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm sm:text-base font-bold text-slate-800 tracking-tight">
+                Weekly Schedule
+              </h2>
+            </div>
           </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold text-slate-100">
-              Weekly Hostel Mess Schedule
-            </h2>
-          </div>
+
+          <span className="text-xs font-semibold text-orange-600/90 font-mono hidden sm:inline-block">
+            {selectedDay}
+          </span>
         </div>
 
-        {/* Day Pills Carousel */}
+        {/* Day Pills Flow */}
         <div className="grid grid-cols-2 xs:grid-cols-4 sm:grid-cols-7 gap-2">
           {daysList.map((day) => {
             const isSelected = selectedDay === day;
@@ -96,34 +102,34 @@ export const MenuDisplay: React.FC = () => {
                 key={day}
                 id={`day-tab-${day.toLowerCase()}`}
                 onClick={() => setSelectedDay(day)}
-                className={`py-3 px-2 rounded-2xl text-center transition-all relative font-bold cursor-pointer ${
+                className={`py-3 px-2 rounded-2xl text-center transition-all relative font-bold cursor-pointer backdrop-blur-xl ${
                   isSelected
-                    ? 'bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-md shadow-amber-500/25 scale-[1.03]'
+                    ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-lg shadow-orange-500/25 scale-[1.02] border border-white/40'
                     : isToday
-                    ? 'bg-slate-800/90 text-amber-400 border border-amber-500/40 hover:bg-slate-755'
-                    : 'bg-slate-950/60 backdrop-blur-md text-slate-300 border border-slate-800/80 hover:bg-slate-800 hover:text-slate-100'
+                    ? 'bg-orange-500/15 text-orange-700 border border-orange-300/60 hover:bg-orange-500/25'
+                    : 'bg-white/40 text-slate-700 border border-white/80 hover:bg-white/70 hover:text-slate-950'
                 }`}
               >
                 {isToday && (
                   <span
-                    className={`absolute -top-1.5 left-1/2 -translate-x-1/2 text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                    className={`absolute -top-1.5 left-1/2 -translate-x-1/2 text-[9px] px-2 py-0.2 rounded-full font-extrabold uppercase tracking-wider ${
                       isSelected
-                        ? 'bg-slate-950 text-amber-400'
-                        : 'bg-amber-500 text-slate-950'
+                        ? 'bg-slate-900 text-amber-300 shadow-xs'
+                        : 'bg-orange-500 text-white shadow-xs'
                     }`}
                   >
                     Today
                   </span>
                 )}
-                <div className="text-xs">{day.slice(0, 3)}</div>
+                <div className="text-xs tracking-wide">{day.slice(0, 3)}</div>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Meal Slot Tabs (Breakfast, Lunch, Snacks, Dinner) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {/* Meal Slot Tabs (Breakfast, Lunch, Snacks, Dinner) - Floating Liquid Capsules */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         {mealTabConfig.map((slot) => {
           const isCurrentActive = mealStatus.currentMeal === slot.type && selectedDay === todayDay;
           const isSelected = selectedMealTab === slot.type;
@@ -135,18 +141,18 @@ export const MenuDisplay: React.FC = () => {
               key={slot.type}
               id={`meal-tab-${slot.type}`}
               onClick={() => setSelectedMealTab(slot.type)}
-              className={`p-4 rounded-[24px] border text-left transition-all relative cursor-pointer ${
+              className={`p-4 sm:p-5 rounded-[28px] text-left transition-all relative cursor-pointer backdrop-blur-2xl ${
                 isSelected
-                  ? 'bg-gradient-to-br from-amber-500 via-amber-400 to-amber-500 text-slate-950 border-amber-300 shadow-xl shadow-amber-500/20 scale-[1.02]'
-                  : 'bg-slate-900/80 backdrop-blur-xl text-slate-300 border-slate-800/90 hover:border-slate-700 hover:bg-slate-850'
+                  ? 'bg-gradient-to-br from-[#ff7a30] via-[#ff8838] to-[#ff9b4e] text-white shadow-xl shadow-orange-500/20 scale-[1.02] border border-white/50'
+                  : 'bg-white/45 text-slate-700 border border-white/80 hover:bg-white/70 hover:border-white shadow-[0_8px_24px_-8px_rgba(249,115,22,0.06)]'
               }`}
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-2.5">
                 <div
-                  className={`w-9 h-9 rounded-2xl flex items-center justify-center ${
+                  className={`w-9 h-9 rounded-2xl flex items-center justify-center transition-all ${
                     isSelected
-                      ? 'bg-slate-950 text-amber-400 shadow-xs'
-                      : 'bg-slate-800 text-slate-300'
+                      ? 'bg-white/20 text-white shadow-inner border border-white/30'
+                      : 'bg-orange-500/10 text-orange-600'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -155,30 +161,30 @@ export const MenuDisplay: React.FC = () => {
                 {isCurrentActive && (
                   <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                     isSelected
-                      ? 'bg-slate-950 text-amber-300'
-                      : 'bg-amber-500 text-slate-950'
+                      ? 'bg-slate-900 text-amber-300'
+                      : 'bg-orange-500 text-white'
                   }`}>
                     Live
                   </span>
                 )}
               </div>
 
-              <div className="font-black text-sm leading-tight mb-0.5">
+              <div className="font-bold text-sm sm:text-base leading-tight mb-0.5">
                 {slot.label}
               </div>
-              <div className={`text-[11px] font-mono ${isSelected ? 'text-slate-900 font-semibold' : 'text-slate-400'}`}>
+              <div className={`text-[11px] font-mono ${isSelected ? 'text-white/85 font-medium' : 'text-slate-500'}`}>
                 {slot.timing}
               </div>
 
-              {/* Check-in badge indicator */}
-              <div className="mt-2.5 pt-2 border-t border-black/10 flex items-center justify-between text-[10px]">
+              {/* Status indicator */}
+              <div className="mt-2.5 pt-2 border-t border-current/10 flex items-center justify-between text-[11px]">
                 {slotStatus.isTaken ? (
-                  <span className={`font-semibold flex items-center gap-1 ${isSelected ? 'text-slate-950 font-bold' : 'text-emerald-400'}`}>
-                    <CheckCircle2 className="w-3 h-3" /> Attended
+                  <span className={`font-semibold flex items-center gap-1 ${isSelected ? 'text-white' : 'text-emerald-700'}`}>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Attended
                   </span>
                 ) : (
-                  <span className={isSelected ? 'text-slate-800 font-medium' : 'text-slate-500'}>
-                    Not Attended
+                  <span className={isSelected ? 'text-white/75' : 'text-slate-400'}>
+                    Pending
                   </span>
                 )}
               </div>
@@ -186,58 +192,56 @@ export const MenuDisplay: React.FC = () => {
           );
         })}
       </div>
-      {/* Main Meal Content Card */}
-      <div className="bg-slate-900/85 backdrop-blur-2xl rounded-[32px] border border-white/10 shadow-2xl overflow-hidden">
-        
-        {/* Banner Header */}
-        <div className="p-6 sm:p-7 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white border-b border-slate-800/80">
-          <div>
-            <div className="flex items-center space-x-2 mb-1.5">
-              <span className="px-3 py-1 rounded-full bg-amber-500 text-slate-950 font-bold text-[11px] uppercase tracking-wider shadow-xs">
-                {selectedDay}'s {currentSlot.name}
-              </span>
-              <span className="text-xs text-slate-400 font-mono">
-                {currentSlot.timing}
-              </span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-100 font-serif tracking-tight">
-              {currentSlot.name} Spread & Nutrition
-            </h2>
-          </div>
 
-          {/* Quick Metrics Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-800">
-            <div className="bg-slate-950/60 border border-slate-800/80 p-3 rounded-2xl">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Estimated Calories</span>
-              <span className="text-base font-bold text-slate-100 font-mono">~{currentSlot.caloriesTotal} kcal</span>
+      {/* Main Meal Flow - Cluster-less Liquid Glass Layout */}
+      <div className="rounded-[36px] bg-white/50 backdrop-blur-3xl border border-white/80 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)] overflow-hidden">
+        
+        {/* Banner Strip */}
+        <div className="p-6 sm:p-8 bg-gradient-to-r from-white/60 via-orange-50/40 to-white/60 border-b border-orange-200/50">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center space-x-2 mb-1.5">
+                <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-bold text-[11px] uppercase tracking-wider shadow-xs">
+                  {selectedDay}'s {currentSlot.name}
+                </span>
+                <span className="text-xs text-slate-500 font-mono">
+                  {currentSlot.timing}
+                </span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 font-serif tracking-tight">
+                {currentSlot.name} Spread
+              </h2>
             </div>
-            <div className="bg-slate-950/60 border border-slate-800/80 p-3 rounded-2xl">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Avg Slot Rating</span>
-              <span className="text-base font-bold text-amber-400 flex items-center gap-1">
-                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                {currentSlot.ratingAvg || 4.7} / 5.0
-              </span>
-            </div>
-            <div className="bg-slate-950/60 border border-slate-800/80 p-3 rounded-2xl">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Your Meal Status</span>
-              <span className={`text-xs font-bold ${checkStatus.isTaken ? 'text-emerald-400' : 'text-amber-400'}`}>
-                {checkStatus.isTaken ? 'Marked Attended' : 'Pending Check-in'}
-              </span>
-            </div>
-            <div className="bg-slate-950/60 border border-slate-800/80 p-3 rounded-2xl">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Dining Hall Facility</span>
-              <span className="text-xs font-semibold text-slate-200">Main Ground Hall</span>
+
+            {/* Quick Metrics in Airy Floating Glass Badges */}
+            <div className="flex items-center flex-wrap gap-2.5">
+              <div className="px-3.5 py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/90 text-xs text-slate-700 flex items-center gap-1.5 shadow-xs">
+                <span className="text-slate-400 font-medium">Energy:</span>
+                <span className="font-bold text-slate-900 font-mono">~{currentSlot.caloriesTotal} kcal</span>
+              </div>
+
+              <div className="px-3.5 py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/90 text-xs text-slate-700 flex items-center gap-1.5 shadow-xs">
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                <span className="font-bold text-slate-900">{currentSlot.ratingAvg || 4.7} / 5.0</span>
+              </div>
+
+              <div className="px-3.5 py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/90 text-xs text-slate-700 flex items-center gap-1.5 shadow-xs">
+                <span className="text-slate-400 font-medium">Status:</span>
+                <span className={`font-bold ${checkStatus.isTaken ? 'text-emerald-700' : 'text-orange-600'}`}>
+                  {checkStatus.isTaken ? 'Attended' : 'Pending'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Dish Items Grid */}
-        <div className="p-6 sm:p-7 bg-slate-900/60">
+        {/* Dish Items - Clean Uncluttered Flow */}
+        <div className="p-6 sm:p-8">
           {/* Active Allergen Filter Notification Banner */}
           {hiddenCount > 0 && allergenFilterMode === 'hide' && (
-            <div className="mb-5 p-4 rounded-[20px] bg-emerald-950/40 border border-emerald-500/40 text-xs text-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 shadow-sm">
+            <div className="mb-6 p-4 rounded-2xl bg-emerald-50/80 backdrop-blur-xl border border-emerald-300/80 text-xs text-emerald-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 shadow-xs">
               <div className="flex items-center space-x-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>
                   <strong>{hiddenCount} dish{hiddenCount > 1 ? 'es' : ''}</strong> containing your saved allergens ({studentAllergies.join(', ')}) {hiddenCount > 1 ? 'have' : 'has'} been hidden.
                 </span>
@@ -245,14 +249,14 @@ export const MenuDisplay: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setAllergenFilterMode('highlight')}
-                className="text-xs text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer self-end sm:self-auto"
+                className="text-xs text-emerald-800 hover:text-emerald-900 font-bold underline cursor-pointer self-end sm:self-auto"
               >
                 Switch to Highlight Mode
               </button>
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             {displayedDishes.map((dish) => {
               // Allergen matching
               const clashingAllergens = (dish.allergens || []).filter(da =>
@@ -265,37 +269,42 @@ export const MenuDisplay: React.FC = () => {
                 <div
                   key={dish.id}
                   id={`dish-card-${dish.id}`}
-                  className={`p-5 rounded-[26px] border transition-all flex flex-col justify-between relative ${
+                  className={`p-5 sm:p-6 rounded-[28px] transition-all flex flex-col justify-between relative backdrop-blur-2xl ${
                     isClashing
-                      ? 'bg-emerald-950/30 border-emerald-500/60 shadow-lg'
+                      ? 'bg-emerald-50/60 border border-emerald-400/50 shadow-sm'
                       : dish.isChefSpecial
-                      ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950/30 border-amber-500/40 shadow-lg'
-                      : 'bg-slate-950/75 backdrop-blur-md border-slate-800/80 hover:border-slate-700'
+                      ? 'bg-gradient-to-br from-white/70 via-orange-50/50 to-amber-50/40 border border-orange-300/60 shadow-md shadow-orange-500/5'
+                      : 'bg-white/55 border border-white/90 hover:bg-white/75 hover:border-white shadow-xs'
                   }`}
                 >
                   {/* Dish details */}
                   <div>
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h4 className="text-sm font-bold text-slate-100 leading-snug">
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <h4 className="text-base font-bold text-slate-900 leading-snug">
                         {dish.name}
                       </h4>
+                      {dish.isChefSpecial && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-[10px] tracking-wide shrink-0">
+                          Special
+                        </span>
+                      )}
                     </div>
 
                     {dish.description && (
-                      <p className="text-xs text-slate-400 leading-relaxed mb-3">
+                      <p className="text-xs text-slate-600 leading-relaxed mb-3">
                         {dish.description}
                       </p>
                     )}
 
                     {/* Allergens Listed - Light Green Glass Tag */}
                     {dish.allergens && dish.allergens.length > 0 && (
-                      <div className="flex items-center flex-wrap gap-1.5 mb-2 text-[10px]">
-                        <span className="text-slate-400 font-medium">Allergens:</span>
+                      <div className="flex items-center flex-wrap gap-1.5 mb-2.5 text-[10px]">
+                        <span className="text-slate-500 font-medium">Allergens:</span>
                         {dish.allergens.map((alg) => {
                           return (
                             <span
                               key={alg}
-                              className="px-2.5 py-0.5 rounded-full font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 backdrop-blur-xs"
+                              className="px-2.5 py-0.5 rounded-full font-bold bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 backdrop-blur-xs"
                             >
                               {alg}
                             </span>
@@ -309,18 +318,18 @@ export const MenuDisplay: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => toggleIngredients(dish.id)}
-                        className="text-[11px] font-medium text-orange-400 hover:text-orange-300 flex items-center space-x-1 py-1 cursor-pointer"
+                        className="text-[11px] font-semibold text-orange-600 hover:text-orange-700 flex items-center space-x-1 py-1 cursor-pointer"
                       >
                         <span>{isExpanded ? 'Hide Ingredients' : 'View Ingredients'}</span>
                         {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                       </button>
 
                       {isExpanded && (
-                        <div className="mt-1.5 p-3 rounded-2xl bg-slate-950/80 backdrop-blur-md border border-slate-800 text-xs space-y-1 animate-in fade-in duration-150">
-                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                            Full Kitchen Ingredients:
+                        <div className="mt-2 p-3.5 rounded-2xl bg-white/70 backdrop-blur-md border border-orange-200/60 text-xs space-y-1 animate-in fade-in duration-150">
+                          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                            Kitchen Ingredients:
                           </div>
-                          <div className="text-slate-300 text-[11px] leading-relaxed">
+                          <div className="text-slate-700 text-[11px] leading-relaxed">
                             {dish.ingredients && dish.ingredients.length > 0
                               ? dish.ingredients.join(', ')
                               : 'Standard fresh hostel kitchen ingredients (spices, salt, refined oil).'}
@@ -331,21 +340,19 @@ export const MenuDisplay: React.FC = () => {
 
                   </div>
 
-                  {/* Card Footer: Calories & Action Buttons */}
-                  <div className="pt-3.5 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                    <div className="text-slate-400 font-mono">
-                      {dish.calories ? `~${dish.calories} kcal` : 'Unlimited Portions'}
+                  {/* Flow Footer: Calories & Action Buttons */}
+                  <div className="pt-3.5 border-t border-slate-200/60 flex items-center justify-between text-xs">
+                    <div className="text-slate-500 font-mono font-medium">
+                      {dish.calories ? `~${dish.calories} kcal` : 'Hostel Spread'}
                     </div>
 
-                    <div className="flex items-center space-x-1.5">
-                      <button
-                        onClick={() => setRatingModalDish({ dish, mealName: currentSlot.name })}
-                        className="px-3.5 py-1.5 text-[11px] font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 rounded-full border border-white/20 shadow-md shadow-orange-500/20 transition-all flex items-center space-x-1.5 cursor-pointer"
-                      >
-                        <Star className="w-3.5 h-3.5 text-white fill-white" />
-                        <span>Rate</span>
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => setRatingModalDish({ dish, mealName: currentSlot.name })}
+                      className="px-3.5 py-1.5 text-[11px] font-bold text-white bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] rounded-full border border-white/30 shadow-md shadow-orange-500/20 transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
+                    >
+                      <Star className="w-3.5 h-3.5 text-white fill-white" />
+                      <span>Rate Dish</span>
+                    </button>
                   </div>
                 </div>
               );
@@ -353,9 +360,9 @@ export const MenuDisplay: React.FC = () => {
           </div>
 
           {displayedDishes.length === 0 && (
-            <div className="text-center py-12 bg-slate-950/60 rounded-[28px] border border-dashed border-slate-800">
-              <Info className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-slate-300">
+            <div className="text-center py-12 bg-white/40 backdrop-blur-xl rounded-[28px] border border-dashed border-orange-200">
+              <Info className="w-8 h-8 text-orange-400 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-slate-700">
                 {hiddenCount > 0
                   ? `All ${hiddenCount} dishes in this meal slot contain allergens from your profile.`
                   : 'No dishes listed for this meal slot.'}
@@ -364,7 +371,7 @@ export const MenuDisplay: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setAllergenFilterMode('highlight')}
-                  className="mt-3.5 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all cursor-pointer shadow-sm"
+                  className="mt-3.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white text-xs font-bold transition-all cursor-pointer shadow-md shadow-orange-500/20"
                 >
                   View All Items with Warnings
                 </button>
