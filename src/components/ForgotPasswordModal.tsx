@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ChromeButton from './ui/chrome-button';
 import {
   X,
   KeyRound,
@@ -185,7 +186,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                   <div><strong>Password:</strong> admin123</div>
                 </div>
                 {onSelectDemoAdmin && (
-                  <button
+                  <ChromeButton
                     type="button"
                     onClick={() => {
                       onSelectDemoAdmin('admin@campus.edu', 'admin123');
@@ -194,7 +195,7 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                     className="w-full py-2 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold rounded-xl text-xs shadow-xs"
                   >
                     Fill Admin Credentials
-                  </button>
+                  </ChromeButton>
                 )}
               </div>
             </>

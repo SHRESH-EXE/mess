@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useMess } from '../context/MessContext';
+import ChromeButton from './ui/chrome-button';
 import {
   ShoppingBag,
   Plus,
@@ -489,14 +490,14 @@ export const DayScholarOrder: React.FC = () => {
                                 </button>
                               </div>
                             ) : (
-                              <button
+                              <ChromeButton
                                 type="button"
                                 onClick={() => handleAddToCart(dish)}
                                 className="px-4 py-2 rounded-full text-xs font-bold flex items-center space-x-1.5 transition-all cursor-pointer bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white shadow-md shadow-orange-500/20 border border-white/20"
                               >
                                 <Plus className="w-3.5 h-3.5" />
                                 <span>Add to Order</span>
-                              </button>
+                              </ChromeButton>
                             )}
                           </div>
                         </div>
@@ -790,7 +791,7 @@ export const DayScholarOrder: React.FC = () => {
                 </div>
 
                 {/* Submit Button */}
-                <button
+                <ChromeButton
                   type="submit"
                   disabled={cartItems.length === 0}
                   className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] disabled:opacity-50 disabled:cursor-not-allowed text-white font-black text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
@@ -799,7 +800,7 @@ export const DayScholarOrder: React.FC = () => {
                   <span>
                     Submit Order & Open WhatsApp {cartTotal > 0 ? `(₹${cartTotal})` : ''}
                   </span>
-                </button>
+                </ChromeButton>
               </form>
 
             </div>

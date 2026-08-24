@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
+import ChromeButton from './ui/chrome-button';
 import { X, Search, CheckCircle2, AlertTriangle, ArrowRight, UserCheck } from 'lucide-react';
 
 interface SwitchStudentModalProps {
@@ -101,13 +102,13 @@ export const SwitchStudentModal: React.FC<SwitchStudentModalProps> = ({ onClose 
               </div>
             )}
 
-            <button
+            <ChromeButton
               type="submit"
               className="w-full py-2.5 px-4 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl shadow-md shadow-orange-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
               <span>Switch Active Student</span>
               <ArrowRight className="w-4 h-4 text-white" />
-            </button>
+            </ChromeButton>
           </form>
 
           {/* Quick List of Demo Students */}

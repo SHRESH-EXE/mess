@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
 import { ForgotPasswordModal } from './ForgotPasswordModal';
 import { soundEffects } from '../utils/soundEffects';
+import ChromeButton from './ui/chrome-button';
 import {
   UtensilsCrossed,
   Eye,
@@ -257,7 +258,7 @@ export const LoginPage: React.FC = () => {
               </div>
 
               {/* Submit Button - Oval Capsule */}
-              <button
+              <ChromeButton
                 id="login-submit-button"
                 type="submit"
                 disabled={isLoading}
@@ -271,7 +272,7 @@ export const LoginPage: React.FC = () => {
                     <ArrowRight className="w-4 h-4 text-white" />
                   </>
                 )}
-              </button>
+              </ChromeButton>
             </form>
 
           </div>

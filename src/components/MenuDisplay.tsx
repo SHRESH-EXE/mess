@@ -19,6 +19,7 @@ import {
 import { MealType, DishItem, DayOfWeek } from '../types/mess';
 import { getActiveMealStatus, getCurrentDayOfWeek } from '../utils/time';
 import { RateDishModal } from './RateDishModal';
+import ChromeButton from './ui/chrome-button';
 
 export const MenuDisplay: React.FC = () => {
   const {
@@ -346,13 +347,13 @@ export const MenuDisplay: React.FC = () => {
                       {dish.calories ? `~${dish.calories} kcal` : 'Hostel Spread'}
                     </div>
 
-                    <button
+                    <ChromeButton
                       onClick={() => setRatingModalDish({ dish, mealName: currentSlot.name })}
                       className="px-3.5 py-1.5 text-[11px] font-bold text-white bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] rounded-full border border-white/30 shadow-md shadow-orange-500/20 transition-all flex items-center space-x-1.5 cursor-pointer active:scale-95"
                     >
                       <Star className="w-3.5 h-3.5 text-white fill-white" />
                       <span>Rate Dish</span>
-                    </button>
+                    </ChromeButton>
                   </div>
                 </div>
               );
@@ -368,13 +369,13 @@ export const MenuDisplay: React.FC = () => {
                   : 'No dishes listed for this meal slot.'}
               </p>
               {hiddenCount > 0 && (
-                <button
+                <ChromeButton
                   type="button"
                   onClick={() => setAllergenFilterMode('highlight')}
                   className="mt-3.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white text-xs font-bold transition-all cursor-pointer shadow-md shadow-orange-500/20"
                 >
                   View All Items with Warnings
-                </button>
+                </ChromeButton>
               )}
             </div>
           )}

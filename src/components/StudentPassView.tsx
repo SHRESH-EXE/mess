@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
+import ChromeButton from './ui/chrome-button';
 import {
   CheckCircle2,
   Clock,
@@ -236,14 +237,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
           {/* Live Scanner Actions */}
           <div className="relative z-10 pt-3 border-t border-slate-200/60 flex items-center justify-end">
             <div className="flex items-center space-x-2.5 w-full sm:w-auto">
-              <button
+              <ChromeButton
                 id="open-camera-scanner-btn"
                 onClick={onOpenScanner}
                 className="flex-1 sm:flex-none px-5 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white text-xs font-bold rounded-full shadow-lg shadow-orange-500/20 flex items-center justify-center space-x-1.5 transition-all active:scale-95 cursor-pointer border border-white/30"
               >
                 <Zap className="w-4 h-4 text-white" />
                 <span>Open QR Scanner</span>
-              </button>
+              </ChromeButton>
 
               <button
                 onClick={() => handleMarkMeal(mealStatus.currentMeal)}
@@ -586,13 +587,13 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               >
                 Cancel
               </button>
-              <button
+              <ChromeButton
                 type="button"
                 onClick={handleSaveAllergies}
                 className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white rounded-full transition shadow-lg shadow-orange-500/20 cursor-pointer border border-white/30"
               >
                 Save Dietary Profile
-              </button>
+              </ChromeButton>
             </div>
           </div>
         </div>
@@ -640,13 +641,13 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               >
                 Cancel
               </button>
-              <button
+              <ChromeButton
                 type="button"
                 onClick={() => handleApplyRebate(showRebateModal)}
                 className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white rounded-full transition-colors shadow-lg shadow-orange-500/20 border border-white/30 cursor-pointer"
               >
                 Confirm Skip & Credit Rebate
-              </button>
+              </ChromeButton>
             </div>
           </div>
         </div>

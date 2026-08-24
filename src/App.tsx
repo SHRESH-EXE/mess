@@ -9,6 +9,7 @@ import { AnonymousFeedbackForm } from './components/AnonymousFeedbackForm';
 import { AdminDashboard } from './components/AdminDashboard';
 import { QRScannerModal } from './components/QRScannerModal';
 import { SwitchStudentModal } from './components/SwitchStudentModal';
+import ChromeButton from './components/ui/chrome-button';
 import { getActiveMealStatus } from './utils/time';
 import {
   UtensilsCrossed,
@@ -92,13 +93,13 @@ const MainAppContent: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-3">
-            <button
+            <ChromeButton
               onClick={() => setIsScannerOpen(true)}
               className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-full shadow-lg shadow-orange-500/25 transition-all cursor-pointer active:scale-95 border border-white/30"
             >
               <QrCode className="w-4 h-4 text-white" />
               <span className="hidden sm:inline">Launch QR Scanner</span>
-            </button>
+            </ChromeButton>
 
             <button
               onClick={logout}

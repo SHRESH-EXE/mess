@@ -557,17 +557,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                         <td className="py-3 max-w-xs">
                           <div className="flex items-center space-x-1.5">
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                              ord.fulfillmentType === 'delivery'
+                              ord.preference === 'delivery'
                                 ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
                                 : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
                             }`}>
-                              {ord.fulfillmentType === 'delivery' ? 'Delivery' : 'Counter Pickup'}
+                              {ord.preference === 'delivery' ? 'Delivery' : 'Counter Pickup'}
                             </span>
                             <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
                               {ord.mealSlot}
                             </span>
                           </div>
-                          {ord.fulfillmentType === 'delivery' && ord.blockName && (
+                          {ord.preference === 'delivery' && ord.blockName && (
                             <div className="text-[11px] text-slate-300 font-medium mt-1">
                               {ord.blockName} {ord.roomFloor ? `(${ord.roomFloor})` : ''}
                             </div>

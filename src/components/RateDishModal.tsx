@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
+import ChromeButton from './ui/chrome-button';
 import { Star, X, Check } from 'lucide-react';
 import { DishItem } from '../types/mess';
 
@@ -120,12 +121,12 @@ export const RateDishModal: React.FC<RateDishModalProps> = ({ dish, mealName, on
               >
                 Cancel
               </button>
-              <button
+              <ChromeButton
                 type="submit"
                 className="px-5 py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-xl shadow-md shadow-orange-500/25 transition-all cursor-pointer"
               >
                 Submit Rating
-              </button>
+              </ChromeButton>
             </div>
           </form>
         )}

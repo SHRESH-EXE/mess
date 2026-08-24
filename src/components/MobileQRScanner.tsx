@@ -167,7 +167,8 @@ export const MobileQRScanner: React.FC<MobileQRScannerProps> = ({
       setCameraFacing(facing);
 
       try {
-        const hasTorch = html5QrCodeRef.current.getRunningTrackCapabilities?.()?.torch;
+        const caps = html5QrCodeRef.current.getRunningTrackCapabilities?.() as (MediaTrackCapabilities & { torch?: boolean }) | undefined;
+        const hasTorch = caps?.torch;
         setTorchAvailable(Boolean(hasTorch));
       } catch {
         setTorchAvailable(false);

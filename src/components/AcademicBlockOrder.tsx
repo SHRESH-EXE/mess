@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useMess } from '../context/MessContext';
+import ChromeButton from './ui/chrome-button';
 import {
   Send,
   Building,
@@ -519,7 +520,7 @@ export const AcademicBlockOrder: React.FC = () => {
             </div>
 
             {/* Prominent Action Button: Order via WhatsApp */}
-            <button
+            <ChromeButton
               id="submit-whatsapp-order-btn"
               type="submit"
               disabled={selectedItems.length === 0 || (hasAllergyConflict && !acknowledgedAllergy)}
@@ -527,7 +528,7 @@ export const AcademicBlockOrder: React.FC = () => {
             >
               <Send className="w-5 h-5" />
               <span>Order via WhatsApp Direct</span>
-            </button>
+            </ChromeButton>
 
           </form>
         </div>

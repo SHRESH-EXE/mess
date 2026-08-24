@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
+import ChromeButton from './ui/chrome-button';
 import { X, Plus, Trash2, Check, Utensils, AlertCircle, ShieldAlert } from 'lucide-react';
 import { MealType, MealSlot, DishItem, STANDARD_ALLERGENS } from '../types/mess';
 
@@ -275,13 +276,13 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
               </div>
             </div>
 
-            <button
+            <ChromeButton
               type="submit"
               disabled={!newDishName.trim()}
               className="w-full py-2.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] disabled:opacity-50 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-orange-500/25 cursor-pointer"
             >
               + Add to Menu Spread
-            </button>
+            </ChromeButton>
           </form>
         </div>
 
@@ -299,13 +300,13 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
             >
               Cancel
             </button>
-            <button
+            <ChromeButton
               type="button"
               onClick={handleSave}
               className="px-5 py-2.5 text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white rounded-xl shadow-md shadow-orange-500/25 transition-all cursor-pointer"
             >
               Save Menu Changes
-            </button>
+            </ChromeButton>
           </div>
         </div>
 

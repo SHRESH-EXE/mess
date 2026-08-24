@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
 import { MealType } from '../types/mess';
+import ChromeButton from './ui/chrome-button';
 import {
   MessageSquareHeart,
   Star,
@@ -220,13 +221,13 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                 </div>
 
                 {/* Submit CTA */}
-                <button
+                <ChromeButton
                   type="submit"
                   className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/25 border border-white/20 active:scale-98 flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span>Post Review</span>
-                </button>
+                </ChromeButton>
 
               </form>
             )}
