@@ -476,11 +476,51 @@
   background: #ea580c;
 }
 
-/* Hide scrollbar for clean touch carousels */
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* Animated Glitter & Shimmer Effect for Buttons */
+@keyframes glitter-sweep {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  50%, 100% {
+    transform: translateX(260%) skewX(-20deg);
+  }
 }
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
+
+@keyframes glitter-sparkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.7) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25) rotate(90deg);
+  }
+}
+
+.button-glitter-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-glitter-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-160%) skewX(-20deg);
+  animation: glitter-sweep 3.2s infinite ease-in-out;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.button-glitter-effect:hover::after {
+  animation: glitter-sweep 1.5s infinite ease-in-out;
 }
