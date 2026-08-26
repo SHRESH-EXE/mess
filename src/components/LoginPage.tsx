@@ -175,113 +175,106 @@ export const LoginPage: React.FC = () => {
       <div className="py-4" />
 
       {/* =========================================================
-          2. CENTRAL GLASS LOGIN CARD (BLACK TEXT ON WHITE GLASS)
+          2. CENTRAL 3D NEUMORPHIC CIRCULAR DISC LOGIN CARD
           ========================================================= */}
-      <main className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6">
-        <div className="w-full max-w-[460px] relative">
-          {/* THE LIQUID GLASSMORPHISM OVAL CARD */}
+      <main className="relative z-10 flex-1 flex items-center justify-center p-3 sm:p-6 my-auto">
+        <div className="neumorphic-circle-wrapper w-full max-w-[500px] sm:max-w-[520px]">
+          {/* THE 3D CONVEX CIRCULAR NEUMORPHIC DISC CARD */}
           <div
             id="login-card"
-            className={`relative glassmorphism-card rounded-[36px] p-6 sm:p-8 text-center overflow-hidden transition-all duration-300 shadow-[0_25px_50px_-12px_rgba(249,115,22,0.15)] border-[1.5px] border-white/90 ${
+            className={`neumorphic-circle-card w-full aspect-auto sm:aspect-square rounded-[42px] sm:rounded-full p-6 sm:p-10 flex flex-col items-center justify-center text-center overflow-hidden transition-all duration-300 ${
               isShaking ? 'animate-[shake_0.4s_ease-in-out]' : ''
             }`}
           >
-            {/* Top specular light sheen overlay */}
+            {/* Ambient specular highlight on circular face */}
             <div
-              className="absolute inset-0 pointer-events-none rounded-[36px]"
+              className="absolute inset-0 pointer-events-none rounded-[42px] sm:rounded-full"
               style={{
                 background:
-                  'linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 45%, transparent 65%)'
+                  'radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 65%)'
               }}
             />
 
-            {/* Card Header */}
-            <div className="relative z-10 mb-4">
-              <div className="w-14 h-14 rounded-[20px] bg-gradient-to-br from-[#ff7a30] to-[#ff9248] mx-auto flex items-center justify-center mb-2.5 shadow-md shadow-orange-500/25 border border-white/40 text-white">
-                {selectedRole === 'vendor' ? (
-                  <Store className="w-7 h-7" strokeWidth={2.2} />
-                ) : selectedRole === 'admin' ? (
-                  <ShieldCheck className="w-7 h-7" strokeWidth={2.2} />
-                ) : (
-                  <UtensilsCrossed className="w-7 h-7" strokeWidth={2.2} />
-                )}
-              </div>
-
-              <h1 className="text-2xl sm:text-[26px] font-black text-slate-900 tracking-tight font-sans">
-                {selectedRole === 'vendor'
-                  ? 'Food Court Owner Portal'
-                  : selectedRole === 'admin'
-                  ? 'Mess Authority & Warden'
-                  : 'Campus Dining Portal'}
-              </h1>
-            </div>
-
-            {/* 3-Way Role Selector Tabs (Clear Separation of Sections) */}
-            <div className="relative z-10 grid grid-cols-3 gap-1.5 p-1.5 rounded-2xl bg-orange-100/60 border border-orange-200/80 mb-5">
-              <button
-                type="button"
-                onClick={() => handleRoleChange('student')}
-                className={`py-2 px-1 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 cursor-pointer ${
-                  selectedRole === 'student'
-                    ? 'bg-white text-[#ea580c] shadow-sm font-extrabold scale-[1.02]'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <GraduationCap className="w-3.5 h-3.5" />
-                <span className="leading-tight">Student</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleRoleChange('admin')}
-                className={`py-2 px-1 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 cursor-pointer ${
-                  selectedRole === 'admin'
-                    ? 'bg-white text-[#ea580c] shadow-sm font-extrabold scale-[1.02]'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span className="leading-tight">Mess Warden</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleRoleChange('vendor')}
-                className={`py-2 px-1 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center space-y-1 cursor-pointer ${
-                  selectedRole === 'vendor'
-                    ? 'bg-white text-[#ea580c] shadow-sm font-extrabold scale-[1.02]'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Store className="w-3.5 h-3.5" />
-                <span className="leading-tight">Food Court</span>
-              </button>
-            </div>
-
-            {/* Error Message */}
-            {errorMessage && (
-              <div className="relative z-10 mb-4 p-3 rounded-2xl bg-emerald-50/90 backdrop-blur-md border border-emerald-300 text-emerald-950 text-xs flex items-center space-x-2 text-left shadow-xs">
-                <AlertCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span className="font-bold">{errorMessage}</span>
-              </div>
-            )}
-
-            {/* Login Form */}
-            <form onSubmit={handleLoginSubmit} className="relative z-10 space-y-3.5 text-left">
-              {/* Field 1: User / Stall ID */}
+            <div className="relative z-10 w-full max-w-[360px] mx-auto space-y-4">
+              {/* Header */}
               <div className="space-y-1">
-                <label
-                  htmlFor="registration-id-field"
-                  className="block text-xs font-black text-slate-900 ml-1"
-                >
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] mx-auto flex items-center justify-center mb-2 shadow-md shadow-orange-500/25 border border-white/60 text-white">
+                  {selectedRole === 'vendor' ? (
+                    <Store className="w-6 h-6" strokeWidth={2.2} />
+                  ) : selectedRole === 'admin' ? (
+                    <ShieldCheck className="w-6 h-6" strokeWidth={2.2} />
+                  ) : (
+                    <UtensilsCrossed className="w-6 h-6" strokeWidth={2.2} />
+                  )}
+                </div>
+
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
                   {selectedRole === 'vendor'
-                    ? 'Food Court Stall ID'
+                    ? 'Food Court Owner'
                     : selectedRole === 'admin'
-                    ? 'Admin Email / Staff ID'
-                    : 'Student Registration ID'}
-                </label>
+                    ? 'Mess Warden'
+                    : 'Login'}
+                </h1>
+                <p className="text-xs text-slate-500 font-medium">
+                  Sign in to your account
+                </p>
+              </div>
+
+              {/* 3-Way Role Selector Tabs (Neumorphic Inset Capsule) */}
+              <div className="neumorphic-inset-container grid grid-cols-3 gap-1 p-1">
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('student')}
+                  className={`py-1.5 px-2 rounded-full text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                    selectedRole === 'student'
+                      ? 'neumorphic-active-pill text-[#ea580c] font-black'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <GraduationCap className="w-3 h-3" />
+                  <span className="truncate">Student</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('admin')}
+                  className={`py-1.5 px-2 rounded-full text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                    selectedRole === 'admin'
+                      ? 'neumorphic-active-pill text-[#ea580c] font-black'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <ShieldCheck className="w-3 h-3" />
+                  <span className="truncate">Warden</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('vendor')}
+                  className={`py-1.5 px-2 rounded-full text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                    selectedRole === 'vendor'
+                      ? 'neumorphic-active-pill text-[#ea580c] font-black'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Store className="w-3 h-3" />
+                  <span className="truncate">Food Court</span>
+                </button>
+              </div>
+
+              {/* Error Message */}
+              {errorMessage && (
+                <div className="p-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-center space-x-2 text-left shadow-xs">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span className="font-bold">{errorMessage}</span>
+                </div>
+              )}
+
+              {/* Login Form */}
+              <form onSubmit={handleLoginSubmit} className="space-y-3 text-left">
+                {/* Field 1: Recessed Inset Username / ID Input */}
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#ea580c]">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                     {selectedRole === 'vendor' ? (
                       <Store className="w-4 h-4" />
                     ) : (
@@ -298,36 +291,19 @@ export const LoginPage: React.FC = () => {
                     }}
                     placeholder={
                       selectedRole === 'vendor'
-                        ? 'e.g. stall-rolls or stall-south'
+                        ? 'Food Court Stall ID'
                         : selectedRole === 'admin'
-                        ? 'admin@campus.edu'
-                        : 'e.g. 22CS0142'
+                        ? 'Admin Email / Staff ID'
+                        : 'Username / Registration ID'
                     }
                     required
-                    className="w-full glassmorphism-input rounded-[18px] pl-11 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold shadow-xs"
+                    className="w-full neumorphic-inset-input pl-11 pr-4 py-3 text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold"
                   />
                 </div>
-              </div>
 
-              {/* Field 2: Password */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between px-1">
-                  <label
-                    htmlFor="password-field"
-                    className="block text-xs font-black text-slate-900"
-                  >
-                    {selectedRole === 'student' ? 'Room No / PIN' : 'Password'}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setIsForgotModalOpen(true)}
-                    className="text-[11px] font-bold text-[#ea580c] hover:text-[#c2410c] transition-colors cursor-pointer"
-                  >
-                    Quick Demo Logins &rarr;
-                  </button>
-                </div>
+                {/* Field 2: Recessed Inset Password Input */}
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#ea580c]">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                     <Lock className="w-4 h-4" />
                   </div>
                   <input
@@ -338,56 +314,89 @@ export const LoginPage: React.FC = () => {
                       setPassword(e.target.value);
                       setErrorMessage(null);
                     }}
-                    placeholder="Enter password..."
+                    placeholder={selectedRole === 'student' ? 'Room No / PIN' : 'Password'}
                     required
-                    className="w-full glassmorphism-input rounded-[18px] pl-11 pr-11 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold shadow-xs"
+                    className="w-full neumorphic-inset-input pl-11 pr-11 py-3 text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-              </div>
 
-              {/* Remember Me Checkbox */}
-              <div className="flex items-center justify-between text-xs py-0.5 px-1">
-                <label className="flex items-center space-x-2 text-slate-800 cursor-pointer font-semibold">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-4 h-4 rounded text-[#ff7a30] focus:ring-[#ff7a30] bg-white border-orange-300 accent-[#ff7a30]"
-                  />
-                  <span>Remember my session</span>
-                </label>
-              </div>
+                {/* Remember Me Toggle & Forgot Password Row */}
+                <div className="flex items-center justify-between text-xs py-0.5 px-1">
+                  <label className="flex items-center space-x-2 text-slate-600 cursor-pointer font-medium select-none">
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setRememberMe(!rememberMe);
+                      }}
+                      className={`w-9 h-5 rounded-full p-0.5 transition-colors cursor-pointer flex items-center ${
+                        rememberMe ? 'bg-[#ff7a30]' : 'bg-slate-300'
+                      }`}
+                    >
+                      <div
+                        className={`w-4 h-4 rounded-full bg-white shadow-xs transition-transform transform ${
+                          rememberMe ? 'translate-x-4' : 'translate-x-0'
+                        }`}
+                      />
+                    </div>
+                    <span>Remember me</span>
+                  </label>
 
-              {/* Submit Button - Oval Capsule */}
-              <ChromeButton
-                id="login-submit-button"
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3.5 px-6 rounded-full font-bold text-sm text-white bg-gradient-to-r from-[#ff7a30] via-[#ff843a] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] active:scale-[0.98] transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 border border-white/30"
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <span className="text-white font-bold">
-                      {selectedRole === 'vendor'
-                        ? 'Open Food Court Dashboard'
-                        : selectedRole === 'admin'
-                        ? 'Enter Mess Authority Portal'
-                        : 'Enter Student Dining Portal'}
-                    </span>
-                    <ArrowRight className="w-4 h-4 text-white" />
-                  </>
-                )}
-              </ChromeButton>
-            </form>
+                  <button
+                    type="button"
+                    onClick={() => setIsForgotModalOpen(true)}
+                    className="text-[11px] font-bold text-slate-600 hover:text-[#ea580c] transition-colors cursor-pointer"
+                  >
+                    Quick Demo Logins &rarr;
+                  </button>
+                </div>
+
+                {/* Raised Pill Sign In Button */}
+                <div className="pt-1">
+                  <ChromeButton
+                    id="login-submit-button"
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-3 px-6 rounded-full font-bold text-sm text-white bg-gradient-to-r from-[#ff7a30] via-[#ff843a] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] active:scale-[0.98] transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 border border-white/40 uppercase tracking-wider"
+                  >
+                    {isLoading ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span className="text-white font-bold">
+                          {selectedRole === 'vendor'
+                            ? 'SIGN IN'
+                            : selectedRole === 'admin'
+                            ? 'SIGN IN'
+                            : 'SIGN IN'}
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-white ml-1" />
+                      </>
+                    )}
+                  </ChromeButton>
+                </div>
+
+                {/* Don't have an account / Portal info text */}
+                <div className="text-center pt-1">
+                  <p className="text-[11px] text-slate-500">
+                    Campus Dining Portal •{' '}
+                    <button
+                      type="button"
+                      onClick={() => setIsForgotModalOpen(true)}
+                      className="font-bold text-[#ea580c] hover:underline cursor-pointer"
+                    >
+                      Demo Passwords
+                    </button>
+                  </p>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </main>

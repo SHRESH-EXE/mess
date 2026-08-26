@@ -524,3 +524,83 @@
 .button-glitter-effect:hover::after {
   animation: glitter-sweep 1.5s infinite ease-in-out;
 }
+
+/* =========================================================
+   NEUMORPHIC 3D CIRCULAR DISC & INSET INPUT ARCHITECTURE
+   ========================================================= */
+
+.neumorphic-circle-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Outer concentric halo rim */
+.neumorphic-circle-card {
+  position: relative;
+  background: linear-gradient(145deg, #ffffff 0%, #faf3ec 55%, #f2e5da 100%);
+  box-shadow:
+    28px 28px 65px rgba(220, 185, 160, 0.45),
+    -24px -24px 60px rgba(255, 255, 255, 0.95),
+    inset 2px 2px 5px rgba(255, 255, 255, 0.95),
+    inset -3px -3px 6px rgba(210, 175, 150, 0.25);
+  border: 4px solid rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Outer secondary stepped bezel / glow ring */
+.neumorphic-circle-card::before {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: inherit;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(245, 230, 220, 0.4));
+  box-shadow:
+    16px 16px 40px rgba(225, 190, 165, 0.35),
+    -16px -16px 40px rgba(255, 255, 255, 0.95);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Recessed Inset Neumorphic Pill Input */
+.neumorphic-inset-input {
+  background: #ede3d8 !important;
+  border-radius: 9999px !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow:
+    inset 3px 3px 6px rgba(180, 150, 130, 0.35),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.95),
+    0 1px 2px rgba(255, 255, 255, 0.6) !important;
+  color: #0f172a !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.neumorphic-inset-input:focus {
+  background: #f3eae0 !important;
+  border-color: rgba(255, 122, 48, 0.7) !important;
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 122, 48, 0.22),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.95),
+    0 0 0 2px rgba(255, 122, 48, 0.2) !important;
+}
+
+/* Neumorphic Inset Pill Container for Tabs */
+.neumorphic-inset-container {
+  background: #ede3d8;
+  border-radius: 9999px;
+  box-shadow:
+    inset 3px 3px 6px rgba(180, 150, 130, 0.35),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.neumorphic-active-pill {
+  background: linear-gradient(145deg, #ffffff, #f7ede6);
+  box-shadow:
+    3px 3px 8px rgba(200, 170, 150, 0.35),
+    -3px -3px 8px rgba(255, 255, 255, 0.95);
+  border-radius: 9999px;
+}
+
