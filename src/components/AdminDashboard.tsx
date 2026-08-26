@@ -40,6 +40,7 @@ import {
 import { MealType, STANDARD_ALLERGENS, DayScholarOrderStatus } from '../types/mess';
 import { MenuEditorModal } from './MenuEditorModal';
 import { getCurrentDayOfWeek, formatTimeAmPm } from '../utils/time';
+import ChromeButton from './ui/chrome-button';
 
 interface AdminDashboardProps {
   onOpenScanner: () => void;
@@ -85,10 +86,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
   const rebatesToday = attendanceRecords.filter(r => r.date === todayDateStr && r.status === 'rebate_applied').length;
 
   const mealSlotsList: { type: MealType; label: string; icon: typeof Coffee; color: string }[] = [
-    { type: 'breakfast', label: 'Breakfast', icon: Coffee, color: 'text-amber-400 bg-amber-500/20 border border-amber-500/30' },
-    { type: 'lunch', label: 'Lunch', icon: Sun, color: 'text-amber-300 bg-amber-500/20 border border-amber-500/30' },
-    { type: 'snacks', label: 'High Tea', icon: Cookie, color: 'text-emerald-400 bg-emerald-500/20 border border-emerald-500/30' },
-    { type: 'dinner', label: 'Dinner', icon: Moon, color: 'text-indigo-400 bg-indigo-500/20 border border-indigo-500/30' }
+    { type: 'breakfast', label: 'Breakfast', icon: Coffee, color: 'text-amber-600 bg-amber-100 border border-amber-200' },
+    { type: 'lunch', label: 'Lunch', icon: Sun, color: 'text-orange-600 bg-orange-100 border border-orange-200' },
+    { type: 'snacks', label: 'High Tea', icon: Cookie, color: 'text-emerald-600 bg-emerald-100 border border-emerald-200' },
+    { type: 'dinner', label: 'Dinner', icon: Moon, color: 'text-indigo-600 bg-indigo-100 border border-indigo-200' }
   ];
 
   // Feedback Aggregations
@@ -209,48 +210,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
   return (
     <section id="admin-dashboard-section" className="space-y-6 animate-in fade-in duration-200">
       
-      {/* Admin Header Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center space-x-3.5">
-          <div className="p-3 rounded-2xl bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 font-bold">
-            <ShieldCheck className="w-6 h-6 text-slate-950" />
+      {/* 1. Admin Header Banner (Warm Frosted Glassmorphism with Signature Orange) */}
+      <div className="glassmorphism-card rounded-3xl p-5 sm:p-7 border border-white/90 shadow-lg relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center space-x-4 relative z-10">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-md shadow-orange-500/25 border border-white/40 shrink-0">
+            <ShieldCheck className="w-7 h-7 text-white" strokeWidth={2.2} />
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-white font-['Outfit'] tracking-tight">
-              MESS Operations Console
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="px-2.5 py-0.5 rounded-full bg-orange-500/15 text-[#ea580c] text-[11px] font-extrabold border border-orange-300">
+                HOSTEL & DINING OPERATIONS
+              </span>
+              <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 text-[11px] font-extrabold border border-emerald-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>LIVE SYNC ACTIVE</span>
+              </span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-sans">
+              Mess Authority & Warden Console
             </h2>
           </div>
         </div>
 
         {/* Quick Admin Actions */}
-        <div className="flex flex-wrap items-center gap-2">
-          <button
+        <div className="flex flex-wrap items-center gap-2.5 relative z-10">
+          <ChromeButton
             onClick={onOpenScanner}
-            className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-colors flex items-center space-x-1.5 shadow-sm cursor-pointer"
+            className="px-4 py-2.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white text-xs font-bold shadow-md shadow-orange-500/20 active:scale-95 transition-all flex items-center space-x-1.5 cursor-pointer border border-white/30"
           >
             <QrCode className="w-4 h-4" />
             <span>QR Scanner</span>
-          </button>
+          </ChromeButton>
 
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors flex items-center space-x-1.5 border border-slate-700 cursor-pointer"
+            className="px-4 py-2.5 rounded-full bg-white/80 hover:bg-white text-slate-700 hover:text-slate-900 text-xs font-bold transition-all flex items-center space-x-1.5 border border-orange-200/80 shadow-xs cursor-pointer"
           >
-            <Download className="w-4 h-4 text-amber-400" />
+            <Download className="w-4 h-4 text-[#ea580c]" />
             <span>Export CSV</span>
           </button>
 
           <button
             onClick={() => setShowResetConfirm(true)}
-            className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-emerald-950 text-slate-300 hover:text-emerald-300 text-xs font-semibold transition-colors border border-slate-700 cursor-pointer"
+            className="p-2.5 rounded-full bg-white/80 hover:bg-red-50 text-slate-500 hover:text-red-600 transition-colors border border-orange-200/80 shadow-xs cursor-pointer"
             title="Reset to default prototype state"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* Admin Module Navigation Sub-Tabs */}
+      {/* 2. Admin Module Navigation Sub-Tabs (Warm Theme matching Food Court & Student) */}
       <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none pb-1">
         {[
           { id: 'headcount', label: 'Live Headcount & Attendance', icon: Users, badge: `${totalHeadcountToday}` },
@@ -266,16 +276,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
             <button
               key={tab.id}
               onClick={() => setAdminActiveSubTab(tab.id as typeof adminActiveSubTab)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer ${
+              className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer ${
                 isActive
-                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                  : 'bg-slate-900 hover:bg-slate-850 text-slate-300 border border-slate-800'
+                  ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-md shadow-orange-500/20'
+                  : 'bg-white/80 hover:bg-white text-slate-700 border border-orange-100/80 shadow-xs'
               }`}
             >
               <Icon className="w-4 h-4" />
               <span>{tab.label}</span>
               {tab.badge && (
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-slate-950 text-amber-400' : 'bg-slate-800 text-slate-300'}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${isActive ? 'bg-white/25 text-white' : 'bg-orange-100 text-[#ea580c]'}`}>
                   {tab.badge}
                 </span>
               )}
@@ -289,114 +299,114 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
         <div className="space-y-6">
           {/* KPI Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="glassmorphism-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/90 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                   Meals Eaten Today
                 </span>
-                <div className="text-xl font-black text-slate-100 font-mono">
+                <div className="text-2xl font-black text-slate-900 font-mono">
                   {totalHeadcountToday}
                 </div>
-                <div className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                <div className="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" /> Live count
                 </div>
               </div>
-              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <div className="p-3 rounded-2xl bg-orange-500/15 text-[#ea580c] border border-orange-200/80">
                 <UtensilsCrossed className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="glassmorphism-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/90 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                   Day Scholar Orders
                 </span>
-                <div className="text-xl font-black text-amber-400 font-mono">
+                <div className="text-2xl font-black text-[#ea580c] font-mono">
                   {dayScholarOrders.length}
                 </div>
-                <div className="text-[10px] text-amber-300">À La Carte Today</div>
+                <div className="text-[10px] text-slate-500 font-semibold">À La Carte Today</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <div className="p-3 rounded-2xl bg-orange-500/15 text-[#ea580c] border border-orange-200/80">
                 <Store className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="glassmorphism-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/90 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                   Day Scholar Revenue
                 </span>
-                <div className="text-xl font-black text-emerald-400 font-mono">
+                <div className="text-2xl font-black text-emerald-600 font-mono">
                   ₹{dayScholarRevenueToday}
                 </div>
-                <div className="text-[10px] text-emerald-300">Direct Pay / Counter</div>
+                <div className="text-[10px] text-emerald-700 font-semibold">Direct Pay / Counter</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <div className="p-3 rounded-2xl bg-emerald-500/15 text-emerald-600 border border-emerald-200">
                 <IndianRupee className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="glassmorphism-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/90 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                   Registered Students
                 </span>
-                <div className="text-xl font-black text-slate-100 font-mono">
+                <div className="text-2xl font-black text-slate-900 font-mono">
                   {students.length}
                 </div>
-                <div className="text-[10px] text-slate-400">Hostel Residents</div>
+                <div className="text-[10px] text-slate-500 font-semibold">Hostel Residents</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/30">
+              <div className="p-3 rounded-2xl bg-blue-500/15 text-blue-600 border border-blue-200">
                 <Users className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="glassmorphism-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/90 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                   Avg Meal Rating
                 </span>
-                <div className="text-xl font-black text-amber-400 font-mono flex items-center gap-1">
+                <div className="text-2xl font-black text-[#ea580c] font-mono flex items-center gap-1">
                   <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                   {feedbackStats.avgRating || '4.5'}
                 </div>
-                <div className="text-[10px] text-slate-400">
+                <div className="text-[10px] text-slate-500 font-semibold">
                   {anonymousFeedbacks.length} Reviews
                 </div>
               </div>
-              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <div className="p-3 rounded-2xl bg-amber-500/15 text-amber-600 border border-amber-200">
                 <MessageSquareHeart className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
+            <div className="glassmorphism-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/90 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
               <div className="space-y-1">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                   Rebates / Skips
                 </span>
-                <div className="text-xl font-black text-slate-100 font-mono">
+                <div className="text-2xl font-black text-slate-900 font-mono">
                   {rebatesToday}
                 </div>
-                <div className="text-[10px] text-blue-400">₹45/meal credited</div>
+                <div className="text-[10px] text-indigo-600 font-semibold">₹45/meal credited</div>
               </div>
-              <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              <div className="p-3 rounded-2xl bg-indigo-500/15 text-indigo-600 border border-indigo-200">
                 <Clock className="w-5 h-5" />
               </div>
             </div>
           </div>
 
           {/* Headcount Breakdown by Meal Slot with Manual Staff Adjusters */}
-          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+          <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-md space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-orange-100/80">
               <div>
-                <h3 className="text-base font-bold text-slate-100">
+                <h3 className="text-base font-bold text-slate-900">
                   Live Headcount Log by Meal Session ({todayDateStr})
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Tallied via QR camera scans with quick manual staff increment controls
                 </p>
               </div>
-              <span className="text-xs text-slate-400 font-mono">Central Dining Complex</span>
+              <span className="text-xs text-slate-500 font-mono font-medium">Central Dining Complex</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -406,37 +416,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                 return (
                   <div
                     key={slot.type}
-                    className="p-4 rounded-2xl border border-slate-800 bg-slate-950/70 space-y-3"
+                    className="p-4 rounded-2xl border border-orange-100/80 bg-white/70 backdrop-blur-sm space-y-3 shadow-xs hover:shadow-md transition-all"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <div className={`p-2 rounded-xl ${slot.color}`}>
                           <Icon className="w-4 h-4" />
                         </div>
-                        <span className="text-xs font-bold text-slate-100">{slot.label}</span>
+                        <span className="text-xs font-bold text-slate-900">{slot.label}</span>
                       </div>
-                      <span className="text-xl font-black text-slate-100 font-mono">
+                      <span className="text-xl font-black text-slate-900 font-mono">
                         {count}
                       </span>
                     </div>
 
-                    <div className="flex items-center space-x-1.5 pt-2 border-t border-slate-800">
+                    <div className="flex items-center space-x-1.5 pt-2 border-t border-orange-100">
                       <button
                         onClick={() => incrementAdminHeadcount(slot.type, -1)}
-                        className="p-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-xl bg-white border border-orange-200 text-slate-600 hover:bg-orange-50 transition-colors cursor-pointer"
                         title="Decrement 1"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => incrementAdminHeadcount(slot.type, 1)}
-                        className="flex-1 py-1 px-2 text-xs font-bold rounded-lg bg-slate-800 border border-slate-700 text-slate-200 hover:bg-amber-500/20 hover:text-amber-300 hover:border-amber-500/30 transition-colors text-center cursor-pointer"
+                        className="flex-1 py-1.5 px-2 text-xs font-bold rounded-xl bg-orange-50 border border-orange-200 text-orange-900 hover:bg-orange-100 transition-colors text-center cursor-pointer"
                       >
                         +1 Headcount
                       </button>
                       <button
                         onClick={() => incrementAdminHeadcount(slot.type, 5)}
-                        className="py-1 px-2 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 hover:bg-amber-400 transition-colors cursor-pointer"
+                        className="py-1.5 px-3 text-xs font-bold rounded-xl bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white hover:from-[#ea671e] hover:to-[#ff8130] transition-colors cursor-pointer shadow-xs"
                       >
                         +5
                       </button>
@@ -453,48 +463,48 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
       {adminActiveSubTab === 'dayscholar' && (
         <div className="space-y-6 animate-in fade-in duration-150">
           {/* Day Scholar Summary Banner */}
-          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
               <div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider">
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-orange-500/15 text-[#ea580c] border border-orange-300 uppercase tracking-wider">
                   À La Carte Pay-Per-Order
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-slate-100">
+              <h3 className="text-xl font-bold text-slate-900">
                 Day Scholar Orders & Kitchen Expeditor
               </h3>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="bg-slate-950 px-4 py-2.5 rounded-2xl border border-slate-800 text-center">
-                <div className="text-[10px] uppercase font-bold text-slate-400">Total Revenue</div>
-                <div className="text-lg font-black text-emerald-400 font-mono">₹{dayScholarRevenueToday}</div>
+              <div className="bg-white/80 px-4 py-2.5 rounded-2xl border border-orange-100 text-center shadow-xs">
+                <div className="text-[10px] uppercase font-bold text-slate-500">Total Revenue</div>
+                <div className="text-lg font-black text-emerald-600 font-mono">₹{dayScholarRevenueToday}</div>
               </div>
-              <div className="bg-slate-950 px-4 py-2.5 rounded-2xl border border-slate-800 text-center">
-                <div className="text-[10px] uppercase font-bold text-slate-400">Active / Pending</div>
-                <div className="text-lg font-black text-amber-400 font-mono">{pendingDayScholarOrders.length}</div>
+              <div className="bg-white/80 px-4 py-2.5 rounded-2xl border border-orange-100 text-center shadow-xs">
+                <div className="text-[10px] uppercase font-bold text-slate-500">Active / Pending</div>
+                <div className="text-lg font-black text-[#ea580c] font-mono">{pendingDayScholarOrders.length}</div>
               </div>
             </div>
           </div>
 
           {/* Filter and Search Bar */}
-          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <div className="bg-white/80 p-4 rounded-2xl border border-orange-100/80 flex flex-wrap items-center justify-between gap-3 shadow-xs">
             <div className="flex flex-wrap items-center gap-2">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
                 <input
                   type="text"
                   value={dayScholarSearch}
                   onChange={(e) => setDayScholarSearch(e.target.value)}
                   placeholder="Search student, phone, block, dept..."
-                  className="text-xs pl-8 pr-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                  className="text-xs pl-8 pr-3 py-2 rounded-xl bg-white border border-orange-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ff7a30]"
                 />
               </div>
 
               <select
                 value={dayScholarFilter}
                 onChange={(e) => setDayScholarFilter(e.target.value)}
-                className="text-xs p-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 font-medium focus:outline-hidden cursor-pointer"
+                className="text-xs py-2 px-3 rounded-xl bg-white border border-orange-200 text-slate-800 font-semibold focus:outline-none cursor-pointer"
               >
                 <option value="all">All Statuses ({dayScholarOrders.length})</option>
                 <option value="New">New ({dayScholarOrders.filter(o => o.status === 'New').length})</option>
@@ -505,19 +515,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
               </select>
             </div>
 
-            <div className="text-xs text-slate-400">
-              Showing <span className="font-bold text-slate-200">{filteredDayScholarOrders.length}</span> orders
+            <div className="text-xs text-slate-500">
+              Showing <span className="font-bold text-slate-900">{filteredDayScholarOrders.length}</span> orders
             </div>
           </div>
 
           {/* Day Scholar Orders Table */}
-          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl overflow-hidden">
+          <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-md overflow-hidden">
             {filteredDayScholarOrders.length === 0 ? (
               <div className="text-center py-12 space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 rounded-2xl bg-orange-100 text-[#ea580c] flex items-center justify-center mx-auto">
                   <Store className="w-6 h-6" />
                 </div>
-                <h4 className="text-base font-bold text-slate-300">No Day Scholar Orders Found</h4>
+                <h4 className="text-base font-bold text-slate-900">No Day Scholar Orders Found</h4>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
                   {dayScholarSearch || dayScholarFilter !== 'all'
                     ? 'Try clearing the search query or status filter to see other orders.'
@@ -528,7 +538,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                    <tr className="border-b border-orange-100 text-slate-400 font-bold uppercase text-[10px]">
                       <th className="pb-2.5">Order ID</th>
                       <th className="pb-2.5">Day Scholar / Dept</th>
                       <th className="pb-2.5">Fulfillment & Slot</th>
@@ -538,17 +548,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                       <th className="pb-2.5 text-right">Quick Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-orange-100/70">
                     {filteredDayScholarOrders.map((ord) => (
-                      <tr key={ord.id} className="hover:bg-slate-800/40 transition-colors">
-                        <td className="py-3 font-mono font-bold text-slate-100">
+                      <tr key={ord.id} className="hover:bg-orange-50/50 transition-colors">
+                        <td className="py-3 font-mono font-bold text-slate-900">
                           <div>{ord.id}</div>
-                          <div className="text-[10px] text-slate-500 font-normal">{ord.timestamp}</div>
+                          <div className="text-[10px] text-slate-400 font-normal">{ord.timestamp}</div>
                         </td>
                         <td className="py-3">
-                          <div className="font-bold text-slate-100">{ord.name}</div>
-                          <div className="text-[10px] text-slate-400 font-mono">
-                            <a href={`tel:${ord.phoneNumber}`} className="hover:underline text-amber-400">
+                          <div className="font-bold text-slate-900">{ord.name}</div>
+                          <div className="text-[10px] text-slate-500 font-mono">
+                            <a href={`tel:${ord.phoneNumber}`} className="hover:underline text-[#ea580c] font-bold">
                               {ord.phoneNumber}
                             </a>
                             {ord.department ? ` • ${ord.department}` : ''}
@@ -558,66 +568,66 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                           <div className="flex items-center space-x-1.5">
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                               ord.preference === 'delivery'
-                                ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-                                : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                                ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             }`}>
                               {ord.preference === 'delivery' ? 'Delivery' : 'Counter Pickup'}
                             </span>
-                            <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-orange-100 text-[#ea580c]">
                               {ord.mealSlot}
                             </span>
                           </div>
                           {ord.preference === 'delivery' && ord.blockName && (
-                            <div className="text-[11px] text-slate-300 font-medium mt-1">
+                            <div className="text-[11px] text-slate-700 font-medium mt-1">
                               {ord.blockName} {ord.roomFloor ? `(${ord.roomFloor})` : ''}
                             </div>
                           )}
                         </td>
                         <td className="py-3">
-                          <div className="text-slate-200 font-medium space-y-0.5">
+                          <div className="text-slate-800 font-medium space-y-0.5">
                             {ord.items.map((i, idx) => (
                               <div key={idx} className="flex items-center space-x-1.5">
-                                <span className="text-amber-400 font-bold">{i.quantity}x</span>
+                                <span className="text-[#ea580c] font-bold">{i.quantity}x</span>
                                 <span>{i.dishName}</span>
-                                <span className="text-slate-500 font-mono text-[10px]">(₹{i.price * i.quantity})</span>
+                                <span className="text-slate-400 font-mono text-[10px]">(₹{i.price * i.quantity})</span>
                               </div>
                             ))}
                           </div>
                           {ord.specialNotes && (
-                            <div className="text-[10px] text-amber-300/80 bg-amber-500/10 rounded px-1.5 py-0.5 mt-1 border border-amber-500/20">
+                            <div className="text-[10px] text-amber-800 bg-amber-50 rounded px-1.5 py-0.5 mt-1 border border-amber-200">
                               Note: {ord.specialNotes}
                             </div>
                           )}
                         </td>
-                        <td className="py-3 font-mono font-bold text-emerald-400 text-sm">
+                        <td className="py-3 font-mono font-bold text-emerald-600 text-sm">
                           ₹{ord.totalAmount}
                         </td>
                         <td className="py-3">
                           <select
                             value={ord.status}
                             onChange={(e) => updateDayScholarOrderStatus(ord.id, e.target.value as DayScholarOrderStatus)}
-                            className={`text-xs font-bold p-1 rounded-lg border cursor-pointer ${
+                            className={`text-xs font-bold py-1 px-2 rounded-lg border cursor-pointer ${
                               ord.status === 'Collected'
-                                ? 'bg-emerald-950 text-emerald-300 border-emerald-800'
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                                 : ord.status === 'Ready'
-                                ? 'bg-blue-950 text-blue-300 border-blue-800'
+                                ? 'bg-blue-50 text-blue-800 border-blue-300'
                                 : ord.status === 'Preparing'
-                                ? 'bg-amber-950 text-amber-300 border-amber-800'
+                                ? 'bg-amber-50 text-amber-800 border-amber-300'
                                 : ord.status === 'New'
-                                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-600/50'
-                                : 'bg-slate-800 text-slate-200 border-slate-700'
+                                ? 'bg-orange-50 text-[#ea580c] border-orange-300'
+                                : 'bg-slate-100 text-slate-700 border-slate-300'
                             }`}
                           >
-                            <option value="New" className="bg-slate-900 text-slate-100">New</option>
-                            <option value="Preparing" className="bg-slate-900 text-slate-100">Preparing</option>
-                            <option value="Ready" className="bg-slate-900 text-slate-100">Ready</option>
-                            <option value="Collected" className="bg-slate-900 text-slate-100">Collected</option>
-                            <option value="Cancelled" className="bg-slate-900 text-slate-100">Cancelled</option>
+                            <option value="New">New</option>
+                            <option value="Preparing">Preparing</option>
+                            <option value="Ready">Ready</option>
+                            <option value="Collected">Collected</option>
+                            <option value="Cancelled">Cancelled</option>
                           </select>
                         </td>
                         <td className="py-3 text-right">
                           {ord.status !== 'Collected' && ord.status !== 'Cancelled' ? (
-                            <button
+                            <ChromeButton
                               onClick={() => {
                                 const nextStatus: DayScholarOrderStatus =
                                   ord.status === 'New'
@@ -627,16 +637,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                                     : 'Collected';
                                 updateDayScholarOrderStatus(ord.id, nextStatus);
                               }}
-                              className="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg transition-colors cursor-pointer shadow-sm"
+                              className="px-3 py-1.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white text-[11px] font-bold rounded-full transition-colors cursor-pointer shadow-xs border border-white/30"
                             >
                               Advance →
-                            </button>
+                            </ChromeButton>
                           ) : ord.status === 'Collected' ? (
-                            <span className="text-emerald-400 font-bold text-[11px] flex items-center justify-end gap-1">
+                            <span className="text-emerald-600 font-bold text-[11px] flex items-center justify-end gap-1">
                               <CheckCircle2 className="w-3.5 h-3.5" /> Collected
                             </span>
                           ) : (
-                            <span className="text-emerald-400 font-bold text-[11px]">Cancelled</span>
+                            <span className="text-rose-600 font-bold text-[11px]">Cancelled</span>
                           )}
                         </td>
                       </tr>
@@ -655,58 +665,58 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
           
           {/* Top Analytics Card */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-xl flex flex-col justify-between">
+            <div className="glassmorphism-card p-5 sm:p-6 rounded-3xl border border-white/90 shadow-md flex flex-col justify-between">
               <div>
-                <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-[#ea580c] uppercase tracking-wider">
                   Overall Mess Satisfaction
                 </span>
                 <div className="flex items-baseline space-x-2 mt-2">
-                  <span className="text-4xl font-black text-white font-mono">
+                  <span className="text-4xl font-black text-slate-900 font-mono">
                     {feedbackStats.avgRating}
                   </span>
                   <span className="text-sm text-slate-400 font-bold">/ 5.0</span>
                 </div>
-                <div className="flex items-center space-x-1 mt-1 text-amber-400">
+                <div className="flex items-center space-x-1 mt-2 text-amber-400">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <Star
                       key={s}
                       className={`w-4 h-4 ${
                         s <= Math.round(Number(feedbackStats.avgRating) || 0)
                           ? 'fill-amber-400 text-amber-400'
-                          : 'text-slate-700'
+                          : 'text-slate-200'
                       }`}
                     />
                   ))}
                 </div>
               </div>
-              <div className="text-xs text-slate-400 pt-3 border-t border-slate-800">
-                Calculated from <strong className="text-slate-200">{feedbackStats.count}</strong> student reviews
+              <div className="text-xs text-slate-500 pt-3 border-t border-orange-100">
+                Calculated from <strong className="text-slate-900">{feedbackStats.count}</strong> student reviews
               </div>
             </div>
 
             {/* Rating Distribution Bar Breakdown */}
-            <div className="bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-xl md:col-span-2 space-y-2">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="glassmorphism-card p-5 sm:p-6 rounded-3xl border border-white/90 shadow-md md:col-span-2 space-y-2">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Star Rating Breakdown
               </span>
-              <div className="space-y-1.5 pt-1">
+              <div className="space-y-2 pt-1">
                 {[5, 4, 3, 2, 1].map((stars) => {
                   const count = feedbackStats.breakdown[stars as 1 | 2 | 3 | 4 | 5] || 0;
                   const pct = feedbackStats.count > 0 ? Math.round((count / feedbackStats.count) * 100) : 0;
                   return (
                     <div key={stars} className="flex items-center space-x-2 text-xs">
-                      <span className="w-12 font-mono text-slate-300 font-bold flex items-center gap-1">
+                      <span className="w-12 font-mono text-slate-700 font-bold flex items-center gap-1">
                         {stars} <Star className="w-3 h-3 fill-amber-400 text-amber-400 inline" />
                       </span>
-                      <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="flex-1 h-2.5 bg-orange-100/70 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-300 ${
-                            stars >= 4 ? 'bg-emerald-500' : stars === 3 ? 'bg-amber-500' : 'bg-emerald-400/60'
+                            stars >= 4 ? 'bg-emerald-500' : stars === 3 ? 'bg-[#ff7a30]' : 'bg-orange-300'
                           }`}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
-                      <span className="w-12 text-right font-mono text-slate-400">{count} ({pct}%)</span>
+                      <span className="w-14 text-right font-mono text-slate-500 font-semibold">{count} ({pct}%)</span>
                     </div>
                   );
                 })}
@@ -715,23 +725,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
           </div>
 
           {/* Feedback Filter Bar */}
-          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <div className="bg-white/80 p-4 rounded-2xl border border-orange-100/80 flex flex-wrap items-center justify-between gap-3 shadow-xs">
             <div className="flex flex-wrap items-center gap-2">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
                 <input
                   type="text"
                   value={feedbackSearch}
                   onChange={(e) => setFeedbackSearch(e.target.value)}
                   placeholder="Search dish or student comment..."
-                  className="text-xs pl-8 pr-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                  className="text-xs pl-8 pr-3 py-2 rounded-xl bg-white border border-orange-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ff7a30]"
                 />
               </div>
 
               <select
                 value={feedbackMealFilter}
                 onChange={(e) => setFeedbackMealFilter(e.target.value as MealType | 'all')}
-                className="text-xs p-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 font-medium focus:outline-hidden capitalize"
+                className="text-xs py-2 px-3 rounded-xl bg-white border border-orange-200 text-slate-800 font-semibold focus:outline-none capitalize cursor-pointer"
               >
                 <option value="all">All Meal Slots</option>
                 <option value="breakfast">Breakfast</option>
@@ -743,7 +753,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
               <select
                 value={feedbackRatingFilter}
                 onChange={(e) => setFeedbackRatingFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                className="text-xs p-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 font-medium focus:outline-hidden"
+                className="text-xs py-2 px-3 rounded-xl bg-white border border-orange-200 text-slate-800 font-semibold focus:outline-none cursor-pointer"
               >
                 <option value="all">All Star Ratings</option>
                 <option value="5">5 Stars ⭐⭐⭐⭐⭐</option>
@@ -754,8 +764,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
               </select>
             </div>
 
-            <div className="text-xs text-slate-400">
-              Showing <strong className="text-slate-200">{filteredFeedbacks.length}</strong> student reviews
+            <div className="text-xs text-slate-500">
+              Showing <strong className="text-slate-900">{filteredFeedbacks.length}</strong> student reviews
             </div>
           </div>
 
@@ -764,43 +774,43 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
             {filteredFeedbacks.map((fb) => (
               <div
                 key={fb.id}
-                className="p-4 rounded-2xl border border-slate-800 bg-slate-950/80 space-y-3 shadow-lg flex flex-col justify-between"
+                className="p-5 rounded-2xl border border-orange-100/80 bg-white/75 backdrop-blur-md space-y-3 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-800 text-amber-300 uppercase tracking-wider border border-slate-700">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-[#ea580c] uppercase tracking-wider">
                         {fb.mealSlot}
                       </span>
-                      <h4 className="text-sm font-bold text-slate-100 mt-1">
+                      <h4 className="text-sm font-bold text-slate-900 mt-1.5">
                         {fb.dishName}
                       </h4>
                     </div>
 
-                    <div className="flex items-center space-x-1 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800 shrink-0">
+                    <div className="flex items-center space-x-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200 shrink-0">
                       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      <span className="font-mono font-bold text-xs text-white">{fb.rating}.0</span>
+                      <span className="font-mono font-bold text-xs text-amber-900">{fb.rating}.0</span>
                     </div>
                   </div>
 
                   {fb.comment && (
-                    <p className="text-xs text-slate-300 leading-relaxed mt-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-850">
+                    <p className="text-xs text-slate-700 leading-relaxed mt-2 bg-orange-50/60 p-3 rounded-xl border border-orange-100">
                       "{fb.comment}"
                     </p>
                   )}
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                <div className="pt-2 border-t border-orange-100 flex items-center justify-between text-[10px] text-slate-400 font-mono">
                   <span>{fb.timestamp}</span>
-                  <span className="text-teal-400 font-bold">Verified Student</span>
+                  <span className="text-emerald-600 font-bold">Verified Student</span>
                 </div>
               </div>
             ))}
           </div>
 
           {filteredFeedbacks.length === 0 && (
-            <div className="text-center py-10 bg-slate-900 rounded-2xl border border-dashed border-slate-800">
-              <p className="text-sm text-slate-400">No student feedback matches your current filter.</p>
+            <div className="text-center py-10 bg-white/80 rounded-3xl border border-dashed border-orange-200">
+              <p className="text-sm text-slate-500 font-medium">No student feedback matches your current filter.</p>
             </div>
           )}
         </div>
@@ -811,16 +821,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
         <div className="space-y-6 animate-in fade-in duration-150">
           
           {/* Top Allergen Distribution Summary */}
-          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center space-x-3 pb-3 border-b border-slate-800">
-              <div className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-md space-y-4">
+            <div className="flex items-center space-x-3 pb-3 border-b border-orange-100">
+              <div className="p-2.5 rounded-2xl bg-orange-500/15 text-[#ea580c] border border-orange-200">
                 <HeartPulse className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-100">
+                <h3 className="text-base font-bold text-slate-900">
                   Campus-Wide Student Allergy Registry
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Aggregated statistics of declared allergens across registered hostel resident students
                 </p>
               </div>
@@ -832,13 +842,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                 return (
                   <div
                     key={alg}
-                    className="p-3.5 rounded-2xl border border-slate-800 bg-slate-950/70 flex items-center justify-between"
+                    className="p-3.5 rounded-2xl border border-orange-100/80 bg-white/70 flex items-center justify-between shadow-xs"
                   >
                     <div>
-                      <div className="text-xs font-bold text-slate-100">{alg}</div>
+                      <div className="text-xs font-bold text-slate-900">{alg}</div>
                       <div className="text-[10px] text-slate-400">Declared Students</div>
                     </div>
-                    <span className="text-lg font-black text-amber-400 font-mono">
+                    <span className="text-lg font-black text-[#ea580c] font-mono">
                       {count}
                     </span>
                   </div>
@@ -848,18 +858,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
           </div>
 
           {/* Today's Menu Allergen Cross-Reference Clashes */}
-          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-md space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-orange-100">
               <div>
-                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-amber-400" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 text-[#ea580c]" />
                   <span>Today's Menu Food Safety Matrix ({todayDay})</span>
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Dishes served today containing allergens flagged by student dietary profiles
                 </p>
               </div>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-slate-500">
                 {todayMenuClashes.length} Dishes with declared allergens
               </span>
             </div>
@@ -867,7 +877,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                  <tr className="border-b border-orange-100 text-slate-400 font-bold uppercase text-[10px]">
                     <th className="pb-2.5">Meal Slot</th>
                     <th className="pb-2.5">Dish Name</th>
                     <th className="pb-2.5">Contained Allergens</th>
@@ -875,25 +885,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                     <th className="pb-2.5 text-right">Kitchen Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-orange-100">
                   {todayMenuClashes.map((c, i) => (
-                    <tr key={i} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="py-3 font-bold uppercase text-slate-200">{c.mealSlot}</td>
-                      <td className="py-3 font-bold text-slate-100">{c.dishName}</td>
+                    <tr key={i} className="hover:bg-orange-50/50 transition-colors">
+                      <td className="py-3 font-bold uppercase text-slate-800">{c.mealSlot}</td>
+                      <td className="py-3 font-bold text-slate-900">{c.dishName}</td>
                       <td className="py-3">
                         <div className="flex flex-wrap gap-1">
                           {c.allergens.map(a => (
-                            <span key={a} className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold text-[10px] border border-emerald-500/30">
+                            <span key={a} className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-bold text-[10px] border border-emerald-200">
                               {a}
                             </span>
                           ))}
                         </div>
                       </td>
-                      <td className="py-3 font-mono text-amber-400 font-bold">
+                      <td className="py-3 font-mono text-[#ea580c] font-bold">
                         ~{c.affectedStudents} Students at risk
                       </td>
                       <td className="py-3 text-right">
-                        <span className="text-[11px] px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">
+                        <span className="text-[11px] px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 font-bold">
                           Clear Labeling Active
                         </span>
                       </td>
@@ -909,13 +919,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
       {/* SUB-VIEW 4: MENU & RECIPE MANAGER */}
       {adminActiveSubTab === 'menu' && (
-        <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4 animate-in fade-in duration-150">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+        <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-md space-y-4 animate-in fade-in duration-150">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-orange-100">
             <div>
-              <h3 className="text-base font-bold text-slate-100">
+              <h3 className="text-base font-bold text-slate-900">
                 Hostel Daily Menu & Recipe Manager
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Select any day and meal slot to configure ingredients, declared allergens, and specials
               </p>
             </div>
@@ -924,45 +934,45 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
               <select
                 value={editingDay}
                 onChange={(e) => setEditingDay(e.target.value)}
-                className="text-xs p-2 rounded-xl border border-slate-700 bg-slate-950 text-slate-100 font-bold focus:outline-hidden focus:ring-1 focus:ring-amber-500 cursor-pointer"
+                className="text-xs py-2 px-3 rounded-xl border border-orange-200 bg-white text-slate-900 font-bold focus:outline-none focus:ring-2 focus:ring-[#ff7a30] cursor-pointer"
               >
                 {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((d) => (
-                  <option key={d} value={d} className="bg-slate-900 text-slate-100">{d}</option>
+                  <option key={d} value={d}>{d}</option>
                 ))}
               </select>
 
               <select
                 value={editingMealType}
                 onChange={(e) => setEditingMealType(e.target.value as MealType)}
-                className="text-xs p-2 rounded-xl border border-slate-700 bg-slate-950 text-slate-100 font-bold capitalize focus:outline-hidden focus:ring-1 focus:ring-amber-500 cursor-pointer"
+                className="text-xs py-2 px-3 rounded-xl border border-orange-200 bg-white text-slate-900 font-bold capitalize focus:outline-none focus:ring-2 focus:ring-[#ff7a30] cursor-pointer"
               >
-                <option value="breakfast" className="bg-slate-900 text-slate-100">Breakfast</option>
-                <option value="lunch" className="bg-slate-900 text-slate-100">Lunch</option>
-                <option value="snacks" className="bg-slate-900 text-slate-100">High Tea / Snacks</option>
-                <option value="dinner" className="bg-slate-900 text-slate-100">Dinner</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="snacks">High Tea / Snacks</option>
+                <option value="dinner">Dinner</option>
               </select>
 
-              <button
+              <ChromeButton
                 onClick={() => setIsEditorOpen(true)}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition-colors flex items-center space-x-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
+                className="px-4 py-2 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-bold text-xs rounded-full transition-colors flex items-center space-x-1.5 shadow-md shadow-orange-500/20 cursor-pointer border border-white/30"
               >
                 <Edit3 className="w-3.5 h-3.5" />
                 <span>Edit Slot Items</span>
-              </button>
+              </ChromeButton>
             </div>
           </div>
 
-          <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          <div className="p-4 bg-white/70 rounded-2xl border border-orange-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
             <div>
-              <span className="font-bold text-slate-100">{editingDay} • {editingMealType.toUpperCase()}</span>
-              <div className="text-slate-400 font-mono mt-0.5">
+              <span className="font-bold text-slate-900">{editingDay} • {editingMealType.toUpperCase()}</span>
+              <div className="text-slate-500 font-mono mt-0.5">
                 {weeklyMenu[editingDay]?.meals[editingMealType]?.timing}
               </div>
               <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {weeklyMenu[editingDay]?.meals[editingMealType]?.dishes?.map((d) => (
-                  <div key={d.id} className="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
-                    <div className="font-bold text-slate-100">{d.name}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">
+                  <div key={d.id} className="p-3 rounded-xl bg-white border border-orange-100 shadow-xs">
+                    <div className="font-bold text-slate-900">{d.name}</div>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
                       Allergens: {d.allergens?.join(', ') || 'None listed'}
                     </div>
                   </div>
@@ -972,7 +982,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
             <button
               onClick={() => setIsEditorOpen(true)}
-              className="text-xs font-bold text-amber-400 hover:underline self-start md:self-auto cursor-pointer"
+              className="text-xs font-bold text-[#ea580c] hover:underline self-start md:self-auto cursor-pointer"
             >
               Modify Dishes & Allergens →
             </button>
@@ -982,39 +992,39 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
       {/* SUB-VIEW 5: ACADEMIC PARCEL DELIVERIES */}
       {adminActiveSubTab === 'parcels' && (
-        <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4 animate-in fade-in duration-150">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+        <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-md space-y-4 animate-in fade-in duration-150">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-orange-100">
             <div>
-              <h3 className="text-base font-bold text-slate-100">
+              <h3 className="text-base font-bold text-slate-900">
                 Academic Block Parcel Delivery Dispatch Tracker
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Manage packing and dispatch states for students ordering meals to academic departments
               </p>
             </div>
 
             <div className="flex items-center space-x-2">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search roll, name, block..."
-                  className="text-xs pl-8 pr-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-hidden focus:ring-1 focus:ring-amber-500"
+                  className="text-xs pl-8 pr-3 py-2 rounded-xl bg-white border border-orange-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ff7a30]"
                 />
               </div>
 
               <select
                 value={orderFilter}
                 onChange={(e) => setOrderFilter(e.target.value)}
-                className="text-xs p-1.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 font-medium focus:outline-hidden cursor-pointer"
+                className="text-xs py-2 px-3 rounded-xl bg-white border border-orange-200 text-slate-800 font-semibold focus:outline-none cursor-pointer"
               >
-                <option value="all" className="bg-slate-900 text-slate-100">All Statuses</option>
-                <option value="Pending" className="bg-slate-900 text-slate-100">Pending</option>
-                <option value="In Kitchen" className="bg-slate-900 text-slate-100">In Kitchen</option>
-                <option value="Dispatched" className="bg-slate-900 text-slate-100">Dispatched</option>
-                <option value="Delivered" className="bg-slate-900 text-slate-100">Delivered</option>
+                <option value="all">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="In Kitchen">In Kitchen</option>
+                <option value="Dispatched">Dispatched</option>
+                <option value="Delivered">Delivered</option>
               </select>
             </div>
           </div>
@@ -1022,7 +1032,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                <tr className="border-b border-orange-100 text-slate-400 font-bold uppercase text-[10px]">
                   <th className="pb-2.5">Order ID</th>
                   <th className="pb-2.5">Student / Contact</th>
                   <th className="pb-2.5">Academic Building & Room</th>
@@ -1032,54 +1042,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                   <th className="pb-2.5 text-right">Quick Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
+              <tbody className="divide-y divide-orange-100">
                 {filteredOrders.map((ord) => (
-                  <tr key={ord.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3 font-mono font-bold text-slate-100">{ord.id}</td>
+                  <tr key={ord.id} className="hover:bg-orange-50/50 transition-colors">
+                    <td className="py-3 font-mono font-bold text-slate-900">{ord.id}</td>
                     <td className="py-3">
-                      <div className="font-bold text-slate-100">{ord.studentName}</div>
-                      <div className="text-[10px] text-slate-400 font-mono">{ord.phone} {ord.rollNo ? `(${ord.rollNo})` : ''}</div>
+                      <div className="font-bold text-slate-900">{ord.studentName}</div>
+                      <div className="text-[10px] text-slate-500 font-mono">{ord.phone} {ord.rollNo ? `(${ord.rollNo})` : ''}</div>
                     </td>
                     <td className="py-3 max-w-xs">
-                      <div className="font-semibold text-slate-200 truncate">{ord.blockName}</div>
-                      <div className="text-[10px] text-slate-400">{ord.roomFloor}</div>
+                      <div className="font-semibold text-slate-800 truncate">{ord.blockName}</div>
+                      <div className="text-[10px] text-slate-500">{ord.roomFloor}</div>
                     </td>
                     <td className="py-3">
-                      <div className="text-slate-200">
+                      <div className="text-slate-800">
                         {ord.items.map(i => `${i.dishName} x${i.quantity}`).join(', ')}
                       </div>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 border border-slate-700 text-slate-300">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 text-[#ea580c] font-bold">
                         {ord.packingType}
                       </span>
                     </td>
-                    <td className="py-3 font-mono text-slate-300">
+                    <td className="py-3 font-mono text-slate-700">
                       <div>{ord.orderTime}</div>
-                      <div className="text-[10px] text-slate-500">{ord.deliverySlot}</div>
+                      <div className="text-[10px] text-slate-400">{ord.deliverySlot}</div>
                     </td>
                     <td className="py-3">
                       <select
                         value={ord.status}
                         onChange={(e) => updateOrderStatus(ord.id, e.target.value as typeof ord.status)}
-                        className={`text-xs font-bold p-1 rounded-lg border cursor-pointer ${
+                        className={`text-xs font-bold py-1 px-2 rounded-lg border cursor-pointer ${
                           ord.status === 'Delivered'
-                            ? 'bg-emerald-950 text-emerald-300 border-emerald-800'
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                             : ord.status === 'Dispatched'
-                            ? 'bg-blue-950 text-blue-300 border-blue-800'
+                            ? 'bg-blue-50 text-blue-800 border-blue-300'
                             : ord.status === 'In Kitchen'
-                            ? 'bg-amber-950 text-amber-300 border-amber-800'
-                            : 'bg-slate-800 text-slate-200 border-slate-700'
+                            ? 'bg-amber-50 text-amber-800 border-amber-300'
+                            : 'bg-orange-50 text-[#ea580c] border-orange-300'
                         }`}
                       >
-                        <option value="Pending" className="bg-slate-900 text-slate-100">Pending</option>
-                        <option value="In Kitchen" className="bg-slate-900 text-slate-100">In Kitchen</option>
-                        <option value="Dispatched" className="bg-slate-900 text-slate-100">Dispatched</option>
-                        <option value="Delivered" className="bg-slate-900 text-slate-100">Delivered</option>
-                        <option value="Cancelled" className="bg-slate-900 text-slate-100">Cancelled</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Kitchen">In Kitchen</option>
+                        <option value="Dispatched">Dispatched</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
                       </select>
                     </td>
                     <td className="py-3 text-right">
                       {ord.status !== 'Delivered' ? (
-                        <button
+                        <ChromeButton
                           onClick={() => {
                             const nextStatus =
                               ord.status === 'Pending'
@@ -1089,12 +1099,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
                                 : 'Delivered';
                             updateOrderStatus(ord.id, nextStatus);
                           }}
-                          className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold rounded-lg transition-colors border border-slate-700 cursor-pointer"
+                          className="px-3 py-1.5 bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white text-[11px] font-bold rounded-full transition-colors cursor-pointer border border-white/30"
                         >
                           Advance →
-                        </button>
+                        </ChromeButton>
                       ) : (
-                        <span className="text-emerald-400 font-bold text-[11px]">Completed</span>
+                        <span className="text-emerald-600 font-bold text-[11px]">Completed</span>
                       )}
                     </td>
                   </tr>
@@ -1116,28 +1126,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
 
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-sm bg-slate-900 border border-slate-800 text-slate-100 rounded-2xl shadow-2xl p-6 space-y-4">
-            <h4 className="text-base font-bold text-slate-100">Reset Demo Data?</h4>
-            <p className="text-xs text-slate-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in">
+          <div className="w-full max-w-sm glassmorphism-card bg-white/95 border border-white/90 text-slate-900 rounded-3xl shadow-2xl p-6 space-y-4">
+            <h4 className="text-base font-bold text-slate-900">Reset Demo Data?</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
               This will restore all default weekly menus, sample student attendance logs, feedback, and parcel orders.
             </p>
             <div className="flex items-center justify-end space-x-2 pt-2">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="px-3.5 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-800 rounded-lg cursor-pointer"
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-full cursor-pointer transition-colors"
               >
                 Cancel
               </button>
-              <button
+              <ChromeButton
                 onClick={() => {
                   resetToDefaultData();
                   setShowResetConfirm(false);
                 }}
-                className="px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg cursor-pointer"
+                className="px-5 py-2 text-xs font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full cursor-pointer shadow-md shadow-emerald-500/20"
               >
                 Confirm Reset
-              </button>
+              </ChromeButton>
             </div>
           </div>
         </div>
