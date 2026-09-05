@@ -13,22 +13,20 @@ import {
   ArrowRight,
   ShieldCheck,
   Store,
-  GraduationCap,
-  Sparkles,
-  Building2,
-  KeyRound
+  GraduationCap
 } from 'lucide-react';
 
-type LoginPortalRole = 'student' | 'admin' | 'vendor';
+export type LoginPortalRole = 'student' | 'admin' | 'vendor' | 'restaurant';
 
 /**
- * LoginPage with Dedicated 3-Way Portal Selector:
+ * LoginPage with Dedicated 4-Way Portal Selector:
  * 1. Student Hosteler Portal
  * 2. Mess Authority & Warden Portal
- * 3. Food Court Stall Owner Portal (NEW Dedicated Section)
+ * 3. Campus Food Court Franchise Portal
+ * 4. Nearby Restaurant & Dhaba Partner Portal
  */
 export const LoginPage: React.FC = () => {
-  const { loginStudent, loginAdmin, loginVendor } = useMess();
+  const { loginStudent, loginAdmin, loginVendor, loginRestaurant } = useMess();
 
   // Selected Portal Type
   const [selectedRole, setSelectedRole] = useState<LoginPortalRole>('student');
@@ -63,9 +61,13 @@ export const LoginPage: React.FC = () => {
     } else if (role === 'admin') {
       setRegistrationId('admin@campus.edu');
       setPassword('admin123');
-    } else {
+    } else if (role === 'vendor') {
       setRegistrationId('stall-rolls');
       setPassword('vendor123');
+    } else {
+      // Restaurant Partner
+      setRegistrationId('resto-dominos');
+      setPassword('restro123');
     }
   };
 
@@ -77,7 +79,9 @@ export const LoginPage: React.FC = () => {
 
     if (!inputVal) {
       triggerShake(
-        selectedRole === 'vendor'
+        selectedRole === 'restaurant'
+          ? 'Please enter your Restaurant ID (e.g. resto-dominos)'
+          : selectedRole === 'vendor'
           ? 'Please enter your Stall ID or Vendor Code'
           : selectedRole === 'admin'
           ? 'Please enter your Admin Email'
@@ -95,6 +99,15 @@ export const LoginPage: React.FC = () => {
 
     try {
       soundEffects.playClick();
+
+      if (selectedRole === 'restaurant') {
+        const res = await (loginRestaurant ? loginRestaurant(inputVal, passVal) : loginVendor(inputVal, passVal));
+        if (!res.success) {
+          triggerShake(res.error || 'Invalid Restaurant Partner credentials');
+        }
+        setIsLoading(false);
+        return;
+      }
 
       if (selectedRole === 'vendor') {
         const res = await loginVendor(inputVal, passVal);
@@ -178,7 +191,7 @@ export const LoginPage: React.FC = () => {
           2. CENTRAL 3D NEUMORPHIC CIRCULAR DISC LOGIN CARD
           ========================================================= */}
       <main className="relative z-10 flex-1 flex items-center justify-center p-3 sm:p-6 my-auto">
-        <div className="neumorphic-circle-wrapper w-full max-w-[500px] sm:max-w-[520px]">
+        <div className="neumorphic-circle-wrapper w-full max-w-[500px] sm:max-w-[530px]">
           {/* THE 3D CONVEX CIRCULAR NEUMORPHIC DISC CARD */}
           <div
             id="login-card"
@@ -195,70 +208,93 @@ export const LoginPage: React.FC = () => {
               }}
             />
 
-            <div className="relative z-10 w-full max-w-[360px] mx-auto space-y-4">
+            <div className="relative z-10 w-full max-w-[370px] mx-auto space-y-4">
               {/* Header */}
               <div className="space-y-1">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] mx-auto flex items-center justify-center mb-2 shadow-md shadow-orange-500/25 border border-white/60 text-white">
-                  {selectedRole === 'vendor' ? (
+                  {selectedRole === 'restaurant' ? (
+                    <UtensilsCrossed className="w-6 h-6" strokeWidth={2.2} />
+                  ) : selectedRole === 'vendor' ? (
                     <Store className="w-6 h-6" strokeWidth={2.2} />
                   ) : selectedRole === 'admin' ? (
                     <ShieldCheck className="w-6 h-6" strokeWidth={2.2} />
                   ) : (
-                    <UtensilsCrossed className="w-6 h-6" strokeWidth={2.2} />
+                    <GraduationCap className="w-6 h-6" strokeWidth={2.2} />
                   )}
                 </div>
 
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
-                  {selectedRole === 'vendor'
+                  {selectedRole === 'restaurant'
+                    ? 'Restro Partner'
+                    : selectedRole === 'vendor'
                     ? 'Food Court Owner'
                     : selectedRole === 'admin'
                     ? 'Mess Warden'
-                    : 'Login'}
+                    : 'Student Login'}
                 </h1>
                 <p className="text-xs text-slate-500 font-medium">
-                  Sign in to your account
+                  {selectedRole === 'restaurant'
+                    ? 'Sign in to manage delivery & menu'
+                    : selectedRole === 'vendor'
+                    ? 'Sign in to manage food court stall'
+                    : selectedRole === 'admin'
+                    ? 'Sign in to manage hostel mess'
+                    : 'Sign in to your student account'}
                 </p>
               </div>
 
-              {/* 3-Way Role Selector Tabs (Neumorphic Inset Capsule) */}
-              <div className="neumorphic-inset-container grid grid-cols-3 gap-1 p-1">
+              {/* 4-Way Role Selector Tabs (Neumorphic Inset Capsule) */}
+              <div className="neumorphic-inset-container grid grid-cols-4 gap-1 p-1">
                 <button
                   type="button"
                   onClick={() => handleRoleChange('student')}
-                  className={`py-1.5 px-2 rounded-full text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                  className={`py-1.5 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                     selectedRole === 'student'
                       ? 'neumorphic-active-pill text-[#ea580c] font-black'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <GraduationCap className="w-3 h-3" />
+                  <GraduationCap className="w-3 h-3 shrink-0" />
                   <span className="truncate">Student</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleRoleChange('admin')}
-                  className={`py-1.5 px-2 rounded-full text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                  className={`py-1.5 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                     selectedRole === 'admin'
                       ? 'neumorphic-active-pill text-[#ea580c] font-black'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <ShieldCheck className="w-3 h-3" />
+                  <ShieldCheck className="w-3 h-3 shrink-0" />
                   <span className="truncate">Warden</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleRoleChange('vendor')}
-                  className={`py-1.5 px-2 rounded-full text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                  className={`py-1.5 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                     selectedRole === 'vendor'
                       ? 'neumorphic-active-pill text-[#ea580c] font-black'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <Store className="w-3 h-3" />
+                  <Store className="w-3 h-3 shrink-0" />
                   <span className="truncate">Food Court</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('restaurant')}
+                  className={`py-1.5 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                    selectedRole === 'restaurant'
+                      ? 'neumorphic-active-pill text-[#ea580c] font-black'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <UtensilsCrossed className="w-3 h-3 shrink-0" />
+                  <span className="truncate">Restros</span>
                 </button>
               </div>
 
@@ -275,10 +311,14 @@ export const LoginPage: React.FC = () => {
                 {/* Field 1: Recessed Inset Username / ID Input */}
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
-                    {selectedRole === 'vendor' ? (
-                      <Store className="w-4 h-4" />
+                    {selectedRole === 'restaurant' ? (
+                      <UtensilsCrossed className="w-4 h-4 text-[#ea580c]" />
+                    ) : selectedRole === 'vendor' ? (
+                      <Store className="w-4 h-4 text-[#ea580c]" />
+                    ) : selectedRole === 'admin' ? (
+                      <ShieldCheck className="w-4 h-4 text-[#ea580c]" />
                     ) : (
-                      <User className="w-4 h-4" />
+                      <User className="w-4 h-4 text-[#ea580c]" />
                     )}
                   </div>
                   <input
@@ -290,11 +330,13 @@ export const LoginPage: React.FC = () => {
                       setErrorMessage(null);
                     }}
                     placeholder={
-                      selectedRole === 'vendor'
-                        ? 'Food Court Stall ID'
+                      selectedRole === 'restaurant'
+                        ? 'Restro ID (e.g. resto-dominos, resto-subway)'
+                        : selectedRole === 'vendor'
+                        ? 'Food Court Stall ID (e.g. stall-rolls)'
                         : selectedRole === 'admin'
                         ? 'Admin Email / Staff ID'
-                        : 'Username / Registration ID'
+                        : 'Registration ID (e.g. 22CS0142)'
                     }
                     required
                     className="w-full neumorphic-inset-input pl-11 pr-4 py-3 text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold"
@@ -314,7 +356,13 @@ export const LoginPage: React.FC = () => {
                       setPassword(e.target.value);
                       setErrorMessage(null);
                     }}
-                    placeholder={selectedRole === 'student' ? 'Room No / PIN' : 'Password'}
+                    placeholder={
+                      selectedRole === 'student'
+                        ? 'Hostel Room No (e.g. B-312)'
+                        : selectedRole === 'restaurant'
+                        ? 'Restro Password (e.g. restro123)'
+                        : 'Password (e.g. vendor123)'
+                    }
                     required
                     className="w-full neumorphic-inset-input pl-11 pr-11 py-3 text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold"
                   />
@@ -370,11 +418,13 @@ export const LoginPage: React.FC = () => {
                     ) : (
                       <>
                         <span className="text-white font-bold">
-                          {selectedRole === 'vendor'
-                            ? 'SIGN IN'
+                          {selectedRole === 'restaurant'
+                            ? 'SIGN IN AS RESTRO'
+                            : selectedRole === 'vendor'
+                            ? 'SIGN IN AS FOOD COURT'
                             : selectedRole === 'admin'
-                            ? 'SIGN IN'
-                            : 'SIGN IN'}
+                            ? 'SIGN IN AS WARDEN'
+                            : 'SIGN IN AS STUDENT'}
                         </span>
                         <ArrowRight className="w-4 h-4 text-white ml-1" />
                       </>
@@ -417,6 +467,10 @@ export const LoginPage: React.FC = () => {
           onSelectDemoVendor={(stallId, pass) => {
             setSelectedRole('vendor');
             handleAutofill(stallId, pass);
+          }}
+          onSelectDemoRestaurant={(restoId, pass) => {
+            setSelectedRole('restaurant');
+            handleAutofill(restoId, pass);
           }}
         />
       )}

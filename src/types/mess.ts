@@ -549,4 +549,20 @@ export interface TourStep {
   iconName: string;
 }
 
+// Digital Campus Wallet Types
+export type WalletTransactionType = 'topup' | 'foodcourt_order' | 'restaurant_order' | 'mess_rebate_refund';
+
+export interface CampusWalletTransaction {
+  id: string;
+  type: WalletTransactionType;
+  amount: number;
+  description: string;
+  timestamp: string;
+  referenceId?: string;
+  status: 'SUCCESS' | 'PENDING' | 'FAILED';
+}
+
+export type SupportedLanguage = 'en' | 'hi' | 'pa';
+
+
 

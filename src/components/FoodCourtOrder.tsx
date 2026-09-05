@@ -10,6 +10,7 @@ import {
 } from '../types/mess';
 import { soundEffects } from '../utils/audio';
 import { formatTimeAmPm } from '../utils/time';
+import { generateUpiQrCodeUrl, generateUpiIntentUri } from '../utils/payment';
 import {
   Store,
   Clock,
@@ -39,9 +40,11 @@ import {
   Timer,
   X,
   Star,
-  Send
+  Send,
+  Printer
 } from 'lucide-react';
 import ChromeButton from './ui/chrome-button';
+import { printOrderTokenVoucher } from '../utils/printVoucher';
 
 const DEFAULT_MESS_WHATSAPP_NUMBER = '+91 9335568951';
 
@@ -1370,14 +1373,64 @@ export const FoodCourtOrder: React.FC = () => {
                 <span className="font-bold text-emerald-700">{receiptOrder.estimatedReadyTime} (~{receiptOrder.estimatedPrepMins}m)</span>
               </div>
               <div className="pt-2 border-t border-slate-200 flex justify-between text-slate-900 font-bold text-sm">
-                <span>Total Paid:</span>
+                <span>Total:</span>
                 <span>₹{receiptOrder.totalAmount}</span>
               </div>
             </div>
 
-            {/* WhatsApp notification CTA */}
+            {/* UPI Payment Live QR Code & Deep Link if UPI payment was chosen */}
+            {receiptOrder.paymentMethod === 'UPI / Hostel Pay' && (
+              <div className="p-4 rounded-2xl bg-orange-50/70 border border-orange-200/80 text-center space-y-3">
+                <div className="flex items-center justify-center space-x-1.5 text-xs font-bold text-orange-800">
+                  <QrCode className="w-4 h-4 text-orange-600" />
+                  <span>Scan to Pay ₹{receiptOrder.totalAmount} via any UPI App</span>
+                </div>
+                <div className="bg-white p-2 rounded-xl inline-block border border-orange-200 shadow-xs mx-auto">
+                  <img
+                    src={generateUpiQrCodeUrl({
+                      vpa: 'campusfoodcourt@icici',
+                      payeeName: `${receiptOrder.stallName || 'Food Court'}`,
+                      amount: receiptOrder.totalAmount,
+                      transactionNote: `Order ${receiptOrder.tokenNumber}`,
+                      orderId: receiptOrder.id
+                    }, 140)}
+                    alt="UPI Payment QR Code"
+                    className="w-32 h-32 mx-auto rounded-lg"
+                  />
+                </div>
+                <div>
+                  <a
+                    href={generateUpiIntentUri({
+                      vpa: 'campusfoodcourt@icici',
+                      payeeName: `${receiptOrder.stallName || 'Food Court'}`,
+                      amount: receiptOrder.totalAmount,
+                      transactionNote: `Order ${receiptOrder.tokenNumber}`,
+                      orderId: receiptOrder.id
+                    })}
+                    className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full bg-slate-900 text-white font-bold text-xs shadow-xs hover:bg-slate-800 transition-colors"
+                  >
+                    <span>Pay Directly in GPay / PhonePe</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* WhatsApp & Print notification CTA */}
             <div className="space-y-2">
               <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    printOrderTokenVoucher(receiptOrder);
+                  }}
+                  className="px-3 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center space-x-1.5 shadow-md transition-all cursor-pointer"
+                  title="Print Token Receipt / Save as PDF"
+                >
+                  <Printer className="w-4 h-4 text-white" />
+                  <span className="hidden sm:inline">Print</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => {

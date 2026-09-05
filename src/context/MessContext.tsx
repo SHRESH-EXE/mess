@@ -23,8 +23,11 @@ import {
   NearbyRestaurant,
   NearbyRestaurantItem,
   NearbyRestaurantOrder,
-  TourStep
+  TourStep,
+  CampusWalletTransaction,
+  SupportedLanguage
 } from '../types/mess';
+import { showBrowserNotification } from '../utils/pushNotifications';
 import {
   INITIAL_WEEKLY_MENU,
   INITIAL_STUDENTS,
@@ -55,6 +58,21 @@ import {
   clientRateLimiter,
   securityObservability
 } from '../lib/security';
+import {
+  subscribeToRestaurants,
+  subscribeToFoodCourtItems,
+  subscribeToOrders,
+  loginWithFirebaseAuth,
+  logoutFirebaseAuth,
+  addRestaurant as addFirestoreRestaurant,
+  updateRestaurant as updateFirestoreRestaurant,
+  deleteRestaurant as deleteFirestoreRestaurant,
+  addFoodCourtItem as addFirestoreFoodCourtItem,
+  updateFoodCourtItem as updateFirestoreFoodCourtItem,
+  deleteFoodCourtItem as deleteFirestoreFoodCourtItem,
+  createFirestoreOrder,
+  submitFirestoreFeedback
+} from '../lib/firebaseServices';
 
 export type NavigationTab = 'menu' | 'pass' | 'nearbyresto' | 'foodcourt' | 'parcel' | 'dayscholar' | 'feedback' | 'admin' | 'vendor';
 
@@ -65,6 +83,7 @@ interface MessContextType {
   loginStudent: (rollNo: string, roomNoOrPass: string) => Promise<{ success: boolean; error?: string }>;
   loginAdmin: (emailOrId: string, password: string) => Promise<{ success: boolean; error?: string }>;
   loginVendor: (stallIdOrEmail: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginRestaurant: (restoIdOrEmail: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   currentStudent: StudentProfile;
   setCurrentStudent: (student: StudentProfile) => void;
@@ -122,6 +141,18 @@ interface MessContextType {
   isSecurityModalOpen: boolean;
   setIsSecurityModalOpen: (open: boolean) => void;
 
+  // Campus Wallet & Multi-Language
+  walletBalance: number;
+  walletTransactions: CampusWalletTransaction[];
+  topUpWallet: (amount: number, description: string) => void;
+  deductWallet: (amount: number, description: string) => boolean;
+  isWalletModalOpen: boolean;
+  setIsWalletModalOpen: (open: boolean) => void;
+  currentLanguage: SupportedLanguage;
+  setLanguage: (lang: SupportedLanguage) => void;
+  isVoiceSearchOpen: boolean;
+  setIsVoiceSearchOpen: (open: boolean) => void;
+
   // Actions
   markMealAttendance: (mealType: MealType, studentId?: string, method?: 'qr_scanner' | 'manual_admin' | 'pass_tap') => { success: boolean; message: string };
   skipMealForRebate: (mealType: MealType, studentId?: string, reason?: string) => { success: boolean; message: string };
@@ -164,7 +195,10 @@ const STORAGE_KEYS = {
   ANNOUNCEMENTS: 'campusmess_announcements_v3',
   RATINGS: 'campusmess_ratings_v3',
   FEEDBACK: 'campusmess_anonymous_feedback_v3',
-  TODAY_COUNTS: 'campusmess_today_counts_v3'
+  TODAY_COUNTS: 'campusmess_today_counts_v3',
+  WALLET_BALANCE: 'campusmess_wallet_balance_v1',
+  WALLET_TXNS: 'campusmess_wallet_txns_v1',
+  LANGUAGE: 'campusmess_language_v1'
 };
 
 export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -364,6 +398,189 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isCheatSheetOpen, setIsCheatSheetOpen] = useState<boolean>(false);
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState<boolean>(false);
   const tourSteps = CAMPUS_TOUR_STEPS;
+
+  // 11. Campus Meal Wallet & Transactions
+  const [walletBalance, setWalletBalance] = useState<number>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.WALLET_BALANCE);
+    if (saved) {
+      try { return parseFloat(saved); } catch { /* ignore */ }
+    }
+    return 450.0; // Default campus meal credit ₹450
+  });
+
+  const [walletTransactions, setWalletTransactions] = useState<CampusWalletTransaction[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.WALLET_TXNS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return [
+      {
+        id: 'txn-init-1',
+        type: 'topup',
+        amount: 500,
+        description: 'Semester Welcome Dining Grant (UPI)',
+        timestamp: '01 Sep, 10:00 AM',
+        status: 'SUCCESS'
+      },
+      {
+        id: 'txn-init-2',
+        type: 'foodcourt_order',
+        amount: 50,
+        description: 'UniMall Chai & Samosa Combo',
+        timestamp: '02 Sep, 05:15 PM',
+        status: 'SUCCESS'
+      }
+    ];
+  });
+
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
+
+  // 12. App Language (English, Hindi, Punjabi)
+  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE) as SupportedLanguage;
+    if (saved && ['en', 'hi', 'pa'].includes(saved)) {
+      return saved;
+    }
+    return 'en';
+  });
+
+  // 13. Voice Search Modal state
+  const [isVoiceSearchOpen, setIsVoiceSearchOpen] = useState<boolean>(false);
+
+  const topUpWallet = useCallback((amount: number, description: string) => {
+    if (amount <= 0) return;
+    setWalletBalance((prev) => {
+      const next = prev + amount;
+      localStorage.setItem(STORAGE_KEYS.WALLET_BALANCE, next.toString());
+      return next;
+    });
+
+    const newTxn: CampusWalletTransaction = {
+      id: `txn-${Date.now()}`,
+      type: 'topup',
+      amount,
+      description,
+      timestamp: `Today, ${formatTimeAmPm(new Date())}`,
+      status: 'SUCCESS'
+    };
+
+    setWalletTransactions((prev) => {
+      const next = [newTxn, ...prev];
+      localStorage.setItem(STORAGE_KEYS.WALLET_TXNS, JSON.stringify(next));
+      return next;
+    });
+
+    soundEffects.playSuccess();
+  }, []);
+
+  const deductWallet = useCallback((amount: number, description: string): boolean => {
+    if (walletBalance < amount) {
+      soundEffects.playError();
+      return false;
+    }
+
+    setWalletBalance((prev) => {
+      const next = prev - amount;
+      localStorage.setItem(STORAGE_KEYS.WALLET_BALANCE, next.toString());
+      return next;
+    });
+
+    const newTxn: CampusWalletTransaction = {
+      id: `txn-${Date.now()}`,
+      type: 'foodcourt_order',
+      amount,
+      description,
+      timestamp: `Today, ${formatTimeAmPm(new Date())}`,
+      status: 'SUCCESS'
+    };
+
+    setWalletTransactions((prev) => {
+      const next = [newTxn, ...prev];
+      localStorage.setItem(STORAGE_KEYS.WALLET_TXNS, JSON.stringify(next));
+      return next;
+    });
+
+    return true;
+  }, [walletBalance]);
+
+  const setLanguage = useCallback((lang: SupportedLanguage) => {
+    setCurrentLanguage(lang);
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
+  }, []);
+
+  // Real-time Firestore Subscriptions
+  useEffect(() => {
+    // 1. Subscribe to Restaurants
+    const unsubRestaurants = subscribeToRestaurants((firestoreRestos) => {
+      if (firestoreRestos && firestoreRestos.length > 0) {
+        setNearbyRestaurants((prev) => {
+          const merged = [...prev];
+          firestoreRestos.forEach((fr) => {
+            const index = merged.findIndex((r) => r.id === fr.id || r.name.toLowerCase() === fr.name.toLowerCase());
+            const mappedResto: NearbyRestaurant = {
+              id: fr.id || `resto-${Date.now()}`,
+              name: fr.name,
+              tagline: fr.cuisine || 'Popular Campus Eatery',
+              cuisine: fr.cuisine,
+              distance: '0.8 km',
+              deliveryTime: '25 mins',
+              rating: fr.rating || 4.5,
+              ratingCount: 120,
+              priceForTwo: fr.pricing ? (parseInt(fr.pricing.replace(/\D/g, ''), 10) || 200) : 200,
+              isPureVeg: fr.cuisine.toLowerCase().includes('veg'),
+              isOpen: fr.status === 'active',
+              address: fr.address,
+              phone: fr.phone || '+91 9335568951',
+              imageUrl: fr.imageUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80'
+            };
+            if (index >= 0) {
+              merged[index] = { ...merged[index], ...mappedResto };
+            } else {
+              merged.push(mappedResto);
+            }
+          });
+          return merged;
+        });
+      }
+    });
+
+    // 2. Subscribe to Food Court Items
+    const unsubFoodCourtItems = subscribeToFoodCourtItems((firestoreItems) => {
+      if (firestoreItems && firestoreItems.length > 0) {
+        setFoodCourtMenuItems((prev) => {
+          const merged = [...prev];
+          firestoreItems.forEach((fi) => {
+            const index = merged.findIndex((item) => item.id === fi.id);
+            const mappedItem: FoodCourtItem = {
+              id: fi.id || `fc-item-${Date.now()}`,
+              stallId: fi.stallId,
+              stallName: fi.stallName || fi.stallId || 'Campus Food Court',
+              name: fi.name,
+              category: (fi.category as any) || 'Rolls & Wraps',
+              price: fi.price,
+              available: fi.isAvailable,
+              basePrepMins: 8,
+              isVeg: fi.isVeg,
+              description: fi.description,
+              imageUrl: fi.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80',
+              calories: 280
+            };
+            if (index >= 0) {
+              merged[index] = { ...merged[index], ...mappedItem };
+            } else {
+              merged.push(mappedItem);
+            }
+          });
+          return merged;
+        });
+      }
+    });
+
+    return () => {
+      unsubRestaurants();
+      unsubFoodCourtItems();
+    };
+  }, []);
 
   // LocalStorage sync effects
   useEffect(() => {
@@ -822,6 +1039,19 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setFoodCourtOrders(prev => [newOrder, ...prev]);
 
+    // Dispatch async to Firestore in background
+    createFirestoreOrder({
+      tokenNumber: newOrder.tokenNumber,
+      studentRegNo: newOrder.rollNo || 'STUDENT',
+      studentName: newOrder.studentName || 'Student',
+      studentPhone: newOrder.targetWhatsAppNumber,
+      stallId: newOrder.stallId,
+      stallName: newOrder.stallName,
+      totalAmount: newOrder.totalAmount,
+      status: 'received',
+      orderType: 'pickup'
+    }).catch(err => console.warn('Firestore order sync warning:', err));
+
     // Increase stall active queue count slightly
     setFoodCourtStalls(prev =>
       prev.map(s => {
@@ -855,6 +1085,12 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setFoodCourtOrders(prev =>
       prev.map(ord => {
         if (ord.id === orderId) {
+          if (status === 'Ready') {
+            showBrowserNotification('Order Ready for Pickup! 🍽️', {
+              body: `Token #${ord.tokenNumber} at ${ord.stallName} is ready at the counter!`
+            });
+            soundEffects.playOrderReadyChime();
+          }
           return { ...ord, status };
         }
         return ord;
@@ -928,6 +1164,21 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: `fc-item-${Date.now()}`
     };
     setFoodCourtMenuItems(prev => [...prev, newItem]);
+
+    // Background sync to Firestore
+    addFirestoreFoodCourtItem({
+      name: newItem.name,
+      stallId: newItem.stallId,
+      stallName: newItem.stallId,
+      price: newItem.price,
+      category: newItem.category,
+      isVeg: newItem.isVeg,
+      isAvailable: newItem.available,
+      status: 'active',
+      imageUrl: newItem.imageUrl,
+      description: newItem.description
+    }).catch(err => console.warn('Firestore addFoodCourtItem error:', err));
+
     soundEffects.playSuccess();
     return newItem;
   }, [currentSession]);
@@ -954,6 +1205,18 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setFoodCourtMenuItems(prev =>
       prev.map(item => (item.id === sanitized.id ? sanitized : item))
     );
+
+    // Background update to Firestore
+    updateFirestoreFoodCourtItem(itemData.id, {
+      name: itemData.name,
+      price: itemData.price,
+      category: itemData.category,
+      isVeg: itemData.isVeg,
+      isAvailable: itemData.available,
+      imageUrl: itemData.imageUrl,
+      description: itemData.description
+    }).catch(err => console.warn('Firestore updateFoodCourtItem error:', err));
+
     soundEffects.playSuccess();
   }, [currentSession]);
 
@@ -976,13 +1239,24 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     setFoodCourtMenuItems(prev => prev.filter(item => item.id !== itemId));
+
+    // Background delete in Firestore
+    deleteFirestoreFoodCourtItem(itemId).catch(err => console.warn('Firestore deleteFoodCourtItem error:', err));
+
     soundEffects.playTrash();
   }, [currentSession, foodCourtMenuItems]);
 
   // Toggle Food Court Menu Item Availability (In stock / Sold out)
   const toggleFoodCourtItemAvailability = useCallback((itemId: string) => {
     setFoodCourtMenuItems(prev =>
-      prev.map(item => (item.id === itemId ? { ...item, available: !item.available } : item))
+      prev.map(item => {
+        if (item.id === itemId) {
+          const nextAvail = !item.available;
+          updateFirestoreFoodCourtItem(itemId, { isAvailable: nextAvail }).catch(() => {});
+          return { ...item, available: nextAvail };
+        }
+        return item;
+      })
     );
     soundEffects.playTap();
   }, []);
@@ -997,6 +1271,17 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       status: 'Pending'
     };
     setFoodCourtFeedbacks(prev => [newFeedback, ...prev]);
+
+    // Background sync to Firestore
+    submitFirestoreFeedback({
+      mealType: 'Food Court',
+      messHall: feedbackData.stallName || 'UniMall Food Court',
+      rating: feedbackData.rating,
+      category: feedbackData.category,
+      comment: feedbackData.comment,
+      status: 'open'
+    }).catch(err => console.warn('Firestore feedback submit error:', err));
+
     soundEffects.playSuccess();
     confetti({
       particleCount: 50,
@@ -1080,7 +1365,22 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateNearbyRestoOrderStatus = useCallback((orderId: string, status: NearbyRestaurantOrder['status']) => {
     setNearbyRestoOrders(prev =>
-      prev.map(ord => (ord.id === orderId ? { ...ord, status } : ord))
+      prev.map(ord => {
+        if (ord.id === orderId) {
+          if (status === 'Out for Delivery') {
+            showBrowserNotification('Food Out for Delivery! 🛵', {
+              body: `Order ${ord.orderNumber} from ${ord.restoName} is on the way to your hostel!`
+            });
+            soundEffects.playOrderReadyChime();
+          } else if (status === 'Delivered') {
+            showBrowserNotification('Order Delivered! 🎉', {
+              body: `Order ${ord.orderNumber} from ${ord.restoName} has arrived!`
+            });
+          }
+          return { ...ord, status };
+        }
+        return ord;
+      })
     );
     soundEffects.playSuccessBeep();
   }, []);
@@ -1304,7 +1604,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   }, [students]);
 
-  // Authentication: Admin Login
+  // Authentication: Admin Login (Firebase Auth with Demo Fallback)
   const loginAdmin = useCallback(async (emailOrIdInput: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
     // Abuse & Rate Limiting Check
     const rateLimitCheck = clientRateLimiter.checkLimit('AUTH_LOGIN_ADMIN', 4, 60000);
@@ -1326,10 +1626,48 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 600));
-
     const cleanId = stripDangerousTags(emailOrIdInput.trim().toLowerCase());
     const cleanPass = stripDangerousTags(passwordInput.trim());
+
+    // Try Real Firebase Authentication first if email format is provided
+    if (cleanId.includes('@')) {
+      try {
+        const { profile } = await loginWithFirebaseAuth(cleanId, cleanPass);
+        const newSession: UserSession = {
+          role: 'admin',
+          name: profile.name || 'Authorized Admin',
+          id: `ADMIN-${profile.uid.slice(0, 6).toUpperCase()}`,
+          email: profile.email,
+          designation: profile.role === 'superadmin' ? 'Chief Warden / Superadmin' : 'Mess Administrator',
+          loginTime: formatTimeAmPm(new Date())
+        };
+
+        securityObservability.recordEvent({
+          action: 'SUCCESSFUL_FIREBASE_ADMIN_LOGIN',
+          actorRole: 'admin',
+          actorId: profile.uid,
+          ipAddress: '10.0.0.1 (Local Client)',
+          status: 'SUCCESS',
+          category: 'AUTH',
+          details: `Firebase Admin ${profile.name} (${profile.email}) logged in securely`,
+          riskScore: 0
+        });
+
+        setCurrentSession(newSession);
+        setActiveTab('admin');
+        soundEffects.playSuccess();
+        return { success: true };
+      } catch (fbErr: any) {
+        // If it's not a demo fallback account, report error
+        const isDemoId = ['admin@campus.edu', 'warden@campus.edu', 'chef@campus.edu'].includes(cleanId);
+        if (!isDemoId) {
+          soundEffects.playError();
+          return { success: false, error: fbErr.message || 'Firebase Authentication failed.' };
+        }
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 400));
 
     const validAdminIds = ['admin@campus.edu', 'staff-101', 'admin', 'warden@campus.edu', 'chef@campus.edu', 'staff-202'];
     const validAdminPasswords = ['admin123', 'warden2026', 'chef123', 'admin', 'campus2026'];
@@ -1419,23 +1757,53 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 600));
-
     const cleanInput = stripDangerousTags(stallIdOrEmail.trim().toLowerCase());
     const cleanPass = stripDangerousTags(passwordInput.trim());
+
+    // Try Real Firebase Authentication first if email format is provided
+    if (cleanInput.includes('@')) {
+      try {
+        const { profile } = await loginWithFirebaseAuth(cleanInput, cleanPass);
+        const newSession: UserSession = {
+          role: 'vendor',
+          partnerType: profile.role === 'restaurant_admin' ? 'nearby_resto' : 'food_court',
+          name: profile.name || 'Vendor Administrator',
+          id: `VENDOR-${profile.uid.slice(0, 6).toUpperCase()}`,
+          email: profile.email,
+          designation: 'Verified Campus Food Partner',
+          loginTime: formatTimeAmPm(new Date())
+        };
+
+        setCurrentSession(newSession);
+        setActiveTab('vendor');
+        soundEffects.playSuccess();
+        return { success: true };
+      } catch {
+        // Fallback to demo local authentication below
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 400));
 
     // Check if input matches a nearby restaurant
     const matchedResto = nearbyRestaurants.find(r =>
       r.id.toLowerCase() === cleanInput ||
-      r.adminEmail.toLowerCase() === cleanInput ||
+      r.adminEmail?.toLowerCase() === cleanInput ||
       r.name.toLowerCase().includes(cleanInput) ||
       cleanInput.includes(r.id.replace('resto-', '')) ||
-      (cleanInput.includes('royal') && r.id === 'resto-royal-spice') ||
-      (cleanInput.includes('green') && r.id === 'resto-green-leaf') ||
-      (cleanInput.includes('midnight') && r.id === 'resto-midnight-craver') ||
-      (cleanInput.includes('dragon') && r.id === 'resto-dragon-wok') ||
-      (cleanInput.includes('woodfire') && r.id === 'resto-woodfire-crust') ||
-      (cleanInput.includes('paratha') && r.id === 'resto-paratha-junction')
+      (cleanInput.includes('domino') && r.id.includes('domino')) ||
+      (cleanInput.includes('subway') && r.id.includes('subway')) ||
+      (cleanInput.includes('mcdonald') && r.id.includes('mcdonald')) ||
+      (cleanInput.includes('kulcha') && r.id.includes('kulcha')) ||
+      (cleanInput.includes('havmor') && r.id.includes('havmor')) ||
+      (cleanInput.includes('bikaner') && r.id.includes('bikaner')) ||
+      (cleanInput.includes('chaayos') && r.id.includes('chaayos')) ||
+      (cleanInput.includes('royal') && r.id.includes('royal')) ||
+      (cleanInput.includes('green') && r.id.includes('green')) ||
+      (cleanInput.includes('midnight') && r.id.includes('midnight')) ||
+      (cleanInput.includes('dragon') && r.id.includes('dragon')) ||
+      (cleanInput.includes('woodfire') && r.id.includes('woodfire')) ||
+      (cleanInput.includes('paratha') && r.id.includes('paratha'))
     );
 
     // Check if input matches a food court stall
@@ -1533,8 +1901,14 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   }, [foodCourtStalls, nearbyRestaurants]);
 
+  // Authentication: Dedicated Restaurant Partner Login
+  const loginRestaurant = useCallback(async (restoIdOrEmail: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
+    return loginVendor(restoIdOrEmail, passwordInput);
+  }, [loginVendor]);
+
   // Authentication: Logout
   const logout = useCallback(() => {
+    logoutFirebaseAuth().catch(() => {});
     setCurrentSession(null);
     setActiveTab('menu');
     soundEffects.playTap();
@@ -1549,6 +1923,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loginStudent,
         loginAdmin,
         loginVendor,
+        loginRestaurant,
         logout,
         currentStudent,
         setCurrentStudent: updateStudentProfile,
@@ -1599,6 +1974,16 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsCheatSheetOpen,
         isSecurityModalOpen,
         setIsSecurityModalOpen,
+        walletBalance,
+        walletTransactions,
+        topUpWallet,
+        deductWallet,
+        isWalletModalOpen,
+        setIsWalletModalOpen,
+        currentLanguage,
+        setLanguage,
+        isVoiceSearchOpen,
+        setIsVoiceSearchOpen,
         markMealAttendance,
         skipMealForRebate,
         createAcademicOrder,

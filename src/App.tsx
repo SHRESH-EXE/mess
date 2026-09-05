@@ -13,6 +13,11 @@ import { NearbyRestaurantsView } from './components/NearbyRestaurantsView';
 import { QRScannerModal } from './components/QRScannerModal';
 import { SwitchStudentModal } from './components/SwitchStudentModal';
 import { SecurityDefenseModal } from './components/SecurityDefenseModal';
+import { CampusWalletModal } from './components/CampusWalletModal';
+import { VoiceSearchModal } from './components/VoiceSearchModal';
+import { PWAInstallButton } from './components/PWAInstallButton';
+import { OfflineIndicator } from './components/OfflineIndicator';
+import { translations } from './utils/translations';
 import ChromeButton from './components/ui/chrome-button';
 import { getActiveMealStatus } from './utils/time';
 import {
@@ -28,7 +33,10 @@ import {
   Building2,
   ChefHat,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Wallet,
+  Mic,
+  Languages
 } from 'lucide-react';
 
 const LiquidGlassBackdrop: React.FC = () => (
@@ -75,13 +83,23 @@ const MainAppContent: React.FC = () => {
     loginAdmin,
     loginStudent,
     isSecurityModalOpen,
-    setIsSecurityModalOpen
+    setIsSecurityModalOpen,
+    walletBalance,
+    walletTransactions,
+    topUpWallet,
+    isWalletModalOpen,
+    setIsWalletModalOpen,
+    currentLanguage,
+    setLanguage,
+    isVoiceSearchOpen,
+    setIsVoiceSearchOpen
   } = useMess();
 
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
   const [isSwitchStudentOpen, setIsSwitchStudentOpen] = useState<boolean>(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false);
 
+  const t = translations[currentLanguage] || translations.en;
   const mealStatus = getActiveMealStatus();
 
   // If user is not logged in, render University Web Portal Login Page
@@ -95,6 +113,7 @@ const MainAppContent: React.FC = () => {
             onClose={() => setIsSecurityModalOpen(false)}
           />
         )}
+        <OfflineIndicator />
       </>
     );
   }
@@ -115,12 +134,16 @@ const MainAppContent: React.FC = () => {
           {/* Brand & Portal Title */}
           <div className="flex items-center space-x-3">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-md shadow-orange-500/25 border border-white/40">
-              <Store className="w-5 h-5 text-white" />
+              {isNearbyResto ? (
+                <UtensilsCrossed className="w-5 h-5 text-white" />
+              ) : (
+                <Store className="w-5 h-5 text-white" />
+              )}
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-['Outfit'] font-black text-lg sm:text-xl text-slate-900 tracking-wider leading-none">
-                  {isNearbyResto ? 'PARTNER RESTAURANT' : 'FOOD COURT OWNER'}
+                  {isNearbyResto ? 'RESTAURANT PARTNER' : 'FOOD COURT OWNER'}
                 </span>
                 <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-wider">
                   Partner Portal
@@ -128,7 +151,7 @@ const MainAppContent: React.FC = () => {
               </div>
               <p className="text-[11px] text-[#ea580c] font-bold">
                 {isNearbyResto 
-                  ? `${currentSession.restoName || 'Partner Restaurant'} (Hostel Delivery)`
+                  ? `${currentSession.restoName || 'Partner Restaurant'} (Hostel Delivery Hub)`
                   : `${currentSession.stallName || currentStall?.name} (${currentStall?.stallNumber || 'Stall'})`}
               </p>
             </div>
@@ -136,6 +159,26 @@ const MainAppContent: React.FC = () => {
 
           {/* Controls: QR Scanner, Security, Helpline & Logout */}
           <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* PWA Install */}
+            <PWAInstallButton compact />
+
+            {/* Language Switcher */}
+            <div className="flex items-center bg-white/80 border border-orange-200/80 rounded-full p-0.5 text-[11px] font-bold">
+              {(['en', 'hi', 'pa'] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLanguage(l)}
+                  className={`px-2 py-1 rounded-full uppercase transition ${
+                    currentLanguage === l
+                      ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-950'
+                  }`}
+                >
+                  {l === 'en' ? 'EN' : l === 'hi' ? 'हिं' : 'ਪੰ'}
+                </button>
+              ))}
+            </div>
+
             {/* Security Defense Inspector */}
             <button
               type="button"
@@ -144,7 +187,7 @@ const MainAppContent: React.FC = () => {
               className="flex items-center space-x-1.5 px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
             >
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span className="hidden md:inline">Security Architecture</span>
+              <span className="hidden md:inline">Security</span>
             </button>
 
             {/* Helpline */}
@@ -219,16 +262,36 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* PWA Install */}
+            <PWAInstallButton compact />
+
+            {/* Language Switcher */}
+            <div className="flex items-center bg-white/80 border border-orange-200/80 rounded-full p-0.5 text-[11px] font-bold">
+              {(['en', 'hi', 'pa'] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLanguage(l)}
+                  className={`px-2 py-1 rounded-full uppercase transition ${
+                    currentLanguage === l
+                      ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-950'
+                  }`}
+                >
+                  {l === 'en' ? 'EN' : l === 'hi' ? 'हिं' : 'ਪੰ'}
+                </button>
+              ))}
+            </div>
+
             {/* Security Defense Inspector */}
             <button
               type="button"
               onClick={() => setIsSecurityModalOpen(true)}
               title="Inspect Full-Stack Security & Defensive Architecture"
-              className="flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+              className="flex items-center space-x-1.5 px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
             >
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span className="hidden md:inline">Security Architecture</span>
+              <span className="hidden md:inline">Security</span>
             </button>
 
             {/* 24x7 Helpline Support */}
@@ -280,13 +343,13 @@ const MainAppContent: React.FC = () => {
   // VIEW 3: STUDENT HOSTELER PORTAL
   // =========================================================================
   const studentNavTabs: { id: NavigationTab; label: string; icon: typeof UtensilsCrossed; badge?: string }[] = [
-    { id: 'menu', label: "Today's Menu", icon: UtensilsCrossed },
-    { id: 'pass', label: 'Digital Meal Pass', icon: QrCode },
-    { id: 'nearbyresto', label: 'Nearby Restaurants', icon: Store, badge: 'New' },
-    { id: 'foodcourt', label: 'Food Court & Rush', icon: Store },
-    { id: 'parcel', label: 'Academic Block Delivery', icon: Package },
-    { id: 'dayscholar', label: 'Day Scholar Canteen', icon: Store },
-    { id: 'feedback', label: 'Mess & Food Court Feedback', icon: MessageSquareHeart }
+    { id: 'menu', label: t.navMenu, icon: UtensilsCrossed },
+    { id: 'pass', label: t.navPass, icon: QrCode },
+    { id: 'nearbyresto', label: t.navRestaurants, icon: Store },
+    { id: 'foodcourt', label: t.navFoodCourt, icon: Store },
+    { id: 'parcel', label: t.navParcel, icon: Package },
+    { id: 'dayscholar', label: t.navDayScholar, icon: Store },
+    { id: 'feedback', label: t.navFeedback, icon: MessageSquareHeart }
   ];
 
   return (
@@ -308,17 +371,48 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Helpline, Role Switcher, Student Profile & Controls */}
-          <div className="flex items-center space-x-2 sm:space-x-2.5">
-            {/* Helpline Phone Number Badge */}
-            <a
-              href="tel:9335568951"
-              title="Call Campus Mess Helpline & Food Court: +91 9335568951"
-              className="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-500/30 text-xs font-bold font-mono shadow-xs hover:bg-emerald-500/25 transition-all"
+          {/* Right: Controls, Wallet, Voice, Language & Profile */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5">
+            {/* PWA Install */}
+            <PWAInstallButton compact />
+
+            {/* Language Switcher */}
+            <div className="flex items-center bg-white/80 border border-orange-200/80 rounded-full p-0.5 text-[11px] font-bold">
+              {(['en', 'hi', 'pa'] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLanguage(l)}
+                  className={`px-2 py-1 rounded-full uppercase transition ${
+                    currentLanguage === l
+                      ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-950'
+                  }`}
+                >
+                  {l === 'en' ? 'EN' : l === 'hi' ? 'हिं' : 'ਪੰ'}
+                </button>
+              ))}
+            </div>
+
+            {/* Voice Search Button */}
+            <button
+              type="button"
+              onClick={() => setIsVoiceSearchOpen(true)}
+              title="Voice Search Dishes & Stalls"
+              className="p-2 rounded-full bg-white/80 hover:bg-amber-50 text-slate-700 hover:text-amber-600 border border-orange-200/70 shadow-xs transition active:scale-95 cursor-pointer"
             >
-              <Phone className="w-3.5 h-3.5 text-emerald-600" />
-              <span>+91 9335568951</span>
-            </a>
+              <Mic className="w-4 h-4 text-amber-600" />
+            </button>
+
+            {/* Digital Campus Wallet Pill Button */}
+            <button
+              type="button"
+              onClick={() => setIsWalletModalOpen(true)}
+              title="Open Digital Campus Meal Wallet"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition active:scale-95 cursor-pointer border border-amber-400/40"
+            >
+              <Wallet className="w-3.5 h-3.5" />
+              <span className="font-mono">₹{walletBalance.toFixed(0)}</span>
+            </button>
 
             {/* Allergen Warning Pill if any */}
             {currentStudent.allergies && currentStudent.allergies.length > 0 && (
@@ -431,6 +525,23 @@ const MainAppContent: React.FC = () => {
           onClose={() => setIsSecurityModalOpen(false)}
         />
       )}
+      <CampusWalletModal
+        isOpen={isWalletModalOpen}
+        onClose={() => setIsWalletModalOpen(false)}
+        walletBalance={walletBalance}
+        transactions={walletTransactions}
+        onTopUp={topUpWallet}
+        studentName={currentStudent.name}
+        studentRollNo={currentStudent.rollNo}
+      />
+      <VoiceSearchModal
+        isOpen={isVoiceSearchOpen}
+        onClose={() => setIsVoiceSearchOpen(false)}
+        onSearchResult={() => {
+          setActiveTab('foodcourt');
+        }}
+      />
+      <OfflineIndicator />
     </div>
   );
 };

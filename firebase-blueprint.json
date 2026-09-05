@@ -1,0 +1,242 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "Administrator account with role-based access for managing food court stalls and nearby restaurants.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Admin email address used for Firebase Authentication."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["foodcourt_admin", "restaurant_admin", "superadmin"],
+          "description": "Role determining administrative write permissions."
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Full name or designation of administrator."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["email", "role", "name", "createdAt", "updatedAt"]
+    },
+    "Restaurant": {
+      "title": "Restaurant",
+      "description": "Nearby restaurant partner listed for campus and hostel delivery.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120,
+          "description": "Name of the restaurant."
+        },
+        "address": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 300,
+          "description": "Physical address / campus landmark."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Geographical latitude."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Geographical longitude."
+        },
+        "cuisine": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Cuisine type (e.g. Punjabi, Chinese, Fast Food)."
+        },
+        "imageUrl": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Display image URL."
+        },
+        "rating": {
+          "type": "number",
+          "description": "Average customer rating (0.0 to 5.0)."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "inactive"],
+          "description": "Visibility status for students and public visitors."
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 20,
+          "description": "Contact or order phone number."
+        },
+        "pricing": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Average pricing estimate (e.g. ₹150 for two)."
+        },
+        "createdBy": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "UID of the admin who created the record."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["name", "address", "latitude", "longitude", "cuisine", "imageUrl", "rating", "status", "createdAt", "updatedAt"]
+    },
+    "FoodCourtItem": {
+      "title": "FoodCourtItem",
+      "description": "Menu item available in campus UniMall food court stalls.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120,
+          "description": "Dish title."
+        },
+        "stallId": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Unique identifier of the food court stall."
+        },
+        "stallName": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Display name of the food court stall."
+        },
+        "price": {
+          "type": "number",
+          "description": "Item price in INR."
+        },
+        "category": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Dish meal category (e.g. Rolls, Beverages, North Indian)."
+        },
+        "isVeg": {
+          "type": "boolean",
+          "description": "Vegetarian flag."
+        },
+        "isAvailable": {
+          "type": "boolean",
+          "description": "Stock and live availability flag."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "inactive"],
+          "description": "Item active state."
+        },
+        "imageUrl": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Photo URL of the dish."
+        },
+        "rating": {
+          "type": "number",
+          "description": "Rating out of 5."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Short culinary description."
+        },
+        "createdBy": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "UID of the admin who created the item."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["name", "stallId", "stallName", "price", "category", "isVeg", "isAvailable", "status", "createdAt", "updatedAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Live food court and delivery orders placed by students.",
+      "type": "object",
+      "properties": {
+        "tokenNumber": { "type": "string", "maxLength": 20 },
+        "studentRegNo": { "type": "string", "maxLength": 50 },
+        "studentName": { "type": "string", "maxLength": 100 },
+        "studentPhone": { "type": "string", "maxLength": 20 },
+        "stallId": { "type": "string", "maxLength": 64 },
+        "stallName": { "type": "string", "maxLength": 100 },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["received", "preparing", "ready", "completed", "cancelled"] },
+        "deliveryLocation": { "type": "string", "maxLength": 200 },
+        "orderType": { "type": "string", "enum": ["pickup", "academic_delivery", "canteen_dinein"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["tokenNumber", "studentRegNo", "stallId", "totalAmount", "status", "orderType", "createdAt", "updatedAt"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "Anonymous mess and food court meal quality complaints/reviews.",
+      "type": "object",
+      "properties": {
+        "mealType": { "type": "string", "maxLength": 30 },
+        "messHall": { "type": "string", "maxLength": 50 },
+        "rating": { "type": "number" },
+        "category": { "type": "string", "maxLength": 60 },
+        "comment": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["open", "reviewed", "resolved"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["mealType", "messHall", "rating", "comment", "status", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Admins collection storing authorization roles (superadmin, foodcourt_admin, restaurant_admin)."
+    },
+    "/restaurants/{restaurantId}": {
+      "schema": "Restaurant",
+      "description": "Restaurants collection for partner eateries near campus."
+    },
+    "/foodcourt_items/{itemId}": {
+      "schema": "FoodCourtItem",
+      "description": "Food court stall menu items."
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Food court orders and token tracking."
+    },
+    "/feedback/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "Anonymous student feedback and meal reviews."
+    }
+  }
+}

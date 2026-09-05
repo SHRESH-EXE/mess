@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="60%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#fef08a"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  <rect width="500" height="500" x="6" y="6" rx="122" fill="none" stroke="url(#goldGrad)" stroke-width="4" stroke-opacity="0.3"/>
+
+  <!-- University Emblem Ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="url(#goldGrad)" stroke-width="6" stroke-dasharray="8 6" stroke-opacity="0.4"/>
+  <circle cx="256" cy="256" r="165" fill="#0f172a" fill-opacity="0.8" stroke="url(#goldGrad)" stroke-width="3"/>
+
+  <!-- Dining Cloche & Chef Crown -->
+  <!-- Cloche Dome -->
+  <path d="M140 310 C140 210, 372 210, 372 310 Z" fill="url(#goldGrad)" filter="url(#glow)"/>
+  
+  <!-- Cloche Top Knob -->
+  <circle cx="256" cy="205" r="18" fill="url(#goldGrad)"/>
+  <path d="M256 187 C250 160, 262 140, 256 125 C250 140, 262 160, 256 187 Z" fill="url(#flameGrad)"/>
+
+  <!-- Serving Platter Base -->
+  <rect x="110" y="318" width="292" height="20" rx="10" fill="url(#goldGrad)"/>
+  <rect x="160" y="344" width="192" height="12" rx="6" fill="#f59e0b" fill-opacity="0.6"/>
+
+  <!-- Cutlery Accents -->
+  <!-- Fork on left -->
+  <path d="M85 220 L85 320 M75 220 L75 260 M95 220 L95 260" stroke="url(#goldGrad)" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <!-- Spoon on right -->
+  <path d="M427 220 C420 220, 415 235, 427 255 L427 320" stroke="url(#goldGrad)" stroke-width="5" stroke-linecap="round" fill="none"/>
+
+  <!-- LPU Brand Text Badge -->
+  <text x="256" y="415" font-family="'Outfit', sans-serif" font-size="34" font-weight="900" fill="#f8fafc" text-anchor="middle" letter-spacing="4">
+    LPU DINING
+  </text>
+  <text x="256" y="445" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="600" fill="#fbbf24" text-anchor="middle" letter-spacing="3">
+    CAMPUS FOOD PORTAL
+  </text>
+</svg>

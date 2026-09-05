@@ -1,0 +1,179 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =========================================================================
+    // GLOBAL SECURITY HELPERS & ZERO-TRUST GUARDS
+    // =========================================================================
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Role Lookup from /admins/{uid}
+    function hasAdminDoc() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function getAdminRole() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role;
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'shre5750306076sh@gmail.com' ||
+        (hasAdminDoc() && getAdminRole() == 'superadmin')
+      );
+    }
+
+    function isFoodCourtAdmin() {
+      return isSuperAdmin() || (hasAdminDoc() && (getAdminRole() == 'foodcourt_admin' || getAdminRole() == 'superadmin'));
+    }
+
+    function isRestaurantAdmin() {
+      return isSuperAdmin() || (hasAdminDoc() && (getAdminRole() == 'restaurant_admin' || getAdminRole() == 'superadmin'));
+    }
+
+    // Global Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // =========================================================================
+    // 1. ADMINS COLLECTION
+    // =========================================================================
+    function isValidAdmin(data) {
+      return data.keys().hasAll(['email', 'role', 'name', 'createdAt', 'updatedAt']) &&
+             data.email is string && data.email.size() <= 120 &&
+             data.role in ['foodcourt_admin', 'restaurant_admin', 'superadmin'] &&
+             data.name is string && data.name.size() <= 100 &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    match /admins/{adminId} {
+      allow get: if isSignedIn() && (request.auth.uid == adminId || isSuperAdmin());
+      allow list: if isSuperAdmin();
+      allow create: if isSuperAdmin() && isValidId(adminId) && isValidAdmin(incoming()) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isSuperAdmin() && isValidId(adminId) && isValidAdmin(incoming()) && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time;
+      allow delete: if isSuperAdmin() && isValidId(adminId) && adminId != request.auth.uid;
+    }
+
+    // =========================================================================
+    // 2. RESTAURANTS COLLECTION (Nearby Restaurants)
+    // =========================================================================
+    function isValidRestaurant(data) {
+      return data.keys().hasAll(['name', 'address', 'latitude', 'longitude', 'cuisine', 'imageUrl', 'rating', 'status', 'createdAt', 'updatedAt']) &&
+             data.name is string && data.name.size() >= 2 && data.name.size() <= 120 &&
+             data.address is string && data.address.size() >= 3 && data.address.size() <= 300 &&
+             data.latitude is number && data.latitude >= -90.0 && data.latitude <= 90.0 &&
+             data.longitude is number && data.longitude >= -180.0 && data.longitude <= 180.0 &&
+             data.cuisine is string && data.cuisine.size() <= 100 &&
+             data.imageUrl is string && data.imageUrl.size() <= 1000 &&
+             data.rating is number && data.rating >= 0.0 && data.rating <= 5.0 &&
+             data.status in ['active', 'inactive'] &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp &&
+             (!('phone' in data) || (data.phone is string && data.phone.size() <= 30)) &&
+             (!('pricing' in data) || (data.pricing is string && data.pricing.size() <= 60)) &&
+             (!('createdBy' in data) || (data.createdBy is string && data.createdBy.size() <= 128));
+    }
+
+    match /restaurants/{restaurantId} {
+      // Public visitors can read active restaurants; admins can read any
+      allow get: if (resource.data.status == 'active') || isRestaurantAdmin();
+      allow list: if (resource.data.status == 'active') || isRestaurantAdmin();
+
+      // Only authorized restaurant admins / superadmins can mutate
+      allow create: if isRestaurantAdmin() && isValidId(restaurantId) && isValidRestaurant(incoming()) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isRestaurantAdmin() && isValidId(restaurantId) && isValidRestaurant(incoming()) && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time;
+      allow delete: if isRestaurantAdmin() && isValidId(restaurantId);
+    }
+
+    // =========================================================================
+    // 3. FOOD COURT ITEMS COLLECTION
+    // =========================================================================
+    function isValidFoodCourtItem(data) {
+      return data.keys().hasAll(['name', 'stallId', 'stallName', 'price', 'category', 'isVeg', 'isAvailable', 'status', 'createdAt', 'updatedAt']) &&
+             data.name is string && data.name.size() >= 2 && data.name.size() <= 120 &&
+             data.stallId is string && data.stallId.size() <= 64 &&
+             data.stallName is string && data.stallName.size() <= 100 &&
+             data.price is number && data.price >= 0 && data.price <= 100000 &&
+             data.category is string && data.category.size() <= 64 &&
+             data.isVeg is bool &&
+             data.isAvailable is bool &&
+             data.status in ['active', 'inactive'] &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp &&
+             (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 1000)) &&
+             (!('rating' in data) || (data.rating is number && data.rating >= 0.0 && data.rating <= 5.0)) &&
+             (!('description' in data) || (data.description is string && data.description.size() <= 500)) &&
+             (!('createdBy' in data) || (data.createdBy is string && data.createdBy.size() <= 128));
+    }
+
+    match /foodcourt_items/{itemId} {
+      // Public visitors can read active & available items; admins can read all
+      allow get: if (resource.data.status == 'active') || isFoodCourtAdmin();
+      allow list: if (resource.data.status == 'active') || isFoodCourtAdmin();
+
+      // Only authorized food court admins / superadmins can mutate
+      allow create: if isFoodCourtAdmin() && isValidId(itemId) && isValidFoodCourtItem(incoming()) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isFoodCourtAdmin() && isValidId(itemId) && isValidFoodCourtItem(incoming()) && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time;
+      allow delete: if isFoodCourtAdmin() && isValidId(itemId);
+    }
+
+    // =========================================================================
+    // 4. ORDERS COLLECTION (Food Court Tokens & Academic Deliveries)
+    // =========================================================================
+    function isValidOrder(data) {
+      return data.keys().hasAll(['tokenNumber', 'studentRegNo', 'stallId', 'totalAmount', 'status', 'orderType', 'createdAt', 'updatedAt']) &&
+             data.tokenNumber is string && data.tokenNumber.size() <= 20 &&
+             data.studentRegNo is string && data.studentRegNo.size() <= 50 &&
+             data.stallId is string && data.stallId.size() <= 64 &&
+             data.totalAmount is number && data.totalAmount >= 0 &&
+             data.status in ['received', 'preparing', 'ready', 'completed', 'cancelled'] &&
+             data.orderType in ['pickup', 'academic_delivery', 'canteen_dinein'] &&
+             data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    match /orders/{orderId} {
+      // Anyone can create an order, read orders by token/orderId, and admins can list & update status
+      allow get: if true;
+      allow list: if true;
+      allow create: if isValidId(orderId) && isValidOrder(incoming()) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isValidId(orderId) && (isFoodCourtAdmin() || isSignedIn()) && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time;
+      allow delete: if isSuperAdmin();
+    }
+
+    // =========================================================================
+    // 5. FEEDBACK COLLECTION (Anonymous Meal Reviews & Hygiene Reports)
+    // =========================================================================
+    function isValidFeedback(data) {
+      return data.keys().hasAll(['mealType', 'messHall', 'rating', 'comment', 'status', 'createdAt', 'updatedAt']) &&
+             data.mealType is string && data.mealType.size() <= 40 &&
+             data.messHall is string && data.messHall.size() <= 60 &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string && data.comment.size() >= 3 && data.comment.size() <= 1000 &&
+             data.status in ['open', 'reviewed', 'resolved'] &&
+             data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    match /feedback/{feedbackId} {
+      allow get, list: if true;
+      allow create: if isValidId(feedbackId) && isValidFeedback(incoming()) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isFoodCourtAdmin() && incoming().createdAt == existing().createdAt && incoming().updatedAt == request.time;
+      allow delete: if isSuperAdmin();
+    }
+  }
+}

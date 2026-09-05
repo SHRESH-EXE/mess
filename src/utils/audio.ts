@@ -108,6 +108,35 @@ class SoundEffects {
   playChime() {
     this.playSuccessBeep();
   }
+
+  playOrderReadyChime() {
+    try {
+      const ctx = this.getAudioContext();
+      if (!ctx) return;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'sine';
+      osc2.type = 'triangle';
+      osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+      osc1.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
+      osc1.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
+      osc1.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.3); // C6
+
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(ctx.currentTime);
+      osc1.stop(ctx.currentTime + 0.6);
+    } catch {
+      // ignore
+    }
+  }
 }
 
 export const soundEffects = new SoundEffects();
