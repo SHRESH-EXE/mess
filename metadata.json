@@ -1,6 +1,6 @@
 {
-  "name": "Campus Mess and Food Court",
-  "description": "Comprehensive Campus Mess and Food Court Management System featuring live rush meters, stall queue wait time countdowns, food ordering with token passes, interactive step-by-step website guided tour, allergen alerts, QR meal pass check-in, and 24x7 WhatsApp helpline support (+91 9335568951).",
+  "name": "LPU Dining & Food Portal",
+  "description": "Official Dining and Food Delivery Portal for Lovely Professional University (LPU), Phagwara, Punjab. Features LPU UniMall food stalls, Law Gate & Maheru eateries within 10 km radius, Boys & Girls Hostel delivery (BH-1 to BH-8, GH-1 to GH-6), Academic Block parcels (Block 34, 38, 14, 55), live stall queue meters, meal QR check-in, and 24x7 Verto helpline support.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
 import ChromeButton from './ui/chrome-button';
-import { X, Plus, Trash2, Check, Utensils, AlertCircle, ShieldAlert } from 'lucide-react';
+import { X, Plus, Trash2, Check, Utensils, AlertCircle, ShieldAlert, Search, Leaf } from 'lucide-react';
 import { MealType, MealSlot, DishItem, STANDARD_ALLERGENS } from '../types/mess';
 
 interface MenuEditorModalProps {
@@ -35,6 +35,7 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
   const [newDishCalories, setNewDishCalories] = useState<number>(220);
   const [newDishAllergens, setNewDishAllergens] = useState<string[]>([]);
   const [newDishIngredients, setNewDishIngredients] = useState<string>('');
+  const [allergenSearch, setAllergenSearch] = useState<string>('');
   const [isSaved, setIsSaved] = useState<boolean>(false);
 
   const toggleNewDishAllergen = (alg: string) => {
@@ -249,14 +250,39 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
               className="w-full text-xs p-2 rounded-xl glassmorphism-input text-slate-900 placeholder-slate-400 focus:outline-none font-semibold"
             />
 
-            {/* Allergen Checkbox Selection */}
-            <div className="space-y-1.5 pt-1">
-              <label className="text-[11px] font-black text-slate-900 flex items-center gap-1">
-                <ShieldAlert className="w-3.5 h-3.5 text-[#ea580c]" />
-                <span>Select Contained Allergens for Student Warning System:</span>
-              </label>
-              <div className="flex flex-wrap gap-1.5">
-                {STANDARD_ALLERGENS.map(alg => {
+            {/* Allergen Checkbox Selection with Real-time Search */}
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center justify-between">
+                <label className="text-[11px] font-black text-slate-900 flex items-center gap-1">
+                  <ShieldAlert className="w-3.5 h-3.5 text-[#ea580c]" />
+                  <span>Vegetarian Allergen Warning Tags:</span>
+                </label>
+                {newDishAllergens.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setNewDishAllergens([])}
+                    className="text-[10px] text-orange-600 hover:underline font-bold cursor-pointer"
+                  >
+                    Clear Selected ({newDishAllergens.length})
+                  </button>
+                )}
+              </div>
+
+              {/* Quick Allergen Search */}
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={allergenSearch}
+                  onChange={(e) => setAllergenSearch(e.target.value)}
+                  placeholder="Filter allergens (e.g. Dairy, Gluten, Cashews, Mustard)..."
+                  className="w-full text-xs pl-8 pr-2.5 py-1.5 rounded-lg bg-slate-50 border border-orange-200/80 text-slate-800 placeholder-slate-400 focus:outline-none"
+                />
+              </div>
+
+              {/* Allergen Chips */}
+              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 border border-orange-100 rounded-xl bg-orange-50/30">
+                {STANDARD_ALLERGENS.filter(alg => alg.toLowerCase().includes(allergenSearch.toLowerCase())).map(alg => {
                   const isChecked = newDishAllergens.includes(alg);
                   return (
                     <button
@@ -265,11 +291,11 @@ export const MenuEditorModal: React.FC<MenuEditorModalProps> = ({ day, mealType,
                       onClick={() => toggleNewDishAllergen(alg)}
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer inline-flex items-center space-x-1 ${
                         isChecked
-                          ? 'bg-emerald-500/20 text-emerald-800 border-emerald-400'
+                          ? 'bg-emerald-500/20 text-emerald-800 border-emerald-400 font-bold'
                           : 'bg-white text-slate-700 border-orange-200 hover:border-orange-400'
                       }`}
                     >
-                      {isChecked ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                      {isChecked ? <Check className="w-3 h-3 text-emerald-700" /> : <Plus className="w-3 h-3 text-slate-400" />}
                       <span>{alg}</span>
                     </button>
                   );

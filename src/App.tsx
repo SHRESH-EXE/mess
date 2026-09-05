@@ -9,8 +9,10 @@ import { FoodCourtOrder } from './components/FoodCourtOrder';
 import { AnonymousFeedbackForm } from './components/AnonymousFeedbackForm';
 import { AdminDashboard } from './components/AdminDashboard';
 import { FoodCourtOwnerDashboard } from './components/FoodCourtOwnerDashboard';
+import { NearbyRestaurantsView } from './components/NearbyRestaurantsView';
 import { QRScannerModal } from './components/QRScannerModal';
 import { SwitchStudentModal } from './components/SwitchStudentModal';
+import { SecurityDefenseModal } from './components/SecurityDefenseModal';
 import ChromeButton from './components/ui/chrome-button';
 import { getActiveMealStatus } from './utils/time';
 import {
@@ -25,7 +27,8 @@ import {
   Phone,
   Building2,
   ChefHat,
-  Sparkles
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 
 const LiquidGlassBackdrop: React.FC = () => (
@@ -70,7 +73,9 @@ const MainAppContent: React.FC = () => {
     switchVendorStall,
     loginVendor,
     loginAdmin,
-    loginStudent
+    loginStudent,
+    isSecurityModalOpen,
+    setIsSecurityModalOpen
   } = useMess();
 
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
@@ -81,13 +86,24 @@ const MainAppContent: React.FC = () => {
 
   // If user is not logged in, render University Web Portal Login Page
   if (!currentSession) {
-    return <LoginPage />;
+    return (
+      <>
+        <LoginPage />
+        {isSecurityModalOpen && (
+          <SecurityDefenseModal
+            isOpen={isSecurityModalOpen}
+            onClose={() => setIsSecurityModalOpen(false)}
+          />
+        )}
+      </>
+    );
   }
 
   // =========================================================================
   // VIEW 1: FOOD COURT OWNER / VENDOR DASHBOARD (THIRD PAGE)
   // =========================================================================
   if (currentSession.role === 'vendor') {
+    const isNearbyResto = currentSession.partnerType === 'nearby_resto' || Boolean(currentSession.restoId);
     const currentStall = foodCourtStalls.find(s => s.id === currentSession.stallId) || foodCourtStalls[0];
 
     return (
@@ -104,20 +120,33 @@ const MainAppContent: React.FC = () => {
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-['Outfit'] font-black text-lg sm:text-xl text-slate-900 tracking-wider leading-none">
-                  FOOD COURT OWNER
+                  {isNearbyResto ? 'PARTNER RESTAURANT' : 'FOOD COURT OWNER'}
                 </span>
                 <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-wider">
                   Partner Portal
                 </span>
               </div>
               <p className="text-[11px] text-[#ea580c] font-bold">
-                {currentSession.stallName || currentStall?.name} ({currentStall?.stallNumber || 'Stall'})
+                {isNearbyResto 
+                  ? `${currentSession.restoName || 'Partner Restaurant'} (Hostel Delivery)`
+                  : `${currentSession.stallName || currentStall?.name} (${currentStall?.stallNumber || 'Stall'})`}
               </p>
             </div>
           </div>
 
-          {/* Controls: QR Scanner, Helpline & Logout */}
+          {/* Controls: QR Scanner, Security, Helpline & Logout */}
           <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Security Defense Inspector */}
+            <button
+              type="button"
+              onClick={() => setIsSecurityModalOpen(true)}
+              title="Inspect Full-Stack Security & Defensive Architecture"
+              className="flex items-center space-x-1.5 px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span className="hidden md:inline">Security Architecture</span>
+            </button>
+
             {/* Helpline */}
             <a
               href="tel:9335568951"
@@ -156,6 +185,12 @@ const MainAppContent: React.FC = () => {
 
         {/* Modals */}
         {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
+        {isSecurityModalOpen && (
+          <SecurityDefenseModal
+            isOpen={isSecurityModalOpen}
+            onClose={() => setIsSecurityModalOpen(false)}
+          />
+        )}
       </div>
     );
   }
@@ -185,6 +220,17 @@ const MainAppContent: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-3">
+            {/* Security Defense Inspector */}
+            <button
+              type="button"
+              onClick={() => setIsSecurityModalOpen(true)}
+              title="Inspect Full-Stack Security & Defensive Architecture"
+              className="flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span className="hidden md:inline">Security Architecture</span>
+            </button>
+
             {/* 24x7 Helpline Support */}
             <a
               href="tel:9335568951"
@@ -220,6 +266,12 @@ const MainAppContent: React.FC = () => {
 
         {/* Modals */}
         {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
+        {isSecurityModalOpen && (
+          <SecurityDefenseModal
+            isOpen={isSecurityModalOpen}
+            onClose={() => setIsSecurityModalOpen(false)}
+          />
+        )}
       </div>
     );
   }
@@ -230,9 +282,10 @@ const MainAppContent: React.FC = () => {
   const studentNavTabs: { id: NavigationTab; label: string; icon: typeof UtensilsCrossed; badge?: string }[] = [
     { id: 'menu', label: "Today's Menu", icon: UtensilsCrossed },
     { id: 'pass', label: 'Digital Meal Pass', icon: QrCode },
+    { id: 'nearbyresto', label: 'Nearby Restaurants', icon: Store, badge: 'New' },
+    { id: 'foodcourt', label: 'Food Court & Rush', icon: Store },
     { id: 'parcel', label: 'Academic Block Delivery', icon: Package },
     { id: 'dayscholar', label: 'Day Scholar Canteen', icon: Store },
-    { id: 'foodcourt', label: 'Food Court & Rush', icon: Store },
     { id: 'feedback', label: 'Mess & Food Court Feedback', icon: MessageSquareHeart }
   ];
 
@@ -291,6 +344,17 @@ const MainAppContent: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Security Architecture Inspector */}
+            <button
+              type="button"
+              onClick={() => setIsSecurityModalOpen(true)}
+              title="Inspect Full-Stack Security & Defensive Architecture"
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span className="hidden sm:inline">Security</span>
+            </button>
 
             {/* Switch Student (Demo Helper) */}
             <button
@@ -351,15 +415,22 @@ const MainAppContent: React.FC = () => {
             onOpenSwitchStudent={() => setIsSwitchStudentOpen(false)}
           />
         )}
+        {activeTab === 'nearbyresto' && <NearbyRestaurantsView />}
+        {activeTab === 'foodcourt' && <FoodCourtOrder />}
         {activeTab === 'parcel' && <AcademicBlockOrder />}
         {activeTab === 'dayscholar' && <DayScholarOrder />}
-        {activeTab === 'foodcourt' && <FoodCourtOrder />}
         {activeTab === 'feedback' && <AnonymousFeedbackForm />}
       </main>
 
       {/* Modals & Overlays */}
       {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
       {isSwitchStudentOpen && <SwitchStudentModal onClose={() => setIsSwitchStudentOpen(false)} />}
+      {isSecurityModalOpen && (
+        <SecurityDefenseModal
+          isOpen={isSecurityModalOpen}
+          onClose={() => setIsSecurityModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

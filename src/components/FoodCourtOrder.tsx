@@ -499,14 +499,14 @@ export const FoodCourtOrder: React.FC = () => {
               Popular:
             </span>
             {[
-              { label: '🌯 Kathi Rolls', query: 'Roll' },
-              { label: '🥞 Dosa & Idli', query: 'Dosa' },
-              { label: '☕ Chai & Coffee', query: 'Coffee' },
-              { label: '🍕 Fresh Pizzas', query: 'Pizza' },
-              { label: '🍜 Hakka Noodles', query: 'Noodles' },
-              { label: '🥤 Shakes & Smoothies', query: 'Shake' },
-              { label: '🥪 Sandwiches', query: 'Sandwich' },
-              { label: '🥟 Momos & Bites', query: 'Momo' }
+              { label: 'Rolls', query: 'Roll' },
+              { label: 'Idli', query: 'Dosa' },
+              { label: 'Coffee', query: 'Coffee' },
+              { label: 'Pizzas', query: 'Pizza' },
+              { label: 'Noodles', query: 'Noodles' },
+              { label: 'Smoothies', query: 'Shake' },
+              { label: 'Sandwiches', query: 'Sandwich' },
+              { label: 'Bites', query: 'Momo' }
             ].map(tag => (
               <button
                 key={tag.query}

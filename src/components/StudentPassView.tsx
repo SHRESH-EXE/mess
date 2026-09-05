@@ -20,14 +20,21 @@ import {
   RefreshCw,
   FileText,
   Check,
+  X,
   XCircle,
   AlertTriangle,
   HeartPulse,
   Settings,
   ShieldAlert,
-  Edit2
+  Edit2,
+  Search,
+  Plus,
+  Trash2,
+  Leaf,
+  Filter,
+  Tag
 } from 'lucide-react';
-import { MealType, STANDARD_ALLERGENS } from '../types/mess';
+import { MealType, STANDARD_ALLERGENS, VEGETARIAN_ALLERGEN_CATEGORIES } from '../types/mess';
 import { getActiveMealStatus, formatTimeAmPm } from '../utils/time';
 
 interface StudentPassViewProps {
@@ -56,6 +63,9 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
   const [rebateReason, setRebateReason] = useState<string>('Outstation / Home Visit');
   const [showAllergyEditor, setShowAllergyEditor] = useState<boolean>(false);
   const [selectedAllergens, setSelectedAllergens] = useState<string[]>(currentStudent.allergies || []);
+  const [allergenSearchQuery, setAllergenSearchQuery] = useState<string>('');
+  const [activeAllergenCategory, setActiveAllergenCategory] = useState<string>('all');
+  const [customIngredientInput, setCustomIngredientInput] = useState<string>('');
 
   const mealTypes: { type: MealType; label: string; timing: string; icon: typeof Coffee }[] = [
     { type: 'breakfast', label: 'Breakfast', timing: '07:30 - 09:30 AM', icon: Coffee },
@@ -95,6 +105,36 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
     }
   };
 
+  const handleAddCustomIngredient = () => {
+    const trimmed = customIngredientInput.trim();
+    if (!trimmed) return;
+    if (!selectedAllergens.includes(trimmed)) {
+      setSelectedAllergens([...selectedAllergens, trimmed]);
+    }
+    setCustomIngredientInput('');
+  };
+
+  const handleRemoveSingleTag = (tagToRemove: string) => {
+    const updated = (currentStudent.allergies || []).filter(a => a !== tagToRemove);
+    updateStudentAllergies(currentStudent.id, updated);
+    setSelectedAllergens(updated);
+    setFeedbackMsg({
+      type: 'success',
+      text: `Removed "${tagToRemove}" from allergy protection profile.`
+    });
+    setTimeout(() => setFeedbackMsg(null), 3500);
+  };
+
+  const handleClearAllTagsDirect = () => {
+    updateStudentAllergies(currentStudent.id, []);
+    setSelectedAllergens([]);
+    setFeedbackMsg({
+      type: 'success',
+      text: 'All allergy tags cleared. No allergen restrictions active.'
+    });
+    setTimeout(() => setFeedbackMsg(null), 3500);
+  };
+
   const handleSaveAllergies = () => {
     updateStudentAllergies(currentStudent.id, selectedAllergens);
     setShowAllergyEditor(false);
@@ -104,6 +144,15 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
     });
     setTimeout(() => setFeedbackMsg(null), 4000);
   };
+
+  // Filtered allergens for the modal
+  const displayedAllergenItems = STANDARD_ALLERGENS.filter(item => {
+    const matchesSearch = item.toLowerCase().includes(allergenSearchQuery.toLowerCase());
+    if (!matchesSearch) return false;
+    if (activeAllergenCategory === 'all') return true;
+    const cat = VEGETARIAN_ALLERGEN_CATEGORIES.find(c => c.category === activeAllergenCategory);
+    return cat ? cat.items.includes(item) : true;
+  });
 
   // Student specific records
   const studentAttendance = attendanceRecords.filter(r => r.studentId === currentStudent.id);
@@ -152,20 +201,20 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
           {/* Pass Top Header */}
           <div className="flex items-start justify-between gap-3 relative z-10">
             <div className="flex items-center space-x-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#ff7a30] to-[#ff9248] p-0.5 shadow-md shadow-orange-500/20 flex items-center justify-center text-white font-black text-lg border border-white/40">
-                CM
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#ff7a30] to-[#ff9248] p-0.5 shadow-md shadow-orange-500/20 flex items-center justify-center text-white font-black text-sm border border-white/40">
+                LPU
               </div>
               <div>
                 <div className="flex items-center space-x-2">
                   <span className="text-[11px] font-black tracking-widest uppercase text-orange-600">
-                    CAMPUS DINING PASS
+                    VERTO DINING PASS
                   </span>
                   <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 text-[10px] font-mono font-bold">
                     ACTIVE 2026
                   </span>
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 font-serif tracking-tight">
-                  Central Hostel Mess Authority
+                  Lovely Professional University
                 </h3>
               </div>
             </div>
@@ -202,16 +251,30 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                 </div>
               </div>
 
-              {/* Allergies Chip Summary on Pass - Light Green Glassmorphism */}
+              {/* Allergies Chip Summary on Pass - Light Green Glassmorphism with Remove Tags */}
               <div className="mt-2.5 pt-2 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-                <div className="flex items-center space-x-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-slate-500">Dietary Allergies:</span>
+                <div className="flex items-center space-x-1.5 flex-wrap gap-1">
+                  <ShieldAlert className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span className="text-slate-500 font-medium">Dietary Allergies:</span>
                   {currentStudent.allergies && currentStudent.allergies.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1 items-center">
                       {currentStudent.allergies.map(alg => (
-                        <span key={alg} className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 font-bold text-[10px]">
-                          {alg}
+                        <span
+                          key={alg}
+                          className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 font-bold text-[10px]"
+                        >
+                          <span>{alg}</span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveSingleTag(alg);
+                            }}
+                            title={`Remove ${alg} tag`}
+                            className="w-3.5 h-3.5 rounded-full bg-emerald-700/10 hover:bg-emerald-700/30 text-emerald-900 inline-flex items-center justify-center cursor-pointer transition-colors"
+                          >
+                            <X className="w-2.5 h-2.5" />
+                          </button>
                         </span>
                       ))}
                     </div>
@@ -223,12 +286,14 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
                 <button
                   onClick={() => {
                     setSelectedAllergens(currentStudent.allergies || []);
+                    setAllergenSearchQuery('');
+                    setActiveAllergenCategory('all');
                     setShowAllergyEditor(true);
                   }}
                   className="px-2.5 py-0.5 rounded-full bg-white/80 hover:bg-white text-orange-600 text-[10px] font-bold border border-orange-200 shadow-xs transition flex items-center gap-1 cursor-pointer"
                 >
                   <Edit2 className="w-3 h-3" />
-                  <span>Edit</span>
+                  <span>Configure</span>
                 </button>
               </div>
             </div>
@@ -309,32 +374,54 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
               </div>
             </div>
 
-            {/* Registered Allergies Banner */}
-            <div className="mt-4 p-4 sm:p-5 rounded-[26px] bg-white/60 border border-white/90 backdrop-blur-xl shadow-xs space-y-2">
+            {/* Registered Allergies Banner / Allergy Protection Section */}
+            <div id="allergy-protection-card" className="mt-4 p-4 sm:p-5 rounded-[26px] bg-white/60 border border-white/90 backdrop-blur-xl shadow-xs space-y-2.5">
               <div className="flex items-center justify-between text-xs font-bold text-slate-800">
                 <div className="flex items-center space-x-1.5 text-orange-700">
                   <HeartPulse className="w-4 h-4 text-orange-600" />
                   <span>Allergy Protection:</span>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedAllergens(currentStudent.allergies || []);
-                    setShowAllergyEditor(true);
-                  }}
-                  className="text-[11px] text-orange-600 hover:text-orange-700 underline font-bold cursor-pointer"
-                >
-                  Manage Allergies
-                </button>
+                <div className="flex items-center space-x-2">
+                  {currentStudent.allergies && currentStudent.allergies.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleClearAllTagsDirect}
+                      className="text-[10px] text-slate-500 hover:text-emerald-700 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
+                    >
+                      <Trash2 className="w-2.5 h-2.5" />
+                      <span>Clear Tags</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setSelectedAllergens(currentStudent.allergies || []);
+                      setAllergenSearchQuery('');
+                      setActiveAllergenCategory('all');
+                      setShowAllergyEditor(true);
+                    }}
+                    className="text-[11px] text-orange-600 hover:text-orange-700 underline font-bold cursor-pointer"
+                  >
+                    Manage Allergies
+                  </button>
+                </div>
               </div>
 
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1.5 items-center">
                 {currentStudent.allergies && currentStudent.allergies.length > 0 ? (
                   currentStudent.allergies.map(alg => (
                     <span
                       key={alg}
-                      className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 text-xs font-bold"
+                      className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-400/40 text-xs font-bold shadow-2xs"
                     >
-                      {alg}
+                      <span>{alg}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSingleTag(alg)}
+                        title={`Remove ${alg} tag`}
+                        className="w-4 h-4 rounded-full bg-emerald-700/15 hover:bg-emerald-700/30 text-emerald-900 inline-flex items-center justify-center cursor-pointer transition-colors"
+                      >
+                        <X className="w-2.5 h-2.5" />
+                      </button>
                     </span>
                   ))
                 ) : (
@@ -522,79 +609,222 @@ export const StudentPassView: React.FC<StudentPassViewProps> = ({
         </div>
       </div>
 
-      {/* Allergy Setup Modal */}
+      {/* Allergy Setup Modal - Comprehensive Vegetarian Food Allergens Catalog */}
       {showAllergyEditor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-xl animate-in fade-in duration-150">
-          <div className="w-full max-w-lg rounded-[36px] bg-white/80 backdrop-blur-3xl shadow-[0_24px_60px_-15px_rgba(249,115,22,0.2)] border border-white p-6 sm:p-8 space-y-4 text-slate-800">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-2xl bg-orange-500/15 text-orange-600 flex items-center justify-center border border-orange-200">
-                <HeartPulse className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-slate-900">Configure Student Allergens</h3>
-                <p className="text-xs text-slate-500">
-                  Select known food allergies for automatic menu warnings
-                </p>
-              </div>
-            </div>
-
-            <p className="text-xs text-slate-600 leading-relaxed">
-              When any selected allergen is present in hostel recipes, you will receive highlighted alert badges on the daily menu and pre-order confirmation steps.
-            </p>
-
-            {/* Allergen Checkboxes - Light Green Active State */}
-            <div className="grid grid-cols-2 gap-2.5 pt-2">
-              {STANDARD_ALLERGENS.map((alg) => {
-                const isChecked = selectedAllergens.includes(alg);
-                return (
-                  <button
-                    key={alg}
-                    type="button"
-                    onClick={() => handleToggleAllergen(alg)}
-                    className={`p-3 rounded-2xl text-left text-xs font-semibold border transition-all flex items-center justify-between cursor-pointer ${
-                      isChecked
-                        ? 'bg-emerald-500/15 border-emerald-400 text-emerald-900 shadow-xs'
-                        : 'bg-white/60 border-orange-200/70 text-slate-600 hover:bg-white'
-                    }`}
-                  >
-                    <span>{alg}</span>
-                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] ${isChecked ? 'bg-emerald-600 text-white font-bold' : 'border border-slate-300'}`}>
-                      {isChecked ? <Check className="w-2.5 h-2.5" /> : null}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-150 overflow-y-auto">
+          <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-[36px] bg-white/90 backdrop-blur-3xl shadow-[0_24px_60px_-15px_rgba(249,115,22,0.25)] border border-white p-5 sm:p-7 space-y-4 text-slate-800 my-auto">
+            
+            {/* Modal Header */}
+            <div className="flex items-start justify-between gap-3 border-b border-orange-200/50 pb-3.5">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 border border-white/40 shrink-0">
+                  <HeartPulse className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                      Food Allergy & Dietary Protection
+                    </h3>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
+                      <Leaf className="w-3 h-3" />
+                      <span>100% Veg Items</span>
                     </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {selectedAllergens.length > 0 && (
-              <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-                <span className="text-emerald-700 font-semibold">{selectedAllergens.length} active allergens selected</span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedAllergens([])}
-                  className="text-orange-600 hover:text-orange-700 hover:underline cursor-pointer font-semibold"
-                >
-                  Clear All
-                </button>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Select any vegetarian food ingredients humans can be allergic to (all non-veg items strictly removed)
+                  </p>
+                </div>
               </div>
-            )}
 
-            <div className="flex items-center justify-end space-x-2 pt-4 border-t border-orange-200/50">
               <button
                 type="button"
                 onClick={() => setShowAllergyEditor(false)}
-                className="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-orange-100/50 rounded-full transition cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer transition-colors shrink-0"
               >
-                Cancel
+                <X className="w-4 h-4" />
               </button>
-              <ChromeButton
-                type="button"
-                onClick={handleSaveAllergies}
-                className="px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white rounded-full transition shadow-lg shadow-orange-500/20 cursor-pointer border border-white/30"
-              >
-                Save Dietary Profile
-              </ChromeButton>
             </div>
+
+            {/* Currently Active Added Tags Strip */}
+            <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-300/60 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-emerald-900">
+                <div className="flex items-center space-x-1.5">
+                  <Tag className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Currently Added Allergy Tags ({selectedAllergens.length}):</span>
+                </div>
+                {selectedAllergens.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAllergens([])}
+                    className="text-[11px] text-orange-600 hover:text-orange-800 hover:underline cursor-pointer font-bold flex items-center gap-1"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    <span>Remove All Added Tags</span>
+                  </button>
+                )}
+              </div>
+
+              {selectedAllergens.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                  {selectedAllergens.map((alg) => (
+                    <span
+                      key={alg}
+                      className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full bg-white text-emerald-900 border border-emerald-400/60 text-xs font-bold shadow-2xs animate-in zoom-in-95 duration-100"
+                    >
+                      <span>{alg}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleAllergen(alg)}
+                        title={`Remove ${alg}`}
+                        className="w-4 h-4 rounded-full bg-emerald-100 hover:bg-emerald-300 text-emerald-900 inline-flex items-center justify-center cursor-pointer transition-colors"
+                      >
+                        <X className="w-2.5 h-2.5" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[11px] text-slate-500 italic">
+                  No allergy tags currently selected. Search or click any vegetarian ingredient below to add protection tags.
+                </p>
+              )}
+            </div>
+
+            {/* Search & Custom Ingredient Input Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+              <div className="sm:col-span-7 relative">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={allergenSearchQuery}
+                  onChange={(e) => setAllergenSearchQuery(e.target.value)}
+                  placeholder="Search 80+ vegetarian allergens (e.g. Paneer, Mustard, Garlic, Soy, Peanuts)..."
+                  className="w-full text-xs pl-9 pr-3.5 py-2.5 rounded-2xl bg-white border border-orange-200/80 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 shadow-xs"
+                />
+                {allergenSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setAllergenSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="sm:col-span-5 flex items-center space-x-1.5">
+                <input
+                  type="text"
+                  value={customIngredientInput}
+                  onChange={(e) => setCustomIngredientInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddCustomIngredient();
+                    }
+                  }}
+                  placeholder="Add custom ingredient..."
+                  className="flex-1 text-xs px-3 py-2.5 rounded-2xl bg-white border border-orange-200/80 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/40 shadow-xs"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddCustomIngredient}
+                  disabled={!customIngredientInput.trim()}
+                  className="px-3 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:opacity-40 text-white rounded-2xl text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1 shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Category Filter Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
+              <button
+                type="button"
+                onClick={() => setActiveAllergenCategory('all')}
+                className={`px-3 py-1.5 rounded-full font-bold transition-all whitespace-nowrap cursor-pointer text-[11px] ${
+                  activeAllergenCategory === 'all'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white/70 text-slate-600 hover:bg-white border border-orange-200/60'
+                }`}
+              >
+                All Ingredients ({STANDARD_ALLERGENS.length})
+              </button>
+              {VEGETARIAN_ALLERGEN_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.category}
+                  type="button"
+                  onClick={() => setActiveAllergenCategory(cat.category)}
+                  className={`px-3 py-1.5 rounded-full font-bold transition-all whitespace-nowrap cursor-pointer text-[11px] ${
+                    activeAllergenCategory === cat.category
+                      ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-xs'
+                      : 'bg-white/70 text-slate-600 hover:bg-white border border-orange-200/60'
+                  }`}
+                >
+                  {cat.category}
+                </button>
+              ))}
+            </div>
+
+            {/* Scrollable Allergen Ingredients Grid */}
+            <div className="flex-1 overflow-y-auto max-h-72 p-1 space-y-3 pr-1">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {displayedAllergenItems.map((alg) => {
+                  const isChecked = selectedAllergens.includes(alg);
+                  return (
+                    <button
+                      key={alg}
+                      type="button"
+                      onClick={() => handleToggleAllergen(alg)}
+                      className={`p-2.5 rounded-2xl text-left text-xs font-semibold border transition-all flex items-center justify-between cursor-pointer ${
+                        isChecked
+                          ? 'bg-emerald-500/15 border-emerald-400 text-emerald-950 shadow-xs'
+                          : 'bg-white/70 border-orange-100 hover:border-orange-300 text-slate-700 hover:bg-white'
+                      }`}
+                    >
+                      <span className="truncate pr-1">{alg}</span>
+                      <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] shrink-0 ${
+                        isChecked ? 'bg-emerald-600 text-white font-bold' : 'border border-slate-300'
+                      }`}>
+                        {isChecked ? <Check className="w-2.5 h-2.5" /> : null}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {displayedAllergenItems.length === 0 && (
+                <div className="text-center py-6 text-slate-500 space-y-1">
+                  <p className="text-xs font-semibold">No ingredients matching "{allergenSearchQuery}".</p>
+                  <p className="text-[11px]">You can type it above and tap "+ Add" to add a custom allergy tag.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-orange-200/50">
+              <div className="text-xs text-slate-500">
+                <span className="font-bold text-emerald-700 font-mono">{selectedAllergens.length}</span> tags active
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAllergyEditor(false)}
+                  className="px-4 sm:px-5 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-orange-100/50 rounded-full transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <ChromeButton
+                  type="button"
+                  onClick={handleSaveAllergies}
+                  className="px-5 sm:px-6 py-2.5 text-xs font-bold bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white rounded-full transition shadow-lg shadow-orange-500/20 cursor-pointer border border-white/30"
+                >
+                  Save Dietary Profile
+                </ChromeButton>
+              </div>
+            </div>
+
           </div>
         </div>
       )}

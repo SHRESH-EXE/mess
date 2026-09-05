@@ -3,27 +3,27 @@ import { DayMenu, StudentProfile, MessAnnouncement, AcademicBlockOrder, Anonymou
 export const INITIAL_ANNOUNCEMENTS: MessAnnouncement[] = [
   {
     id: 'ann-1',
-    title: 'Sunday Grand Feast: Pure Veg Dum Biryani & Gulab Jamun',
+    title: 'LPU Sunday Grand Feast: Amritsari Dum Biryani, Shahi Paneer & Gulab Jamun',
     date: 'Upcoming Sunday',
     priority: 'high',
-    message: 'Special dinner served between 7:30 PM - 10:00 PM with Royal Paneer Dum Biryani, Mirchi Ka Salan, Burani Raita & Hot Gulab Jamun.',
-    tag: 'Feast Menu'
+    message: 'Special dinner served between 7:30 PM - 10:00 PM across all BH & GH Mess Halls with Royal Paneer Dum Biryani, Dal Makhani, Butter Naan & Hot Gulab Jamun.',
+    tag: 'LPU Feast'
   },
   {
     id: 'ann-2',
-    title: 'Allergen Information & Kitchen Transparency',
-    date: 'Active Policy',
+    title: 'Law Gate & Maheru Partner Delivery (Within 10 km)',
+    date: 'Active Daily',
     priority: 'normal',
-    message: 'All kitchen ingredients and potential allergens (Dairy, Gluten, Nuts, Eggs) are now tracked. Check dish tags before dining.',
-    tag: 'Safety'
+    message: 'Order food directly from 12+ top rated Law Gate, Maheru & GT Road Phagwara restaurants with express delivery to all LPU Boys & Girls Hostel security desks.',
+    tag: 'Nearby Dining'
   },
   {
     id: 'ann-3',
     title: 'Academic Block Lunch Parcel Timings',
     date: 'Active Daily',
     priority: 'normal',
-    message: 'Place parcel orders before 12:15 PM for 1:00 PM batch delivery to CS Block, Library, and Tech Shed.',
-    tag: 'Delivery Update'
+    message: 'Place parcel orders before 12:15 PM for 1:00 PM batch delivery to Block 34 (CSE), Block 38 (MSB), Block 14 (Mech), and Central Library (Block 28).',
+    tag: 'Block Delivery'
   }
 ];
 
@@ -31,104 +31,133 @@ export const INITIAL_STUDENTS: StudentProfile[] = [
   {
     id: 'stu-1',
     name: 'Aarav Sharma',
-    rollNo: '22CS0142',
-    hostel: 'Aryabhatta Hostel (Block-B)',
+    rollNo: '12204567',
+    hostel: 'BH-4 (Bhabha House)',
     roomNo: 'B-312',
-    email: 'aarav.sharma@campus.edu',
+    email: 'aarav.12204567@lpu.in',
     phone: '+91 9335568951',
     planName: 'Full Mess Pass (4 Meals/Day)',
     planType: 'full',
     totalMealsOpted: 120,
     mealsConsumedMonth: 78,
     photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
-    barcode: 'CMH-22CS0142-2026',
+    barcode: 'LPU-12204567-2026',
     active: true,
-    department: 'Computer Science & Engg',
+    department: 'School of Computer Science & Engg',
     semester: '6th Semester',
-    allergies: ['Dairy', 'Tree Nuts']
+    allergies: []
   },
   {
     id: 'stu-2',
     name: 'Priya Patel',
-    rollNo: '23EE0089',
-    hostel: 'Gargi Girls Hostel (Block-A)',
-    roomNo: 'A-204',
-    email: 'priya.patel@campus.edu',
+    rollNo: '12115982',
+    hostel: 'GH-2 (Mother Teresa House)',
+    roomNo: 'G-204',
+    email: 'priya.12115982@lpu.in',
     phone: '+91 9335568951',
     planName: 'Flexi Pass (Lunch + Dinner)',
     planType: 'lunch_dinner',
     totalMealsOpted: 60,
     mealsConsumedMonth: 41,
     photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80',
-    barcode: 'CMH-23EE0089-2026',
+    barcode: 'LPU-12115982-2026',
     active: true,
-    department: 'Electrical Engineering',
+    department: 'Mittal School of Business (MSB)',
     semester: '4th Semester',
-    allergies: ['Gluten']
+    allergies: []
   },
   {
     id: 'stu-3',
-    name: 'Rohan Verma',
-    rollNo: '21ME0310',
-    hostel: 'CV Raman Hostel (Block-C)',
-    roomNo: 'C-108',
-    email: 'rohan.verma@campus.edu',
+    name: 'Harpreet Singh',
+    rollNo: '12003891',
+    hostel: 'BH-2 (Kalam House)',
+    roomNo: 'B-108',
+    email: 'harpreet.12003891@lpu.in',
     phone: '+91 9335568951',
     planName: 'Full Mess Pass (4 Meals/Day)',
     planType: 'full',
     totalMealsOpted: 120,
     mealsConsumedMonth: 82,
     photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
-    barcode: 'CMH-21ME0310-2026',
+    barcode: 'LPU-12003891-2026',
     active: true,
-    department: 'Mechanical Engineering',
+    department: 'School of Mechanical Engineering',
     semester: '8th Semester',
-    allergies: ['Peanuts', 'Eggs']
+    allergies: []
   },
   {
     id: 'stu-4',
-    name: 'Ananya Deshmukh',
-    rollNo: '23BT0045',
-    hostel: 'Sarojini Hostel (Block-D)',
-    roomNo: 'D-118',
-    email: 'ananya.d@campus.edu',
+    name: 'Ananya Sen',
+    rollNo: '12301844',
+    hostel: 'GH-6 (Sarojini House)',
+    roomNo: 'G-118',
+    email: 'ananya.12301844@lpu.in',
     phone: '+91 9335568951',
     planName: 'Full Mess Pass (4 Meals/Day)',
     planType: 'full',
     totalMealsOpted: 120,
     mealsConsumedMonth: 65,
     photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
-    barcode: 'CMH-23BT0045-2026',
+    barcode: 'LPU-12301844-2026',
     active: true,
-    department: 'Bio-Technology',
+    department: 'School of Bioengineering & Biosciences',
     semester: '4th Semester',
-    allergies: ['Soy', 'Dairy']
+    allergies: []
   },
   {
     id: 'stu-5',
     name: 'Vikramaditya Rao',
-    rollNo: '22CE0199',
-    hostel: 'Aryabhatta Hostel (Block-B)',
+    rollNo: '12208942',
+    hostel: 'BH-7 (Tagore House)',
     roomNo: 'B-105',
-    email: 'vikram.rao@campus.edu',
+    email: 'vikram.12208942@lpu.in',
     phone: '+91 9335568951',
     planName: 'Full Mess Pass (4 Meals/Day)',
     planType: 'full',
     totalMealsOpted: 120,
     mealsConsumedMonth: 90,
     photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
-    barcode: 'CMH-22CE0199-2026',
+    barcode: 'LPU-12208942-2026',
     active: true,
-    department: 'Civil Engineering',
+    department: 'School of Civil Engineering',
     semester: '6th Semester',
-    allergies: ['Shellfish', 'Fish']
+    allergies: []
   }
 ];
 
-export const ACADEMIC_BLOCKS: string[] = Array.from(
-  { length: 30 },
-  (_, i) => `Academic Block ${i + 1}`
-);
+export const ACADEMIC_BLOCKS: string[] = [
+  'Block 34 (School of Computer Science & Engg)',
+  'Block 38 (Mittal School of Business - MSB)',
+  'Block 14 (School of Mechanical & Aerospace Engg)',
+  'Block 55 (School of Pharmaceutical Sciences)',
+  'Block 56 (School of Bioengineering & Biosciences)',
+  'Block 25 (School of Law & Legal Studies)',
+  'Block 28 (Central Library & Student Welfare Wing)',
+  'Block 29 (School of Fashion Design & Animation)',
+  'Block 32 (School of Electronics & Electrical Engg)',
+  'Block 33 (Robotics & Automation Hub)',
+  'Block 36 (School of Civil Engg & Architecture)',
+  'Block 13 (School of Hotel Management & Tourism)',
+  'Block 26 (School of Agriculture & Food Technology)',
+  'Block 27 (School of Social Sciences & Humanities)',
+  'Block 37 (Verto Innovation & Incubation Centre)',
+  'UniMall Level 1 (Food Court Plaza)',
+  'UniMall Level 2 (Student Hub & Retail)',
+  'Baldev Raj Mittal Unipolis (OAT)',
+  'Shanti Devi Mittal Auditorium (SDM)',
+  'Indoor Sports Complex (Block 20)',
+  'UniHospital & Healthcare Centre',
+  'Block 1 (Administrative Block)',
+  'Block 2 (Admissions & Registrar Office)',
+  'Block 3 (Examination Wing)',
+  'Block 4 (International Affairs Office)',
+  'Block 5 (Division of Student Welfare - DSW)',
+  'Block 6 (Placement & Career Services)',
+  'Block 7 (Faculty & Research Chambers)',
+  'Block 8 (Department of Mathematics)',
+  'Block 9 (Department of Physics & Chemistry)',
+  'Block 10 (Department of English & Foreign Languages)'
+];
 
 export const DEFAULT_MESS_WHATSAPP_NUMBER = '919335568951';
 

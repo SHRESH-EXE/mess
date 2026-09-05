@@ -642,7 +642,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-2xl bg-orange-50/60 border border-orange-200/80">
                     <div>
                       <div className="text-[11px] font-bold text-slate-700 mb-1">
-                        Food Taste &amp; Quality: <strong className="text-[#ea580c]">{fcOverallRating}★</strong>
+                        Food Taste &amp; Quality: <strong className="text-[#ea580c]">{fcOverallRating} / 5</strong>
                       </div>
                       <div className="flex space-x-1">
                         {[1, 2, 3, 4, 5].map((s) => (
@@ -664,7 +664,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
 
                     <div>
                       <div className="text-[11px] font-bold text-slate-700 mb-1">
-                        Hygiene &amp; Cleanliness: <strong className="text-[#ea580c]">{fcHygieneRating}★</strong>
+                        Hygiene &amp; Cleanliness: <strong className="text-[#ea580c]">{fcHygieneRating} / 5</strong>
                       </div>
                       <div className="flex space-x-1">
                         {[1, 2, 3, 4, 5].map((s) => (
@@ -686,7 +686,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
 
                     <div>
                       <div className="text-[11px] font-bold text-slate-700 mb-1">
-                        Speed &amp; Service: <strong className="text-[#ea580c]">{fcSpeedRating}★</strong>
+                        Speed &amp; Service: <strong className="text-[#ea580c]">{fcSpeedRating} / 5</strong>
                       </div>
                       <div className="flex space-x-1">
                         {[1, 2, 3, 4, 5].map((s) => (

@@ -7,7 +7,9 @@ import {
   FoodCourtRushLevel,
   FoodCourtFeedback,
   FoodCourtFeedbackCategory,
-  STANDARD_ALLERGENS
+  NearbyRestaurant,
+  NearbyRestaurantItem,
+  NearbyRestaurantOrder
 } from '../types/mess';
 import ChromeButton from './ui/chrome-button';
 import { soundEffects } from '../utils/audio';
@@ -50,7 +52,10 @@ import {
   Receipt,
   IndianRupee,
   Volume2,
-  Download
+  Download,
+  MapPin,
+  Building,
+  Navigation
 } from 'lucide-react';
 
 interface FoodCourtOwnerDashboardProps {
@@ -64,6 +69,9 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
     foodCourtMenuItems,
     foodCourtOrders,
     foodCourtFeedbacks,
+    nearbyRestaurants,
+    nearbyRestoItems,
+    nearbyRestoOrders,
     updateFoodCourtOrderStatus,
     updateStallRushLevel,
     updateFoodCourtStallDetails,
@@ -72,10 +80,19 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
     deleteFoodCourtItem,
     toggleFoodCourtItemAvailability,
     updateFoodCourtFeedbackStatus,
-    switchVendorStall
+    switchVendorStall,
+    updateNearbyRestoOrderStatus,
+    updateNearbyRestaurantDetails,
+    addNearbyRestoItem,
+    updateNearbyRestoItem,
+    deleteNearbyRestoItem,
+    toggleNearbyRestoItemAvailability
   } = useMess();
 
-  // Active Stall determination
+  const isNearbyRestoPartner = currentSession?.partnerType === 'nearby_resto' || Boolean(currentSession?.restoId);
+
+  // Active Partner determination
+  const currentResto = nearbyRestaurants.find(r => r.id === currentSession?.restoId) || nearbyRestaurants[0];
   const currentStallId = currentSession?.stallId || 'stall-rolls';
   const currentStall = foodCourtStalls.find(s => s.id === currentStallId) || foodCourtStalls[0];
 
@@ -84,54 +101,68 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
 
   // Fast Token Lookup in Orders Tab
   const [tokenSearchQuery, setTokenSearchQuery] = useState<string>('');
-  const [calledTokenMessage, setCalledTokenMessage] = useState<string | null>(null);
 
   // Menu Search & Filter State
   const [menuSearchQuery, setMenuSearchQuery] = useState<string>('');
   const [selectedMenuCategory, setSelectedMenuCategory] = useState<string>('all');
   const [isAddDishModalOpen, setIsAddDishModalOpen] = useState<boolean>(false);
   const [editingItem, setEditingItem] = useState<FoodCourtItem | null>(null);
+  const [editingRestoItem, setEditingRestoItem] = useState<NearbyRestaurantItem | null>(null);
 
   // New / Edit Dish Form State
   const [dishName, setDishName] = useState<string>('');
-  const [dishCategory, setDishCategory] = useState<FoodCourtItem['category']>('Rolls & Wraps');
+  const [dishCategory, setDishCategory] = useState<string>('Rolls & Wraps');
   const [dishPrice, setDishPrice] = useState<number>(80);
+  const [dishDiscountedPrice, setDishDiscountedPrice] = useState<number | undefined>(undefined);
   const [dishPrepMins, setDishPrepMins] = useState<number>(8);
   const [dishDescription, setDishDescription] = useState<string>('');
   const [dishIsVeg, setDishIsVeg] = useState<boolean>(true);
   const [dishCalories, setDishCalories] = useState<number>(350);
   const [dishAllergens, setDishAllergens] = useState<string[]>([]);
   const [dishIsBestSeller, setDishIsBestSeller] = useState<boolean>(false);
+  const [dishIsMustTry, setDishIsMustTry] = useState<boolean>(false);
   const [dishAvailable, setDishAvailable] = useState<boolean>(true);
+  const [dishImageUrl, setDishImageUrl] = useState<string>('');
 
-  // Operations Form State
+  // Operations Form State for Stalls
   const [stallNotice, setStallNotice] = useState<string>(currentStall.tagline || '');
   const [stallOpeningHours, setStallOpeningHours] = useState<string>(currentStall.openingHours || '10:00 AM - 11:00 PM');
   const [isNoticeSaved, setIsNoticeSaved] = useState<boolean>(false);
 
+  // Operations Form State for Restaurants
+  const [restoDeliveryTime, setRestoDeliveryTime] = useState<string>(currentResto.deliveryTime || '20-30 mins');
+  const [restoDiscountOffer, setRestoDiscountOffer] = useState<string>(currentResto.studentDiscount || '');
+  const [restoTagline, setRestoTagline] = useState<string>(currentResto.tagline || '');
+  const [restoSpecialty, setRestoSpecialty] = useState<string>(currentResto.famousFor || currentResto.specialty || '');
+  const [restoPhone, setRestoPhone] = useState<string>(currentResto.phone || '');
+  const [restoAddress, setRestoAddress] = useState<string>(currentResto.address || '');
+
   // Feedback Filter State
   const [feedbackCategoryFilter, setFeedbackCategoryFilter] = useState<string>('all');
   const [feedbackSentimentFilter, setFeedbackSentimentFilter] = useState<string>('all');
-  const [replyingFeedbackId, setReplyingFeedbackId] = useState<string | null>(null);
-  const [ownerReplyText, setOwnerReplyText] = useState<string>('');
 
   // Orders Filter State
   const [orderStatusFilter, setOrderStatusFilter] = useState<'all' | 'active' | 'Ready' | 'Completed'>('active');
 
-  // Items for this stall
-  const stallMenuItems = useMemo(() => {
+  // ==========================================
+  // ITEMS FOR ACTIVE PARTNER
+  // ==========================================
+  const activeMenuItems = useMemo(() => {
+    if (isNearbyRestoPartner) {
+      return nearbyRestoItems.filter(item => item.restoId === currentResto.id);
+    }
     return foodCourtMenuItems.filter(item => item.stallId === currentStall.id);
-  }, [foodCourtMenuItems, currentStall.id]);
+  }, [isNearbyRestoPartner, nearbyRestoItems, currentResto.id, foodCourtMenuItems, currentStall.id]);
 
-  // Categories present in this stall's menu
-  const stallCategories = useMemo(() => {
-    const cats = Array.from(new Set(stallMenuItems.map(i => i.category)));
+  // Categories present in this partner's menu
+  const activeCategories = useMemo(() => {
+    const cats = Array.from(new Set(activeMenuItems.map(i => i.category)));
     return ['all', ...cats];
-  }, [stallMenuItems]);
+  }, [activeMenuItems]);
 
   // Filtered Menu Items
   const filteredMenuItems = useMemo(() => {
-    return stallMenuItems.filter(item => {
+    return activeMenuItems.filter(item => {
       const matchesCategory = selectedMenuCategory === 'all' || item.category === selectedMenuCategory;
       const matchesSearch =
         !menuSearchQuery ||
@@ -139,59 +170,66 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
         item.description.toLowerCase().includes(menuSearchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [stallMenuItems, selectedMenuCategory, menuSearchQuery]);
+  }, [activeMenuItems, selectedMenuCategory, menuSearchQuery]);
 
-  // Orders for this stall
-  const stallOrders = useMemo(() => {
+  // ==========================================
+  // ORDERS FOR ACTIVE PARTNER
+  // ==========================================
+  const activeOrders = useMemo(() => {
+    if (isNearbyRestoPartner) {
+      return nearbyRestoOrders.filter(o => o.restoId === currentResto.id);
+    }
     return foodCourtOrders.filter(o => o.stallId === currentStall.id);
-  }, [foodCourtOrders, currentStall.id]);
+  }, [isNearbyRestoPartner, nearbyRestoOrders, currentResto.id, foodCourtOrders, currentStall.id]);
 
   const filteredOrders = useMemo(() => {
-    return stallOrders.filter(o => {
+    return activeOrders.filter((o: any) => {
+      const status = o.status;
       const matchStatus =
         orderStatusFilter === 'all'
           ? true
           : orderStatusFilter === 'active'
-          ? o.status === 'Placed' || o.status === 'Preparing'
+          ? status === 'Placed' || status === 'Preparing' || status === 'Received' || status === 'Confirmed' || status === 'Cooking' || status === 'Out for Delivery'
           : orderStatusFilter === 'Ready'
-          ? o.status === 'Ready'
+          ? status === 'Ready' || status === 'Out for Delivery'
           : orderStatusFilter === 'Completed'
-          ? o.status === 'Completed'
+          ? status === 'Completed' || status === 'Delivered'
           : true;
 
       const q = tokenSearchQuery.trim().toLowerCase();
+      const orderIdentifier = o.tokenNumber || o.orderNumber || '';
+      const student = o.studentName || '';
+      const phone = o.phoneNumber || o.contactPhone || '';
+
       const matchQuery =
         !q ||
-        o.tokenNumber.toLowerCase().includes(q) ||
-        o.studentName.toLowerCase().includes(q) ||
-        o.phoneNumber.toLowerCase().includes(q) ||
-        o.items.some(i => i.name.toLowerCase().includes(q));
+        orderIdentifier.toLowerCase().includes(q) ||
+        student.toLowerCase().includes(q) ||
+        phone.toLowerCase().includes(q) ||
+        o.items.some((i: any) => i.name.toLowerCase().includes(q));
 
       return matchStatus && matchQuery;
     });
-  }, [stallOrders, orderStatusFilter, tokenSearchQuery]);
+  }, [activeOrders, orderStatusFilter, tokenSearchQuery]);
 
-  // Feedbacks for this stall
+  // Feedbacks for stall
   const stallFeedbacks = useMemo(() => {
     return foodCourtFeedbacks.filter(f => f.stallId === currentStall.id);
   }, [foodCourtFeedbacks, currentStall.id]);
 
-  // Sales & Analytics for this stall
+  // Sales & Analytics
   const salesMetrics = useMemo(() => {
-    const totalOrders = stallOrders.length;
-    const completedOrders = stallOrders.filter(o => o.status === 'Completed').length;
-    const activeOrders = stallOrders.filter(o => o.status === 'Placed' || o.status === 'Preparing').length;
-    const readyOrders = stallOrders.filter(o => o.status === 'Ready').length;
-    const totalGrossRevenue = stallOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+    const totalOrders = activeOrders.length;
+    const completedOrders = activeOrders.filter((o: any) => o.status === 'Completed' || o.status === 'Delivered').length;
+    const activeOrdersCount = activeOrders.filter((o: any) => o.status === 'Placed' || o.status === 'Preparing' || o.status === 'Received' || o.status === 'Confirmed' || o.status === 'Cooking' || o.status === 'Out for Delivery').length;
+    const totalGrossRevenue = activeOrders.reduce((sum: number, o: any) => sum + (o.totalAmount || 0), 0);
     const avgOrderValue = totalOrders > 0 ? Math.round(totalGrossRevenue / totalOrders) : 0;
 
-    // Item popularity ranking
     const itemCounts: { [name: string]: { name: string; quantity: number; revenue: number; category: string } } = {};
-    stallOrders.forEach(order => {
-      order.items.forEach(it => {
+    activeOrders.forEach((order: any) => {
+      order.items.forEach((it: any) => {
         if (!itemCounts[it.name]) {
-          const menuItem = foodCourtMenuItems.find(m => m.id === it.itemId || m.name === it.name);
-          itemCounts[it.name] = { name: it.name, quantity: 0, revenue: 0, category: menuItem?.category || 'Special' };
+          itemCounts[it.name] = { name: it.name, quantity: 0, revenue: 0, category: 'Dish' };
         }
         itemCounts[it.name].quantity += it.quantity;
         itemCounts[it.name].revenue += it.quantity * it.price;
@@ -205,84 +243,64 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
     return {
       totalOrders,
       completedOrders,
-      activeOrders,
-      readyOrders,
+      activeOrdersCount,
       totalGrossRevenue,
       avgOrderValue,
       topSellingDishes
     };
-  }, [stallOrders]);
-
-  const filteredFeedbacks = useMemo(() => {
-    return stallFeedbacks.filter(f => {
-      const matchCat = feedbackCategoryFilter === 'all' || f.category === feedbackCategoryFilter;
-      const matchSent = feedbackSentimentFilter === 'all' || f.sentiment === feedbackSentimentFilter;
-      return matchCat && matchSent;
-    });
-  }, [stallFeedbacks, feedbackCategoryFilter, feedbackSentimentFilter]);
-
-  // Feedback Metrics Calculation
-  const feedbackMetrics = useMemo(() => {
-    if (stallFeedbacks.length === 0) {
-      return {
-        avgRating: 4.8,
-        avgHygiene: 4.7,
-        avgSpeed: 4.5,
-        total: 0,
-        positivePct: 92,
-        neutralPct: 6,
-        criticalPct: 2
-      };
-    }
-    const total = stallFeedbacks.length;
-    const sumOverall = stallFeedbacks.reduce((acc, f) => acc + f.rating, 0);
-    const sumHygiene = stallFeedbacks.reduce((acc, f) => acc + (f.hygieneRating || f.rating), 0);
-    const sumSpeed = stallFeedbacks.reduce((acc, f) => acc + (f.speedRating || f.rating), 0);
-    const positiveCount = stallFeedbacks.filter(f => f.rating >= 4).length;
-    const neutralCount = stallFeedbacks.filter(f => f.rating === 3).length;
-    const criticalCount = stallFeedbacks.filter(f => f.rating <= 2).length;
-
-    return {
-      avgRating: (sumOverall / total).toFixed(1),
-      avgHygiene: (sumHygiene / total).toFixed(1),
-      avgSpeed: (sumSpeed / total).toFixed(1),
-      total,
-      positivePct: Math.round((positiveCount / total) * 100),
-      neutralPct: Math.round((neutralCount / total) * 100),
-      criticalPct: Math.round((criticalCount / total) * 100)
-    };
-  }, [stallFeedbacks]);
+  }, [activeOrders]);
 
   // Modal Open Handlers
   const handleOpenAddModal = () => {
     soundEffects.playTap();
     setEditingItem(null);
+    setEditingRestoItem(null);
     setDishName('');
-    setDishCategory('Rolls & Wraps');
-    setDishPrice(90);
-    setDishPrepMins(8);
+    setDishCategory(isNearbyRestoPartner ? (currentResto.cuisine.split(',')[0] || 'Main Course') : 'Rolls & Wraps');
+    setDishPrice(120);
+    setDishDiscountedPrice(undefined);
+    setDishPrepMins(12);
     setDishDescription('');
     setDishIsVeg(true);
     setDishCalories(380);
     setDishAllergens([]);
     setDishIsBestSeller(false);
+    setDishIsMustTry(false);
     setDishAvailable(true);
+    setDishImageUrl('');
     setIsAddDishModalOpen(true);
   };
 
-  const handleOpenEditModal = (item: FoodCourtItem) => {
+  const handleOpenEditModal = (item: any) => {
     soundEffects.playTap();
-    setEditingItem(item);
-    setDishName(item.name);
-    setDishCategory(item.category);
-    setDishPrice(item.price);
-    setDishPrepMins(item.basePrepMins);
-    setDishDescription(item.description);
-    setDishIsVeg(item.isVeg);
-    setDishCalories(item.calories || 350);
-    setDishAllergens(item.allergens || []);
-    setDishIsBestSeller(item.isBestSeller || false);
-    setDishAvailable(item.available);
+    if (isNearbyRestoPartner) {
+      setEditingRestoItem(item as NearbyRestaurantItem);
+      setEditingItem(null);
+      setDishName(item.name);
+      setDishCategory(item.category);
+      setDishPrice(item.price);
+      setDishDiscountedPrice(item.discountedPrice);
+      setDishDescription(item.description);
+      setDishIsVeg(true); // Always strictly veg for portal
+      setDishIsBestSeller(item.isBestseller || false);
+      setDishIsMustTry(item.isMustTry || false);
+      setDishAvailable(item.available !== false);
+      setDishImageUrl(item.imageUrl || '');
+    } else {
+      setEditingItem(item as FoodCourtItem);
+      setEditingRestoItem(null);
+      setDishName(item.name);
+      setDishCategory(item.category);
+      setDishPrice(item.price);
+      setDishPrepMins(item.basePrepMins);
+      setDishDescription(item.description);
+      setDishIsVeg(item.isVeg);
+      setDishCalories(item.calories || 350);
+      setDishAllergens(item.allergens || []);
+      setDishIsBestSeller(item.isBestSeller || false);
+      setDishAvailable(item.available);
+      setDishImageUrl('');
+    }
     setIsAddDishModalOpen(true);
   };
 
@@ -290,192 +308,257 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
     e.preventDefault();
     if (!dishName.trim()) return;
 
-    if (editingItem) {
-      updateFoodCourtItem({
-        ...editingItem,
-        name: dishName.trim(),
-        category: dishCategory,
-        price: Number(dishPrice) || 50,
-        basePrepMins: Number(dishPrepMins) || 5,
-        description: dishDescription.trim(),
-        isVeg: dishIsVeg,
-        calories: Number(dishCalories) || 300,
-        allergens: dishAllergens,
-        isBestSeller: dishIsBestSeller,
-        available: dishAvailable
-      });
+    if (isNearbyRestoPartner) {
+      if (editingRestoItem) {
+        updateNearbyRestoItem({
+          ...editingRestoItem,
+          name: dishName.trim(),
+          category: dishCategory,
+          price: Number(dishPrice) || 50,
+          discountedPrice: dishDiscountedPrice ? Number(dishDiscountedPrice) : undefined,
+          description: dishDescription.trim(),
+          isVeg: true, // Strictly veg
+          isBestseller: dishIsBestSeller,
+          isMustTry: dishIsMustTry,
+          available: dishAvailable,
+          imageUrl: dishImageUrl.trim() || undefined
+        });
+      } else {
+        addNearbyRestoItem({
+          restoId: currentResto.id,
+          restoName: currentResto.name,
+          name: dishName.trim(),
+          category: dishCategory,
+          price: Number(dishPrice) || 50,
+          discountedPrice: dishDiscountedPrice ? Number(dishDiscountedPrice) : undefined,
+          description: dishDescription.trim(),
+          isVeg: true, // Strictly veg
+          isBestseller: dishIsBestSeller,
+          isMustTry: dishIsMustTry,
+          available: dishAvailable,
+          imageUrl: dishImageUrl.trim() || undefined
+        });
+      }
     } else {
-      addFoodCourtItem({
-        stallId: currentStall.id,
-        stallName: currentStall.name,
-        name: dishName.trim(),
-        category: dishCategory,
-        price: Number(dishPrice) || 50,
-        basePrepMins: Number(dishPrepMins) || 5,
-        description: dishDescription.trim(),
-        isVeg: dishIsVeg,
-        calories: Number(dishCalories) || 300,
-        allergens: dishAllergens,
-        isBestSeller: dishIsBestSeller,
-        available: dishAvailable
-      });
+      if (editingItem) {
+        updateFoodCourtItem({
+          ...editingItem,
+          name: dishName.trim(),
+          category: dishCategory as FoodCourtItem['category'],
+          price: Number(dishPrice) || 50,
+          basePrepMins: Number(dishPrepMins) || 5,
+          description: dishDescription.trim(),
+          isVeg: dishIsVeg,
+          calories: Number(dishCalories) || 300,
+          allergens: dishAllergens,
+          isBestSeller: dishIsBestSeller,
+          available: dishAvailable
+        });
+      } else {
+        addFoodCourtItem({
+          stallId: currentStall.id,
+          stallName: currentStall.name,
+          name: dishName.trim(),
+          category: dishCategory as FoodCourtItem['category'],
+          price: Number(dishPrice) || 50,
+          basePrepMins: Number(dishPrepMins) || 5,
+          description: dishDescription.trim(),
+          isVeg: dishIsVeg,
+          calories: Number(dishCalories) || 300,
+          allergens: dishAllergens,
+          isBestSeller: dishIsBestSeller,
+          available: dishAvailable
+        });
+      }
     }
 
     setIsAddDishModalOpen(false);
   };
 
-  const handleSaveStallNotice = (e: React.FormEvent) => {
+  const handleSaveOperations = (e: React.FormEvent) => {
     e.preventDefault();
-    updateFoodCourtStallDetails(currentStall.id, {
-      tagline: stallNotice.trim(),
-      openingHours: stallOpeningHours.trim()
-    });
+    if (isNearbyRestoPartner) {
+      updateNearbyRestaurantDetails(currentResto.id, {
+        deliveryTime: restoDeliveryTime.trim(),
+        studentDiscount: restoDiscountOffer.trim(),
+        tagline: restoTagline.trim(),
+        famousFor: restoSpecialty.trim(),
+        phone: restoPhone.trim(),
+        address: restoAddress.trim()
+      });
+    } else {
+      updateFoodCourtStallDetails(currentStall.id, {
+        tagline: stallNotice.trim(),
+        openingHours: stallOpeningHours.trim()
+      });
+    }
     setIsNoticeSaved(true);
     setTimeout(() => setIsNoticeSaved(false), 2500);
   };
 
-  const handleToggleAllergen = (allergen: string) => {
-    setDishAllergens(prev =>
-      prev.includes(allergen) ? prev.filter(a => a !== allergen) : [...prev, allergen]
-    );
-  };
-
   return (
     <div className="space-y-6">
-      {/* 1. TOP STALL CONTROL BANNER (Liquid Glassmorphism) */}
+      {/* 1. TOP PARTNER CONTROL BANNER */}
       <section className="glassmorphism-card rounded-3xl p-5 sm:p-7 border border-white/90 shadow-lg relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
           
-          {/* Left: Stall Identity & Stall Switcher */}
+          {/* Left: Outlet Identity & Universal Switcher */}
           <div className="flex items-start sm:items-center space-x-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-md shadow-orange-500/25 border border-white/40 shrink-0">
-              <Store className="w-7 h-7 text-white" />
+              {isNearbyRestoPartner ? (
+                <Store className="w-7 h-7 text-white" />
+              ) : (
+                <Store className="w-7 h-7 text-white" />
+              )}
             </div>
 
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full bg-slate-900 text-white font-mono text-[11px] font-bold">
-                  {currentStall.stallNumber}
+                  {isNearbyRestoPartner ? 'PARTNER RESTAURANT' : currentStall.stallNumber}
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-orange-500/15 text-[#ea580c] text-[11px] font-extrabold border border-orange-300">
-                  {currentStall.cuisine}
+                  {isNearbyRestoPartner ? currentResto.cuisine.split(',')[0] : currentStall.cuisine}
                 </span>
-                {currentStall.isOpen ? (
-                  <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 text-[11px] font-extrabold border border-emerald-300">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>OPEN FOR ORDERS</span>
-                  </span>
+                {isNearbyRestoPartner ? (
+                  currentResto.isOpen ? (
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 text-[11px] font-extrabold border border-emerald-300">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>OPEN FOR DELIVERY</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-red-500/15 text-red-800 text-[11px] font-extrabold border border-red-300">
+                      <span className="w-2 h-2 rounded-full bg-red-500" />
+                      <span>CLOSED / BREAK</span>
+                    </span>
+                  )
                 ) : (
-                  <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-red-500/15 text-red-800 text-[11px] font-extrabold border border-red-300">
-                    <span className="w-2 h-2 rounded-full bg-red-500" />
-                    <span>CLOSED / ON BREAK</span>
+                  currentStall.isOpen ? (
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 text-[11px] font-extrabold border border-emerald-300">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>OPEN FOR ORDERS</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-red-500/15 text-red-800 text-[11px] font-extrabold border border-red-300">
+                      <span className="w-2 h-2 rounded-full bg-red-500" />
+                      <span>CLOSED / ON BREAK</span>
+                    </span>
+                  )
+                )}
+
+                {/* Pure Veg or Portal Veg Tag */}
+                {isNearbyRestoPartner && (
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                    currentResto.isPureVeg
+                      ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                      : 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                  }`}>
+                    {currentResto.isPureVeg ? '100% Pure Veg Kitchen' : 'Strict Veg-Only Portal Menu'}
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center space-x-2 mt-1">
+              <div className="flex flex-wrap items-center gap-3 mt-1.5">
                 <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  {currentStall.name}
+                  {isNearbyRestoPartner ? currentResto.name : currentStall.name}
                 </h1>
                 
-                {/* Stall Switcher Dropdown (for Multi-Stall Owners) */}
+                {/* Switcher Dropdown */}
                 <select
-                  value={currentStall.id}
+                  value={isNearbyRestoPartner ? currentResto.id : currentStall.id}
                   onChange={(e) => switchVendorStall(e.target.value)}
-                  className="text-xs font-bold text-[#ea580c] bg-orange-50/80 hover:bg-orange-100/80 border border-orange-300 rounded-full px-3 py-1 cursor-pointer focus:outline-none transition-colors"
-                  title="Switch Food Court Stall"
+                  className="text-xs font-bold text-[#ea580c] bg-orange-50/90 hover:bg-orange-100/90 border border-orange-300 rounded-full px-3 py-1 cursor-pointer focus:outline-none transition-colors shadow-xs"
+                  title="Switch Vendor / Restaurant Outlet"
                 >
-                  {foodCourtStalls.map((stall) => (
-                    <option key={stall.id} value={stall.id}>
-                      Switch to: {stall.name} ({stall.stallNumber})
-                    </option>
-                  ))}
+                  <optgroup label="Famous Nearby Restaurants & Franchises">
+                    {nearbyRestaurants.map((resto) => (
+                      <option key={resto.id} value={resto.id}>
+                        {resto.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Campus Food Court Stalls">
+                    {foodCourtStalls.map((stall) => (
+                      <option key={stall.id} value={stall.id}>
+                        {stall.stallNumber}: {stall.name}
+                      </option>
+                    ))}
+                  </optgroup>
                 </select>
               </div>
 
-              <p className="text-xs text-slate-600 font-medium mt-0.5">
-                {currentStall.location} • Hours: <span className="font-semibold text-slate-800">{currentStall.openingHours}</span>
+              <p className="text-xs text-slate-600 font-medium mt-1 flex items-center gap-2">
+                <MapPin className="w-3.5 h-3.5 text-orange-500" />
+                <span>{isNearbyRestoPartner ? currentResto.address : currentStall.location}</span>
+                {isNearbyRestoPartner && (
+                  <>
+                    <span className="text-slate-300">•</span>
+                    <span className="font-semibold text-slate-800">ETA: {currentResto.deliveryTime}</span>
+                  </>
+                )}
               </p>
             </div>
           </div>
 
-          {/* Right: Live Stall Operations Quick Controls */}
+          {/* Right: Quick Action Controls */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Open / Close Toggle Button */}
             <button
               type="button"
               onClick={() => {
-                updateFoodCourtStallDetails(currentStall.id, { isOpen: !currentStall.isOpen });
+                if (isNearbyRestoPartner) {
+                  updateNearbyRestaurantDetails(currentResto.id, { isOpen: !currentResto.isOpen });
+                } else {
+                  updateFoodCourtStallDetails(currentStall.id, { isOpen: !currentStall.isOpen });
+                }
               }}
               className={`px-4 py-2.5 rounded-full font-extrabold text-xs flex items-center space-x-2 transition-all cursor-pointer shadow-xs border ${
-                currentStall.isOpen
+                (isNearbyRestoPartner ? currentResto.isOpen : currentStall.isOpen)
                   ? 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200'
                   : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300'
               }`}
             >
               <Power className="w-3.5 h-3.5" />
-              <span>{currentStall.isOpen ? 'Pause / Close Counter' : 'Open Stall Counter'}</span>
+              <span>
+                {(isNearbyRestoPartner ? currentResto.isOpen : currentStall.isOpen)
+                  ? 'Pause / Close Counter'
+                  : 'Open Counter for Orders'}
+              </span>
             </button>
-
-            {/* Live Rush Level Quick Select */}
-            <div className="flex items-center space-x-1 bg-white/80 backdrop-blur-md p-1 rounded-full border border-orange-200/80 shadow-xs">
-              <span className="text-[10px] font-extrabold text-slate-500 uppercase px-2">Rush:</span>
-              {(['Low', 'Moderate', 'High', 'Peak'] as FoodCourtRushLevel[]).map((rush) => {
-                const isSelected = currentStall.rushLevel === rush;
-                return (
-                  <button
-                    key={rush}
-                    type="button"
-                    onClick={() => updateStallRushLevel(currentStall.id, rush)}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-extrabold transition-all cursor-pointer ${
-                      isSelected
-                        ? rush === 'Peak'
-                          ? 'bg-red-600 text-white shadow-xs'
-                          : rush === 'High'
-                          ? 'bg-orange-500 text-white shadow-xs'
-                          : rush === 'Moderate'
-                          ? 'bg-amber-500 text-white shadow-xs'
-                          : 'bg-emerald-600 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                    }`}
-                  >
-                    {rush}
-                  </button>
-                );
-              })}
-            </div>
 
             {/* Helpline Contact Info */}
             <a
-              href="tel:9335568951"
+              href={`tel:${isNearbyRestoPartner ? currentResto.phone.replace(/[^0-9]/g, '') : '9335568951'}`}
               className="px-3.5 py-2 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-300 text-xs font-bold flex items-center space-x-1.5 hover:bg-emerald-500/25 transition-colors"
             >
               <Phone className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="font-mono">+91 9335568951</span>
+              <span className="font-mono">{isNearbyRestoPartner ? currentResto.phone : '+91 9335568951'}</span>
             </a>
           </div>
         </div>
 
-        {/* Live Marquee Notice Pill */}
-        {currentStall.tagline && (
-          <div className="mt-4 pt-3 border-t border-orange-200/60 flex items-center justify-between text-xs text-slate-700">
-            <div className="flex items-center space-x-2">
-              <Sparkle className="w-3.5 h-3.5 text-[#ea580c] shrink-0" />
-              <span className="font-bold text-slate-900">Current Student Broadcast:</span>
-              <span className="italic text-slate-600">"{currentStall.tagline}"</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setActiveSubTab('operations')}
-              className="text-[#ea580c] font-bold text-[11px] hover:underline"
-            >
-              Edit Broadcast &rarr;
-            </button>
+        {/* Live Broadcast / Famous For Highlight */}
+        <div className="mt-4 pt-3 border-t border-orange-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-700">
+          <div className="flex items-center space-x-2">
+            <Sparkle className="w-3.5 h-3.5 text-[#ea580c] shrink-0" />
+            <span className="font-bold text-slate-900">
+              {isNearbyRestoPartner ? 'Famous For Specialty:' : 'Current Student Broadcast:'}
+            </span>
+            <span className="italic text-slate-700 font-medium">
+              "{isNearbyRestoPartner ? (currentResto.famousFor || currentResto.specialty) : currentStall.tagline}"
+            </span>
           </div>
-        )}
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('operations')}
+            className="text-[#ea580c] font-bold text-[11px] hover:underline self-start sm:self-auto cursor-pointer"
+          >
+            Edit Settings &rarr;
+          </button>
+        </div>
       </section>
 
-      {/* 2. DASHBOARD NAVIGATION TABS (Pills Container) */}
+      {/* 2. DASHBOARD NAVIGATION TABS */}
       <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
         <button
           type="button"
@@ -492,7 +575,7 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
           <UtensilsCrossed className="w-4 h-4" />
           <span>Menu &amp; Dish Catalog</span>
           <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-white font-mono text-[10px]">
-            {stallMenuItems.length}
+            {activeMenuItems.length}
           </span>
         </button>
 
@@ -509,31 +592,12 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
           }`}
         >
           <Clock className="w-4 h-4" />
-          <span>Live Token Orders</span>
-          {stallOrders.filter(o => o.status === 'Placed' || o.status === 'Preparing').length > 0 && (
+          <span>Live Orders Tracker</span>
+          {activeOrders.filter((o: any) => o.status !== 'Completed' && o.status !== 'Delivered' && o.status !== 'Cancelled').length > 0 && (
             <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white font-mono text-[10px] animate-pulse">
-              {stallOrders.filter(o => o.status === 'Placed' || o.status === 'Preparing').length} Active
+              {activeOrders.filter((o: any) => o.status !== 'Completed' && o.status !== 'Delivered' && o.status !== 'Cancelled').length} Active
             </span>
           )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            soundEffects.playTap();
-            setActiveSubTab('feedback');
-          }}
-          className={`flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-extrabold transition-all cursor-pointer shrink-0 ${
-            activeSubTab === 'feedback'
-              ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white shadow-md shadow-orange-500/25 border border-white/30 scale-[1.02]'
-              : 'bg-white/80 backdrop-blur-md text-slate-700 hover:text-slate-950 border border-orange-200/60 hover:bg-white'
-          }`}
-        >
-          <MessageSquareHeart className="w-4 h-4" />
-          <span>Anonymous Student Feedback</span>
-          <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-white font-mono text-[10px]">
-            {stallFeedbacks.length}
-          </span>
         </button>
 
         <button
@@ -549,7 +613,7 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
           }`}
         >
           <Sliders className="w-4 h-4" />
-          <span>Rush &amp; Stall Settings</span>
+          <span>Operations &amp; Settings</span>
         </button>
 
         <button
@@ -570,11 +634,11 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
       </div>
 
       {/* =========================================================================
-          SUB-TAB 1: MENU & DISH CATALOG (Full Owner CRUD)
+          SUB-TAB 1: MENU & DISH CATALOG
           ========================================================================= */}
       {activeSubTab === 'menu' && (
         <div className="space-y-5">
-          {/* Controls Bar: Search, Category Filters, Add Dish Button */}
+          {/* Controls Bar */}
           <div className="glassmorphism-card rounded-3xl p-4 sm:p-5 border border-white/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
             
             {/* Search Input */}
@@ -584,14 +648,14 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
                 type="text"
                 value={menuSearchQuery}
                 onChange={(e) => setMenuSearchQuery(e.target.value)}
-                placeholder="Search your dishes by name or ingredients..."
+                placeholder={`Search dishes in ${isNearbyRestoPartner ? currentResto.name : currentStall.name}...`}
                 className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white/90 border border-orange-200/80 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#ff7a30] transition-all shadow-xs"
               />
               {menuSearchQuery && (
                 <button
                   type="button"
                   onClick={() => setMenuSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -606,14 +670,14 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
                 className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] hover:from-[#ea671e] hover:to-[#ff8130] text-white font-extrabold text-xs shadow-md shadow-orange-500/25 border border-white/30 flex items-center space-x-2 active:scale-95 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4 text-white" />
-                <span>Add New Dish</span>
+                <span>Add New Veg Dish</span>
               </ChromeButton>
             </div>
           </div>
 
           {/* Category Filter Pills */}
           <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
-            {stallCategories.map((cat) => (
+            {activeCategories.map((cat) => (
               <button
                 key={cat}
                 type="button"
@@ -631,11 +695,11 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
 
           {/* Menu Items Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredMenuItems.map((item) => (
+            {filteredMenuItems.map((item: any) => (
               <div
                 key={item.id}
                 className={`glassmorphism-card rounded-3xl p-5 border transition-all duration-200 flex flex-col justify-between ${
-                  item.available
+                  item.available !== false
                     ? 'border-white/90 bg-white/80 shadow-sm hover:shadow-md'
                     : 'border-slate-200 bg-slate-100/70 opacity-75'
                 }`}
@@ -645,16 +709,10 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
                   <div className="flex items-start justify-between gap-2 mb-2.5">
                     <div className="flex items-center space-x-2">
                       <span
-                        className={`w-3.5 h-3.5 rounded-xs border-2 flex items-center justify-center ${
-                          item.isVeg ? 'border-emerald-600' : 'border-red-600'
-                        }`}
-                        title={item.isVeg ? 'Pure Veg' : 'Contains Egg / Non-Veg'}
+                        className="w-3.5 h-3.5 rounded-xs border-2 border-emerald-600 flex items-center justify-center"
+                        title="100% Pure Vegetarian Dish"
                       >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            item.isVeg ? 'bg-emerald-600' : 'bg-red-600'
-                          }`}
-                        />
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                       </span>
                       <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">
                         {item.category}
@@ -664,15 +722,21 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
                     {/* In Stock / Sold Out Toggle Button */}
                     <button
                       type="button"
-                      onClick={() => toggleFoodCourtItemAvailability(item.id)}
+                      onClick={() => {
+                        if (isNearbyRestoPartner) {
+                          toggleNearbyRestoItemAvailability(item.id);
+                        } else {
+                          toggleFoodCourtItemAvailability(item.id);
+                        }
+                      }}
                       className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center space-x-1 transition-all cursor-pointer border ${
-                        item.available
+                        item.available !== false
                           ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
                           : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
                       }`}
-                      title={item.available ? 'Click to mark as Sold Out' : 'Click to mark as Available'}
+                      title={item.available !== false ? 'Click to mark as Sold Out' : 'Click to mark as In Stock'}
                     >
-                      {item.available ? (
+                      {item.available !== false ? (
                         <>
                           <Check className="w-3 h-3 text-emerald-600" />
                           <span>In Stock</span>
@@ -691,9 +755,22 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
                     <h3 className="font-extrabold text-slate-900 text-base leading-snug">
                       {item.name}
                     </h3>
-                    <span className="font-black text-slate-900 font-mono text-base shrink-0">
-                      ₹{item.price}
-                    </span>
+                    <div className="text-right shrink-0">
+                      {item.discountedPrice ? (
+                        <div>
+                          <span className="font-black text-emerald-700 font-mono text-base">
+                            ₹{item.discountedPrice}
+                          </span>
+                          <span className="text-xs text-slate-400 line-through ml-1.5 font-mono">
+                            ₹{item.price}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="font-black text-slate-900 font-mono text-base">
+                          ₹{item.price}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Description */}
@@ -703,43 +780,53 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
 
                   {/* Badges & Meta */}
                   <div className="flex flex-wrap items-center gap-1.5 mb-4">
-                    <span className="px-2 py-0.5 rounded-md bg-orange-50 text-[#ea580c] font-mono text-[10px] font-bold border border-orange-200 flex items-center space-x-1">
-                      <Clock className="w-2.5 h-2.5" />
-                      <span>~{item.basePrepMins} mins</span>
-                    </span>
-                    {item.calories && (
-                      <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-mono text-[10px] font-semibold">
-                        {item.calories} kcal
+                    {item.isBestseller && (
+                      <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 font-mono text-[10px] font-bold border border-amber-200 flex items-center space-x-1">
+                        <Star className="w-2.5 h-2.5 fill-current" />
+                        <span>Bestseller</span>
                       </span>
                     )}
-                    {item.allergens && item.allergens.length > 0 && (
-                      <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 font-mono text-[10px] font-semibold border border-emerald-200">
-                        {item.allergens.join(', ')}
+                    {item.isMustTry && (
+                      <span className="px-2 py-0.5 rounded-md bg-orange-50 text-orange-800 font-mono text-[10px] font-bold border border-orange-200">
+                        Must Try
+                      </span>
+                    )}
+                    {item.basePrepMins && (
+                      <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-mono text-[10px] font-bold">
+                        ~{item.basePrepMins} mins
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Card Footer: Quick Actions */}
+                {/* Card Footer: Edit / Delete */}
                 <div className="pt-3 border-t border-slate-200/60 flex items-center justify-between gap-2">
-                  <div className="text-[11px] font-bold text-slate-500">
-                    ID: <span className="font-mono text-slate-700">{item.id}</span>
+                  <div className="text-[11px] font-bold text-slate-500 font-mono">
+                    {item.id}
                   </div>
 
                   <div className="flex items-center space-x-2">
                     <button
                       type="button"
                       onClick={() => handleOpenEditModal(item)}
-                      className="px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-slate-200 shadow-xs flex items-center space-x-1 cursor-pointer transition-colors"
+                      className="p-1.5 rounded-xl bg-slate-100 hover:bg-orange-50 hover:text-[#ea580c] text-slate-600 transition-colors cursor-pointer"
+                      title="Edit Dish Details"
                     >
-                      <Edit2 className="w-3 h-3 text-[#ea580c]" />
-                      <span>Edit</span>
+                      <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       type="button"
-                      onClick={() => deleteFoodCourtItem(item.id)}
-                      className="p-1.5 rounded-full bg-white hover:bg-red-50 text-slate-400 hover:text-red-600 border border-slate-200 shadow-xs cursor-pointer transition-colors"
-                      title="Delete dish from menu"
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to remove "${item.name}" from your menu?`)) {
+                          if (isNearbyRestoPartner) {
+                            deleteNearbyRestoItem(item.id);
+                          } else {
+                            deleteFoodCourtItem(item.id);
+                          }
+                        }
+                      }}
+                      className="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition-colors cursor-pointer"
+                      title="Delete Dish"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -748,876 +835,309 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
               </div>
             ))}
           </div>
-
-          {filteredMenuItems.length === 0 && (
-            <div className="glassmorphism-card rounded-3xl p-10 text-center border border-white/90">
-              <UtensilsCrossed className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-              <h3 className="font-extrabold text-slate-900 text-base">No dishes found</h3>
-              <p className="text-xs text-slate-600 max-w-sm mx-auto mt-1 mb-4">
-                No items match your search "{menuSearchQuery}". Add your first dish or clear filters.
-              </p>
-              <ChromeButton
-                type="button"
-                onClick={handleOpenAddModal}
-                className="px-5 py-2 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-bold text-xs"
-              >
-                Add New Dish
-              </ChromeButton>
-            </div>
-          )}
         </div>
       )}
 
       {/* =========================================================================
-          SUB-TAB 2: LIVE TOKEN ORDERS QUEUE
+          SUB-TAB 2: LIVE ORDERS TRACKER
           ========================================================================= */}
       {activeSubTab === 'orders' && (
-        <div className="space-y-5">
-          {/* Order Search & Verification Bar */}
-          <div className="glassmorphism-card rounded-3xl p-4 sm:p-5 border border-white/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex-1 max-w-md relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="space-y-4">
+          <div className="glassmorphism-card rounded-3xl p-4 sm:p-5 border border-white/90 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center space-x-2 w-full sm:w-auto">
               <input
                 type="text"
                 value={tokenSearchQuery}
                 onChange={(e) => setTokenSearchQuery(e.target.value)}
-                placeholder="Search token # (e.g. 9482) or student name..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white/90 border border-orange-200/80 text-xs font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#ff7a30] transition-all shadow-xs"
+                placeholder="Search by Order #, Student Name, Room..."
+                className="px-4 py-2 rounded-full bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30] w-full sm:w-64"
               />
-              {tokenSearchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setTokenSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
             </div>
-
             <div className="flex items-center space-x-2">
-              {onOpenScanner && (
-                <ChromeButton
-                  onClick={onOpenScanner}
-                  className="flex items-center space-x-1.5 px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs cursor-pointer"
-                >
-                  <QrCode className="w-3.5 h-3.5" />
-                  <span>Scan Student QR</span>
-                </ChromeButton>
-              )}
-            </div>
-          </div>
-
-          {/* Called Token Broadcast Alert if any */}
-          {calledTokenMessage && (
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold flex items-center justify-between shadow-sm animate-in fade-in duration-200">
-              <div className="flex items-center space-x-2">
-                <Volume2 className="w-4 h-4 text-emerald-600 animate-bounce" />
-                <span>{calledTokenMessage}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setCalledTokenMessage(null)}
-                className="text-emerald-700 hover:text-emerald-900 font-extrabold text-xs"
-              >
-                Dismiss
-              </button>
-            </div>
-          )}
-
-          {/* Order Filters Header */}
-          <div className="glassmorphism-card rounded-3xl p-4 sm:p-5 border border-white/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h2 className="text-base font-extrabold text-slate-900">
-                Live Kitchen Order Tokens
-              </h2>
-              <p className="text-xs text-slate-600 font-medium">
-                Incoming student tokens placed for {currentStall.name}
-              </p>
-            </div>
-
-            <div className="flex items-center space-x-1.5 bg-white/80 p-1 rounded-full border border-orange-200/80">
-              {(['active', 'Ready', 'Completed', 'all'] as const).map((filter) => (
+              {(['all', 'active', 'Ready', 'Completed'] as const).map((filter) => (
                 <button
                   key={filter}
-                  type="button"
                   onClick={() => setOrderStatusFilter(filter)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                     orderStatusFilter === filter
                       ? 'bg-slate-900 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
                   }`}
                 >
-                  {filter === 'active'
-                    ? 'Active Orders'
-                    : filter === 'Ready'
-                    ? 'Ready for Pickup'
-                    : filter === 'Completed'
-                    ? 'Completed'
-                    : 'All'}
+                  {filter === 'all' ? 'All Orders' : filter}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Orders Feed */}
-          <div className="space-y-3.5">
-            {filteredOrders.map((order) => (
-              <div
-                key={order.id}
-                className="glassmorphism-card rounded-3xl p-5 border border-white/90 shadow-sm bg-white/85 hover:bg-white transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-4"
-              >
-                {/* Left: Token Number, Customer info, Items */}
-                <div className="space-y-2 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="px-3 py-1 rounded-full bg-[#ea580c] text-white font-mono font-black text-sm shadow-xs">
-                      {order.tokenNumber}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[11px] font-bold">
-                      {order.pickupMethod === 'counter_pickup'
-                        ? 'Counter Pickup'
-                        : order.pickupMethod === 'dine_in'
-                        ? 'Dine-In'
-                        : 'Express Takeaway'}
-                    </span>
-                    <span className="text-xs text-slate-500 font-mono">
-                      Placed at {order.placedAt}
-                    </span>
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase ${
-                        order.status === 'Ready'
-                          ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
-                          : order.status === 'Preparing'
-                          ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                          : order.status === 'Completed'
-                          ? 'bg-slate-100 text-slate-700'
-                          : 'bg-blue-100 text-blue-900 border border-blue-300'
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-
-                  {/* Customer info */}
-                  <div className="text-xs text-slate-700 flex items-center space-x-3">
-                    <span className="font-bold text-slate-900">{order.studentName}</span>
-                    <span className="font-mono text-slate-600">{order.phoneNumber}</span>
-                    <span className="font-semibold text-slate-500">Pay: {order.paymentMethod}</span>
-                  </div>
-
-                  {/* Ordered Items List */}
-                  <div className="space-y-1 pt-1">
-                    {order.items.map((it, idx) => (
-                      <div key={idx} className="text-xs text-slate-800 flex items-center space-x-2">
-                        <span className="font-bold font-mono text-[#ea580c]">{it.quantity}x</span>
-                        <span className="font-semibold">{it.name}</span>
-                        <span className="text-slate-500 font-mono">₹{it.price * it.quantity}</span>
-                        {it.customization?.spiceLevel && (
-                          <span className="text-[10px] px-1.5 py-0.2 rounded bg-orange-100 text-[#ea580c] font-bold">
-                            {it.customization.spiceLevel}
-                          </span>
-                        )}
-                        {it.customization?.addCheese && (
-                          <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-900 font-bold">
-                            +Cheese
-                          </span>
-                        )}
-                        {it.customization?.jainPrep && (
-                          <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-900 font-bold">
-                            Jain
-                          </span>
-                        )}
+          {filteredOrders.length === 0 ? (
+            <div className="glassmorphism-card rounded-3xl p-10 text-center border border-white/90">
+              <Receipt className="w-12 h-12 mx-auto text-slate-400 mb-2" />
+              <h3 className="font-bold text-slate-800">No Orders Found</h3>
+              <p className="text-xs text-slate-500 mt-1">There are currently no orders matching your status filter.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredOrders.map((order: any) => {
+                const orderId = order.id;
+                const status = order.status;
+                return (
+                  <div
+                    key={orderId}
+                    className="glassmorphism-card rounded-3xl p-5 border border-white/90 shadow-sm space-y-3 bg-white/90"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <span className="text-xs font-mono font-bold text-orange-600">
+                          {order.tokenNumber || order.orderNumber}
+                        </span>
+                        <h4 className="text-base font-bold text-slate-900">
+                          {order.studentName} ({order.studentRollNo || order.studentId})
+                        </h4>
+                        <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5 mt-0.5">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                          <span>{order.deliveryHostel ? `${order.deliveryHostel}, Room ${order.deliveryRoom}` : 'Counter Pickup'}</span>
+                          <span>•</span>
+                          <Phone className="w-3.5 h-3.5 text-slate-400" />
+                          <span>{order.contactPhone || order.phoneNumber}</span>
+                        </p>
                       </div>
-                    ))}
-                  </div>
 
-                  {order.specialInstructions && (
-                    <div className="text-[11px] text-slate-600 italic bg-orange-50/70 p-2 rounded-xl border border-orange-200">
-                      Note: "{order.specialInstructions}"
-                    </div>
-                  )}
-                </div>
-
-                {/* Right: Total Amount & Status Transitions */}
-                <div className="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end justify-between gap-3 shrink-0 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-200">
-                  <div className="text-left sm:text-right">
-                    <div className="text-[11px] text-slate-500 font-semibold">Total Amount</div>
-                    <div className="text-xl font-black text-slate-900 font-mono">
-                      ₹{order.totalAmount}
-                    </div>
-                  </div>
-
-                  {/* Status Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {order.status === 'Placed' && (
-                      <button
-                        type="button"
-                        onClick={() => updateFoodCourtOrderStatus(order.id, 'Preparing')}
-                        className="px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow-xs transition-all cursor-pointer"
-                      >
-                        Start Preparing
-                      </button>
-                    )}
-
-                    {order.status === 'Preparing' && (
-                      <button
-                        type="button"
-                        onClick={() => updateFoodCourtOrderStatus(order.id, 'Ready')}
-                        className="px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-xs transition-all cursor-pointer flex items-center space-x-1.5"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Mark Ready for Pickup</span>
-                      </button>
-                    )}
-
-                    {order.status === 'Ready' && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            soundEffects.playMealTap();
-                            setCalledTokenMessage(`📢 Calling Token ${order.tokenNumber} (${order.studentName}) - Ready at counter!`);
-                            setTimeout(() => setCalledTokenMessage(null), 7000);
-                          }}
-                          className="px-3.5 py-2 rounded-full bg-orange-100 text-[#ea580c] hover:bg-orange-200 border border-orange-300 font-extrabold text-xs shadow-xs transition-all cursor-pointer flex items-center space-x-1"
-                          title="Broadcast counter callout"
-                        >
-                          <Volume2 className="w-3.5 h-3.5" />
-                          <span>Call Token</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => updateFoodCourtOrderStatus(order.id, 'Completed')}
-                          className="px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shadow-xs transition-all cursor-pointer"
-                        >
-                          Order Handed Over
-                        </button>
-                      </>
-                    )}
-
-                    {order.status !== 'Completed' && (
-                      <a
-                        href={`https://wa.me/${order.targetWhatsAppNumber || '919335568951'}?text=${encodeURIComponent(
-                          `*Token Update from ${currentStall.name}*:\nToken: ${order.tokenNumber}\nCustomer: ${order.studentName}\nStatus: ${order.status}\nYour order is being processed.`
-                        )}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="p-2 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors"
-                        title="Send WhatsApp update to counter / customer"
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {filteredOrders.length === 0 && (
-              <div className="glassmorphism-card rounded-3xl p-10 text-center border border-white/90">
-                <Clock className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                <h3 className="font-extrabold text-slate-900 text-base">No token orders</h3>
-                <p className="text-xs text-slate-600 max-w-sm mx-auto mt-1">
-                  There are no orders matching the "{orderStatusFilter}" filter for {currentStall.name}.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* =========================================================================
-          SUB-TAB 3: ANONYMOUS STUDENT FEEDBACK (Vendor Portal)
-          ========================================================================= */}
-      {activeSubTab === 'feedback' && (
-        <div className="space-y-5">
-          {/* Header & Anonymity Guarantee Banner */}
-          <div className="glassmorphism-card rounded-3xl p-5 sm:p-6 border border-white/90 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <div className="flex items-center space-x-2">
-                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                  <h2 className="text-lg font-black text-slate-900">
-                    Anonymous Student Feedback for {currentStall.name}
-                  </h2>
-                </div>
-                <p className="text-xs text-slate-600 font-medium mt-1">
-                  Enforced student privacy: No roll numbers, names, or student IDs are ever attached or visible.
-                </p>
-              </div>
-
-              {/* Overall Star Badge */}
-              <div className="flex items-center space-x-4 bg-white/80 px-4 py-2 rounded-2xl border border-orange-200/80 shrink-0">
-                <div className="text-center">
-                  <div className="text-2xl font-black text-slate-900 font-mono flex items-center justify-center space-x-1">
-                    <span>{feedbackMetrics.avgRating}</span>
-                    <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-                  </div>
-                  <div className="text-[10px] font-bold text-slate-500 uppercase">
-                    Stall Rating
-                  </div>
-                </div>
-                <div className="w-px h-8 bg-slate-200" />
-                <div className="text-left text-xs font-semibold text-slate-700">
-                  <div>Hygiene: <span className="font-bold text-slate-900 font-mono">{feedbackMetrics.avgHygiene}★</span></div>
-                  <div>Speed: <span className="font-bold text-slate-900 font-mono">{feedbackMetrics.avgSpeed}★</span></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sentiment Breakdown Bar */}
-            <div className="mt-5 pt-4 border-t border-slate-200/60 grid grid-cols-3 gap-3 text-center">
-              <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
-                <div className="text-lg font-black text-emerald-900 font-mono">
-                  {feedbackMetrics.positivePct}%
-                </div>
-                <div className="text-[11px] font-extrabold text-emerald-700">Positive (4-5★)</div>
-              </div>
-              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200">
-                <div className="text-lg font-black text-amber-900 font-mono">
-                  {feedbackMetrics.neutralPct}%
-                </div>
-                <div className="text-[11px] font-extrabold text-amber-700">Neutral (3★)</div>
-              </div>
-              <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200">
-                <div className="text-lg font-black text-rose-900 font-mono">
-                  {feedbackMetrics.criticalPct}%
-                </div>
-                <div className="text-[11px] font-extrabold text-rose-700">Needs Attention (1-2★)</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Feedback Category & Sentiment Filters */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 scrollbar-none">
-              {(['all', 'Taste & Quality', 'Hygiene & Cleanliness', 'Speed & Waiting Time', 'Portion & Pricing', 'General Suggestion'] as const).map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setFeedbackCategoryFilter(cat)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    feedbackCategoryFilter === cat
-                      ? 'bg-slate-900 text-white shadow-xs'
-                      : 'bg-white/80 text-slate-700 hover:bg-white border border-slate-200'
-                  }`}
-                >
-                  {cat === 'all' ? 'All Feedback' : cat}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex items-center space-x-1 bg-white/80 p-1 rounded-full border border-slate-200">
-              <span className="text-[10px] font-bold text-slate-400 uppercase px-2">Sentiment:</span>
-              {(['all', 'positive', 'neutral', 'negative'] as const).map((sent) => (
-                <button
-                  key={sent}
-                  type="button"
-                  onClick={() => setFeedbackSentimentFilter(sent)}
-                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
-                    feedbackSentimentFilter === sent
-                      ? 'bg-orange-500 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  {sent === 'all' ? 'All' : sent}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Feedback Items List */}
-          <div className="space-y-3.5">
-            {filteredFeedbacks.map((fb) => (
-              <div
-                key={fb.id}
-                className="glassmorphism-card rounded-3xl p-5 border border-white/90 shadow-sm bg-white/85 hover:bg-white transition-all space-y-3"
-              >
-                {/* Review Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center space-x-2">
-                    {/* Stars */}
-                    <div className="flex items-center space-x-0.5">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-4 h-4 ${
-                            star <= fb.rating
-                              ? 'text-amber-500 fill-amber-500'
-                              : 'text-slate-200'
-                          }`}
-                        />
-                      ))}
-                    </div>
-
-                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 text-[11px] font-extrabold">
-                      {fb.category}
-                    </span>
-
-                    {fb.dishName && (
-                      <span className="px-2.5 py-0.5 rounded-full bg-orange-50 text-[#ea580c] text-[11px] font-bold border border-orange-200">
-                        Dish: {fb.dishName}
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                        status === 'Completed' || status === 'Delivered'
+                          ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                          : status === 'Cancelled'
+                          ? 'bg-rose-50 text-rose-700 border-rose-200'
+                          : 'bg-amber-50 text-amber-800 border-amber-300'
+                      }`}>
+                        {status}
                       </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center space-x-2 text-xs text-slate-500 font-mono">
-                    <span>{fb.timestamp}</span>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
-                        fb.status === 'Action Taken'
-                          ? 'bg-emerald-100 text-emerald-900'
-                          : fb.status === 'Reviewed'
-                          ? 'bg-blue-100 text-blue-900'
-                          : 'bg-amber-100 text-amber-900'
-                      }`}
-                    >
-                      {fb.status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Review Comment */}
-                <p className="text-xs text-slate-800 leading-relaxed font-medium">
-                  "{fb.comment}"
-                </p>
-
-                {/* Sub-ratings if present */}
-                {(fb.hygieneRating || fb.speedRating) && (
-                  <div className="flex items-center space-x-4 text-[11px] text-slate-600 bg-slate-50 p-2 rounded-xl">
-                    {fb.hygieneRating && (
-                      <span>Hygiene: <strong className="text-slate-900 font-mono">{fb.hygieneRating}★</strong></span>
-                    )}
-                    {fb.speedRating && (
-                      <span>Speed: <strong className="text-slate-900 font-mono">{fb.speedRating}★</strong></span>
-                    )}
-                  </div>
-                )}
-
-                {/* Owner Resolution Note if already added */}
-                {fb.ownerNote && (
-                  <div className="p-3 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-xs text-emerald-950 space-y-1">
-                    <div className="font-extrabold flex items-center space-x-1.5 text-emerald-900">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Owner Resolution &amp; Action Note:</span>
                     </div>
-                    <p className="font-medium text-emerald-900 italic">"{fb.ownerNote}"</p>
-                  </div>
-                )}
 
-                {/* Review Action Controls */}
-                <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
-                  <div className="text-[11px] text-slate-500 font-bold">
-                    Anonymous Reviewer #{fb.id.slice(-4)}
-                  </div>
+                    {/* Ordered Items List */}
+                    <div className="bg-orange-50/50 rounded-2xl p-3 border border-orange-100/70 space-y-1.5 text-xs">
+                      {order.items.map((it: any, idx: number) => (
+                        <div key={idx} className="flex justify-between items-center text-slate-800">
+                          <span className="flex items-center gap-2">
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />
+                            <span className="font-semibold">{it.quantity}x {it.name}</span>
+                          </span>
+                          <span className="font-mono font-bold">₹{it.price * it.quantity}</span>
+                        </div>
+                      ))}
+                      <div className="pt-2 border-t border-orange-200/60 flex justify-between font-bold text-slate-900">
+                        <span>Total ({order.paymentMethod || 'UPI'})</span>
+                        <span className="font-mono text-sm text-emerald-700">₹{order.totalAmount}</span>
+                      </div>
+                    </div>
 
-                  <div className="flex items-center space-x-2">
-                    {fb.status !== 'Reviewed' && fb.status !== 'Action Taken' && (
-                      <button
-                        type="button"
-                        onClick={() => updateFoodCourtFeedbackStatus(fb.id, 'Reviewed')}
-                        className="px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer transition-colors"
-                      >
-                        Mark as Reviewed
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setReplyingFeedbackId(replyingFeedbackId === fb.id ? null : fb.id);
-                        setOwnerReplyText(fb.ownerNote || '');
-                      }}
-                      className="px-3 py-1 rounded-full bg-orange-50 hover:bg-orange-100 text-[#ea580c] text-xs font-bold border border-orange-200 cursor-pointer transition-colors"
-                    >
-                      {replyingFeedbackId === fb.id ? 'Close' : fb.ownerNote ? 'Edit Action Note' : 'Add Action Note'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Action Note Input Dropdown */}
-                {replyingFeedbackId === fb.id && (
-                  <div className="p-3 rounded-2xl bg-orange-50/80 border border-orange-200 space-y-2 mt-2">
-                    <label className="block text-xs font-black text-slate-900">
-                      Add Kitchen Action / Resolution Note:
-                    </label>
-                    <textarea
-                      rows={2}
-                      value={ownerReplyText}
-                      onChange={(e) => setOwnerReplyText(e.target.value)}
-                      placeholder="e.g. Instructed evening chef to prep double chutney batches; adjusted grill heat."
-                      className="w-full p-2.5 rounded-xl bg-white border border-orange-200 text-xs text-slate-900 focus:outline-none focus:border-[#ff7a30]"
-                    />
-                    <div className="flex justify-end space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => setReplyingFeedbackId(null)}
-                        className="px-3 py-1 rounded-full text-xs text-slate-600 font-bold hover:bg-slate-200 cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          updateFoodCourtFeedbackStatus(fb.id, 'Action Taken', ownerReplyText.trim());
-                          setReplyingFeedbackId(null);
-                        }}
-                        className="px-4 py-1.5 rounded-full bg-[#ea580c] hover:bg-[#c2410c] text-white font-bold text-xs shadow-xs cursor-pointer"
-                      >
-                        Save &amp; Mark Resolved
-                      </button>
+                    {/* Status Updaters */}
+                    <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                      <span className="text-[11px] font-bold text-slate-500">Update Status:</span>
+                      {isNearbyRestoPartner ? (
+                        (['Received', 'Confirmed', 'Cooking', 'Out for Delivery', 'Delivered'] as const).map((st) => (
+                          <button
+                            key={st}
+                            type="button"
+                            onClick={() => updateNearbyRestoOrderStatus(orderId, st)}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                              status === st
+                                ? 'bg-orange-600 text-white shadow-xs'
+                                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            }`}
+                          >
+                            {st}
+                          </button>
+                        ))
+                      ) : (
+                        (['Placed', 'Preparing', 'Ready', 'Completed'] as FoodCourtOrderStatus[]).map((st) => (
+                          <button
+                            key={st}
+                            type="button"
+                            onClick={() => updateFoodCourtOrderStatus(orderId, st)}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                              status === st
+                                ? 'bg-orange-600 text-white shadow-xs'
+                                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            }`}
+                          >
+                            {st}
+                          </button>
+                        ))
+                      )}
                     </div>
                   </div>
-                )}
-              </div>
-            ))}
-
-            {filteredFeedbacks.length === 0 && (
-              <div className="glassmorphism-card rounded-3xl p-10 text-center border border-white/90">
-                <MessageSquareHeart className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                <h3 className="font-extrabold text-slate-900 text-base">No feedback found</h3>
-                <p className="text-xs text-slate-600 max-w-sm mx-auto mt-1">
-                  No student reviews match the selected category or sentiment filter for {currentStall.name}.
-                </p>
-              </div>
-            )}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 
       {/* =========================================================================
-          SUB-TAB 4: RUSH & STALL OPERATIONS CONTROLLER
+          SUB-TAB 3: OPERATIONS & SETTINGS
           ========================================================================= */}
       {activeSubTab === 'operations' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Panel 1: Live Rush & Queue Controller */}
-          <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-sm space-y-5">
-            <div>
-              <h2 className="text-base font-extrabold text-slate-900">
-                Live Rush &amp; Queue Controller
-              </h2>
-              <p className="text-xs text-slate-600 font-medium">
-                Adjust wait times and queue counters seen by students on the campus portal.
-              </p>
-            </div>
+        <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-sm max-w-2xl mx-auto space-y-5">
+          <div>
+            <h2 className="text-lg font-black text-slate-900">
+              {isNearbyRestoPartner ? 'Restaurant Profile & Operating Settings' : 'Stall Profile & Operating Settings'}
+            </h2>
+            <p className="text-xs text-slate-600 font-medium">
+              Update delivery timings, student discounts, signature specialty, and contact details.
+            </p>
+          </div>
 
-            {/* Current Rush Level Selector */}
-            <div className="space-y-2">
-              <label className="block text-xs font-black text-slate-900">
-                Set Current Stall Rush Level:
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {(['Low', 'Moderate', 'High', 'Peak'] as FoodCourtRushLevel[]).map((rush) => (
-                  <button
-                    key={rush}
-                    type="button"
-                    onClick={() => updateStallRushLevel(currentStall.id, rush)}
-                    className={`p-3 rounded-2xl font-extrabold text-xs border transition-all cursor-pointer text-left ${
-                      currentStall.rushLevel === rush
-                        ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white border-orange-500 shadow-md shadow-orange-500/20'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="font-black text-sm">{rush}</div>
-                    <div className="text-[11px] opacity-85 font-medium mt-0.5">
-                      {rush === 'Low'
-                        ? '0-2 in queue • ~5 min wait'
-                        : rush === 'Moderate'
-                        ? '3-5 in queue • ~10 min wait'
-                        : rush === 'High'
-                        ? '6-8 in queue • ~15 min wait'
-                        : '8+ in queue • ~20+ min wait'}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Manual Queue Counter */}
-            <div className="space-y-2 pt-2 border-t border-slate-200/60">
-              <label className="block text-xs font-black text-slate-900">
-                Active Orders in Queue:
-              </label>
-              <div className="flex items-center space-x-3">
-                <button
-                  type="button"
-                  onClick={() => updateStallRushLevel(currentStall.id, currentStall.rushLevel, -1)}
-                  className="w-10 h-10 rounded-full bg-white border border-slate-300 font-black text-lg text-slate-700 hover:bg-slate-100 flex items-center justify-center cursor-pointer shadow-xs"
-                >
-                  -
-                </button>
-                <div className="px-6 py-2 rounded-2xl bg-white border border-slate-200 text-center shadow-xs">
-                  <span className="text-xl font-black font-mono text-slate-900">
-                    {currentStall.activeQueueCount}
-                  </span>
-                  <span className="text-[10px] block font-bold text-slate-500">Orders</span>
+          <form onSubmit={handleSaveOperations} className="space-y-4">
+            {isNearbyRestoPartner ? (
+              <>
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-900">
+                    World-Famous Specialty / What You're Famous For:
+                  </label>
+                  <input
+                    type="text"
+                    value={restoSpecialty}
+                    onChange={(e) => setRestoSpecialty(e.target.value)}
+                    placeholder="e.g. McSpicy Paneer Burger, Veg Maharaja Mac & Peri-Peri Fries"
+                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => updateStallRushLevel(currentStall.id, currentStall.rushLevel, 1)}
-                  className="w-10 h-10 rounded-full bg-white border border-slate-300 font-black text-lg text-slate-700 hover:bg-slate-100 flex items-center justify-center cursor-pointer shadow-xs"
-                >
-                  +
-                </button>
-              </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Hostel Delivery Time:
+                  </label>
+                  <input
+                    type="text"
+                    value={restoDeliveryTime}
+                    onChange={(e) => setRestoDeliveryTime(e.target.value)}
+                    placeholder="e.g. 20-30 mins"
+                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Student Discount Offer Banner:
+                  </label>
+                  <input
+                    type="text"
+                    value={restoDiscountOffer}
+                    onChange={(e) => setRestoDiscountOffer(e.target.value)}
+                    placeholder="e.g. Flat 15% Off with VERTO15 / Free item on ₹299+"
+                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Tagline / Description:
+                  </label>
+                  <input
+                    type="text"
+                    value={restoTagline}
+                    onChange={(e) => setRestoTagline(e.target.value)}
+                    placeholder="Short appetizing description"
+                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Contact Phone Number:
+                  </label>
+                  <input
+                    type="text"
+                    value={restoPhone}
+                    onChange={(e) => setRestoPhone(e.target.value)}
+                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Store Address / Locality:
+                  </label>
+                  <input
+                    type="text"
+                    value={restoAddress}
+                    onChange={(e) => setRestoAddress(e.target.value)}
+                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Live Broadcast Banner:
+                  </label>
+                  <input
+                    type="text"
+                    value={stallNotice}
+                    onChange={(e) => setStallNotice(e.target.value)}
+                    placeholder="e.g. Fresh Kathi Rolls ready!"
+                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-bold text-slate-900">
+                    Operating Hours:
+                  </label>
+                  <input
+                    type="text"
+                    value={stallOpeningHours}
+                    onChange={(e) => setStallOpeningHours(e.target.value)}
+                    placeholder="e.g. 10:00 AM - 11:00 PM"
+                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="pt-3">
+              <button
+                type="submit"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-bold text-xs shadow-md shadow-orange-500/25 hover:from-[#ea671e] hover:to-[#ff8130] transition-all cursor-pointer"
+              >
+                {isNoticeSaved ? 'Settings Saved Successfully!' : 'Save Operational Settings'}
+              </button>
             </div>
-
-            {/* Estimated Wait Time */}
-            <div className="space-y-2 pt-2 border-t border-slate-200/60">
-              <div className="flex justify-between items-center">
-                <label className="block text-xs font-black text-slate-900">
-                  Estimated Average Prep Time:
-                </label>
-                <span className="font-black text-[#ea580c] font-mono text-sm">
-                  {currentStall.estimatedWaitMins} Mins
-                </span>
-              </div>
-              <input
-                type="range"
-                min="3"
-                max="35"
-                value={currentStall.estimatedWaitMins}
-                onChange={(e) =>
-                  updateFoodCourtStallDetails(currentStall.id, {
-                    estimatedWaitMins: Number(e.target.value)
-                  })
-                }
-                className="w-full accent-[#ff7a30] cursor-pointer"
-              />
-            </div>
-          </div>
-
-          {/* Panel 2: Live Marquee & Operating Hours Broadcast */}
-          <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-sm space-y-5">
-            <div>
-              <h2 className="text-base font-extrabold text-slate-900">
-                Live Broadcast &amp; Operating Hours
-              </h2>
-              <p className="text-xs text-slate-600 font-medium">
-                Publish announcements and update opening timings.
-              </p>
-            </div>
-
-            <form onSubmit={handleSaveStallNotice} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-black text-slate-900">
-                  Live Marquee Banner for Students:
-                </label>
-                <input
-                  type="text"
-                  value={stallNotice}
-                  onChange={(e) => setStallNotice(e.target.value)}
-                  placeholder="e.g. Fresh batch of Paneer Kathi Rolls ready! 10% combo discount today."
-                  className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-semibold focus:outline-none focus:border-[#ff7a30] shadow-xs"
-                />
-                <span className="text-[11px] text-slate-500 font-medium">
-                  This text appears on your stall header across the student web application.
-                </span>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-black text-slate-900">
-                  Operating Hours:
-                </label>
-                <input
-                  type="text"
-                  value={stallOpeningHours}
-                  onChange={(e) => setStallOpeningHours(e.target.value)}
-                  placeholder="e.g. 10:30 AM - 11:30 PM"
-                  className="w-full p-3 rounded-2xl bg-white border border-slate-200 text-xs text-slate-900 font-semibold focus:outline-none focus:border-[#ff7a30] shadow-xs"
-                />
-              </div>
-
-              <div className="pt-2 flex items-center justify-between">
-                {isNoticeSaved && (
-                  <span className="text-xs font-bold text-emerald-700 flex items-center space-x-1">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Updated successfully!</span>
-                  </span>
-                )}
-                {!isNoticeSaved && <div />}
-
-                <ChromeButton
-                  type="submit"
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-extrabold text-xs shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer"
-                >
-                  Save Stall Info
-                </ChromeButton>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
       )}
 
       {/* =========================================================================
-          SUB-TAB 5: FINANCIALS & SALES ANALYTICS (Vendor Insights)
+          SUB-TAB 4: SALES & ANALYTICS
           ========================================================================= */}
       {activeSubTab === 'analytics' && (
-        <div className="space-y-6">
-          {/* Key Sales Metrics Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="glassmorphism-card rounded-3xl p-5 border border-white/90 shadow-sm">
-              <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider">Gross Sales</span>
-                <IndianRupee className="w-4 h-4 text-[#ea580c]" />
-              </div>
-              <div className="text-2xl sm:text-3xl font-black text-slate-900 font-mono">
+        <div className="space-y-5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="glassmorphism-card rounded-3xl p-5 border border-white/90 bg-white/80">
+              <span className="text-xs text-slate-500 font-bold block">Gross Revenue</span>
+              <span className="text-2xl font-black font-mono text-emerald-700 mt-1 block">
                 ₹{salesMetrics.totalGrossRevenue}
-              </div>
-              <p className="text-[11px] text-emerald-700 font-bold mt-1 flex items-center space-x-1">
-                <TrendingUp className="w-3.5 h-3.5" />
-                <span>Today's counter revenue</span>
-              </p>
+              </span>
             </div>
-
-            <div className="glassmorphism-card rounded-3xl p-5 border border-white/90 shadow-sm">
-              <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider">Orders Served</span>
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              </div>
-              <div className="text-2xl sm:text-3xl font-black text-slate-900 font-mono">
+            <div className="glassmorphism-card rounded-3xl p-5 border border-white/90 bg-white/80">
+              <span className="text-xs text-slate-500 font-bold block">Total Orders</span>
+              <span className="text-2xl font-black font-mono text-slate-900 mt-1 block">
+                {salesMetrics.totalOrders}
+              </span>
+            </div>
+            <div className="glassmorphism-card rounded-3xl p-5 border border-white/90 bg-white/80">
+              <span className="text-xs text-slate-500 font-bold block">Completed</span>
+              <span className="text-2xl font-black font-mono text-emerald-600 mt-1 block">
                 {salesMetrics.completedOrders}
-              </div>
-              <p className="text-[11px] text-slate-600 font-semibold mt-1">
-                out of {salesMetrics.totalOrders} total tokens
-              </p>
+              </span>
             </div>
-
-            <div className="glassmorphism-card rounded-3xl p-5 border border-white/90 shadow-sm">
-              <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider">Avg. Ticket Value</span>
-                <Receipt className="w-4 h-4 text-amber-500" />
-              </div>
-              <div className="text-2xl sm:text-3xl font-black text-slate-900 font-mono">
+            <div className="glassmorphism-card rounded-3xl p-5 border border-white/90 bg-white/80">
+              <span className="text-xs text-slate-500 font-bold block">Avg Order Value</span>
+              <span className="text-2xl font-black font-mono text-orange-600 mt-1 block">
                 ₹{salesMetrics.avgOrderValue}
-              </div>
-              <p className="text-[11px] text-slate-600 font-semibold mt-1">
-                Per student transaction
-              </p>
-            </div>
-
-            <div className="glassmorphism-card rounded-3xl p-5 border border-white/90 shadow-sm">
-              <div className="flex items-center justify-between text-slate-500 mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider">Avg. Prep Speed</span>
-                <Clock className="w-4 h-4 text-blue-600" />
-              </div>
-              <div className="text-2xl sm:text-3xl font-black text-slate-900 font-mono">
-                {currentStall.estimatedWaitMins}m
-              </div>
-              <p className="text-[11px] text-slate-600 font-semibold mt-1">
-                Target: &lt;10 mins
-              </p>
-            </div>
-          </div>
-
-          {/* Two-Column Analytics Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left: Best-Selling Dishes Ranking */}
-            <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2">
-                  <Flame className="w-4 h-4 text-[#ea580c]" />
-                  <span>Top-Selling Menu Items</span>
-                </h3>
-                <span className="text-[11px] font-bold text-slate-500">By Quantity Sold</span>
-              </div>
-
-              <div className="space-y-3 pt-1">
-                {salesMetrics.topSellingDishes.map((dish, idx) => (
-                  <div key={idx} className="space-y-1.5 bg-white/70 p-3 rounded-2xl border border-orange-100">
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center space-x-2 font-bold text-slate-900">
-                        <span className="w-5 h-5 rounded-full bg-orange-500/15 text-[#ea580c] flex items-center justify-center font-mono text-[10px] font-black">
-                          #{idx + 1}
-                        </span>
-                        <span>{dish.name}</span>
-                        <span className="text-[10px] text-slate-500 font-normal">({dish.category})</span>
-                      </div>
-                      <div className="font-mono font-bold text-slate-800">
-                        {dish.quantity} sold • <span className="text-[#ea580c]">₹{dish.revenue}</span>
-                      </div>
-                    </div>
-                    {/* Progress visual */}
-                    <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248]"
-                        style={{
-                          width: `${Math.min(100, Math.max(15, (dish.quantity / (salesMetrics.topSellingDishes[0]?.quantity || 1)) * 100))}%`
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-
-                {salesMetrics.topSellingDishes.length === 0 && (
-                  <p className="text-xs text-slate-500 italic text-center py-6">
-                    No dish sales recorded yet for today.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Right: Stall Operational Performance & Health */}
-            <div className="glassmorphism-card rounded-3xl p-6 border border-white/90 shadow-sm space-y-5">
-              <h3 className="font-extrabold text-slate-900 text-sm flex items-center space-x-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Stall Performance &amp; Campus Rating</span>
-              </h3>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-4 rounded-2xl bg-white/80 border border-slate-200">
-                  <div className="text-[11px] font-bold text-slate-500 uppercase">Student Satisfaction</div>
-                  <div className="text-2xl font-black text-slate-900 font-mono mt-1 flex items-center space-x-1">
-                    <span>{feedbackMetrics.avgRating}</span>
-                    <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                  </div>
-                  <div className="text-[10px] text-emerald-700 font-bold mt-0.5">
-                    {feedbackMetrics.positivePct}% Positive feedback
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white/80 border border-slate-200">
-                  <div className="text-[11px] font-bold text-slate-500 uppercase">Hygiene &amp; Cleanliness</div>
-                  <div className="text-2xl font-black text-slate-900 font-mono mt-1 flex items-center space-x-1">
-                    <span>{feedbackMetrics.avgHygiene}</span>
-                    <Sparkles className="w-4 h-4 text-blue-500" />
-                  </div>
-                  <div className="text-[10px] text-slate-600 font-medium mt-0.5">
-                    Verified Campus Standard
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-orange-50/80 border border-orange-200/80 space-y-2">
-                <div className="text-xs font-black text-slate-900 flex items-center justify-between">
-                  <span>Daily Summary Export</span>
-                  <span className="font-mono text-[11px] text-[#ea580c]">{currentStall.stallNumber}</span>
-                </div>
-                <p className="text-[11px] text-slate-600 font-medium">
-                  Export token logs, total receipts, item volume, and customer reviews in CSV format for counter ledger.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    soundEffects.playTap();
-                    const csvContent = "data:text/csv;charset=utf-8," 
-                      + "Stall,Token,Customer,Phone,Items,Total,Status\n"
-                      + stallOrders.map(o => `"${o.stallName}","${o.tokenNumber}","${o.studentName}","${o.phoneNumber}","${o.items.map(i => `${i.quantity}x ${i.name}`).join('; ')}",${o.totalAmount},"${o.status}"`).join("\n");
-                    const encodedUri = encodeURI(csvContent);
-                    const link = document.createElement("a");
-                    link.setAttribute("href", encodedUri);
-                    link.setAttribute("download", `${currentStall.id}_daily_report.csv`);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  }}
-                  className="w-full py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-900 font-extrabold text-xs border border-orange-200 shadow-xs flex items-center justify-center space-x-2 cursor-pointer transition-colors"
-                >
-                  <Download className="w-3.5 h-3.5 text-[#ea580c]" />
-                  <span>Download Daily Sales CSV</span>
-                </button>
-              </div>
+              </span>
             </div>
           </div>
         </div>
@@ -1628,189 +1148,130 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
           ========================================================================= */}
       {isAddDishModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-lg glassmorphism-card text-slate-900 rounded-3xl shadow-2xl border border-white/95 overflow-hidden flex flex-col max-h-[90vh]">
-            
-            {/* Header */}
-            <div className="px-6 py-4 bg-white/80 backdrop-blur-lg border-b border-orange-200/80 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] text-white font-bold shadow-md shadow-orange-500/25">
-                  <UtensilsCrossed className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-base font-black text-slate-900 leading-tight">
-                    {editingItem ? 'Edit Menu Dish' : 'Add New Dish to Stall'}
-                  </h3>
-                  <p className="text-xs text-slate-600 font-semibold">
-                    {currentStall.name} ({currentStall.stallNumber})
-                  </p>
-                </div>
-              </div>
+          <div className="w-full max-w-lg glassmorphism-card bg-white rounded-3xl shadow-2xl border border-white/95 overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-orange-200/80 flex items-center justify-between bg-orange-50/50">
+              <h3 className="text-base font-black text-slate-900">
+                {editingItem || editingRestoItem ? 'Edit Dish Details' : 'Add New Vegetarian Dish'}
+              </h3>
               <button
                 type="button"
                 onClick={() => setIsAddDishModalOpen(false)}
-                className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-1.5 rounded-xl text-slate-500 hover:text-slate-900 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Form Body */}
-            <form onSubmit={handleSaveDish} className="p-6 overflow-y-auto space-y-4 text-xs">
-              {/* Dish Name */}
+            <form onSubmit={handleSaveDish} className="p-6 overflow-y-auto space-y-4 text-left">
               <div className="space-y-1">
-                <label className="block font-black text-slate-900">Dish Name *</label>
+                <label className="block text-xs font-bold text-slate-900">Dish Name *</label>
                 <input
                   type="text"
                   required
                   value={dishName}
                   onChange={(e) => setDishName(e.target.value)}
-                  placeholder="e.g. Schezwan Paneer Kathi Roll"
-                  className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-none focus:border-[#ff7a30]"
+                  placeholder="e.g. McSpicy Paneer Burger / Paneer Tikka Sub"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
                 />
               </div>
 
-              {/* Category & Price */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="block font-black text-slate-900">Category</label>
-                  <select
+                  <label className="block text-xs font-bold text-slate-900">Category *</label>
+                  <input
+                    type="text"
+                    required
                     value={dishCategory}
-                    onChange={(e) => setDishCategory(e.target.value as any)}
-                    className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-none focus:border-[#ff7a30]"
-                  >
-                    <option value="Rolls & Wraps">Rolls &amp; Wraps</option>
-                    <option value="South Indian">South Indian</option>
-                    <option value="Chai & Snacks">Chai &amp; Snacks</option>
-                    <option value="Pizza & Burgers">Pizza &amp; Burgers</option>
-                    <option value="Chinese & Noodles">Chinese &amp; Noodles</option>
-                    <option value="Beverages & Shakes">Beverages &amp; Shakes</option>
-                    <option value="Healthy Bowls">Healthy Bowls</option>
-                    <option value="Desserts">Desserts</option>
-                  </select>
+                    onChange={(e) => setDishCategory(e.target.value)}
+                    placeholder="e.g. Burgers, Subs, Kulchas"
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                  />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block font-black text-slate-900">Price (₹) *</label>
+                  <label className="block text-xs font-bold text-slate-900">Price (₹) *</label>
                   <input
                     type="number"
                     required
-                    min="5"
-                    max="999"
+                    min="10"
                     value={dishPrice}
                     onChange={(e) => setDishPrice(Number(e.target.value))}
-                    className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-none focus:border-[#ff7a30]"
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
                   />
                 </div>
               </div>
 
-              {/* Prep Mins & Calories */}
-              <div className="grid grid-cols-2 gap-3">
+              {isNearbyRestoPartner && (
                 <div className="space-y-1">
-                  <label className="block font-black text-slate-900">Prep Time (Mins)</label>
+                  <label className="block text-xs font-bold text-slate-900">Discounted Student Price (₹ Optional)</label>
                   <input
                     type="number"
-                    min="1"
-                    max="60"
-                    value={dishPrepMins}
-                    onChange={(e) => setDishPrepMins(Number(e.target.value))}
-                    className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-none focus:border-[#ff7a30]"
+                    value={dishDiscountedPrice || ''}
+                    onChange={(e) => setDishDiscountedPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    placeholder="e.g. 99"
+                    className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
                   />
                 </div>
+              )}
 
-                <div className="space-y-1">
-                  <label className="block font-black text-slate-900">Calories (kcal)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="2000"
-                    value={dishCalories}
-                    onChange={(e) => setDishCalories(Number(e.target.value))}
-                    className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-none focus:border-[#ff7a30]"
-                  />
-                </div>
-              </div>
-
-              {/* Description */}
               <div className="space-y-1">
-                <label className="block font-black text-slate-900">Description &amp; Ingredients</label>
+                <label className="block text-xs font-bold text-slate-900">Description</label>
                 <textarea
                   rows={3}
                   value={dishDescription}
                   onChange={(e) => setDishDescription(e.target.value)}
-                  placeholder="Describe ingredients, cooking style, chutneys or dips included..."
-                  className="w-full p-2.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#ff7a30]"
+                  placeholder="Ingredients, flavors and presentation description..."
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
                 />
               </div>
 
-              {/* Dietary Flags */}
-              <div className="flex flex-wrap items-center gap-4 py-1">
-                <label className="flex items-center space-x-2 text-xs font-bold text-slate-800 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={dishIsVeg}
-                    onChange={(e) => setDishIsVeg(e.target.checked)}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <span>Pure Vegetarian (Veg)</span>
-                </label>
+              <div className="space-y-1">
+                <label className="block text-xs font-bold text-slate-900">Image URL (Optional)</label>
+                <input
+                  type="url"
+                  value={dishImageUrl}
+                  onChange={(e) => setDishImageUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full p-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#ff7a30]"
+                />
+              </div>
 
-                <label className="flex items-center space-x-2 text-xs font-bold text-slate-800 cursor-pointer">
+              <div className="flex flex-wrap gap-4 pt-2">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-800">
                   <input
                     type="checkbox"
                     checked={dishIsBestSeller}
                     onChange={(e) => setDishIsBestSeller(e.target.checked)}
-                    className="w-4 h-4 rounded text-orange-500 focus:ring-orange-400"
+                    className="accent-orange-500 rounded-sm"
                   />
-                  <span>Mark as Best Seller</span>
+                  <span>Mark as Bestseller ⭐</span>
                 </label>
 
-                <label className="flex items-center space-x-2 text-xs font-bold text-slate-800 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-800">
                   <input
                     type="checkbox"
                     checked={dishAvailable}
                     onChange={(e) => setDishAvailable(e.target.checked)}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
+                    className="accent-emerald-500 rounded-sm"
                   />
                   <span>Available in Stock</span>
                 </label>
               </div>
 
-              {/* Allergen Checkboxes */}
-              <div className="space-y-1.5 pt-1">
-                <label className="block font-black text-slate-900">Tracked Allergens:</label>
-                <div className="flex flex-wrap gap-1.5">
-                  {STANDARD_ALLERGENS.map((allergen) => (
-                    <button
-                      key={allergen}
-                      type="button"
-                      onClick={() => handleToggleAllergen(allergen)}
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
-                        dishAllergens.includes(allergen)
-                          ? 'bg-emerald-600 text-white border-emerald-600'
-                          : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                      }`}
-                    >
-                      {allergen}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="pt-4 border-t border-slate-200 flex justify-end space-x-2.5">
+              <div className="pt-4 flex items-center justify-end gap-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsAddDishModalOpen(false)}
-                  className="px-4 py-2 rounded-full text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
                   Cancel
                 </button>
-                <ChromeButton
+                <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-extrabold text-xs shadow-md shadow-orange-500/25 active:scale-95 transition-all cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-bold text-xs shadow-md cursor-pointer"
                 >
-                  {editingItem ? 'Save Changes' : 'Add to Stall Menu'}
-                </ChromeButton>
+                  Save Dish
+                </button>
               </div>
             </form>
           </div>
@@ -1819,3 +1280,4 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
     </div>
   );
 };
+export default FoodCourtOwnerDashboard;

@@ -217,56 +217,141 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               <div className="p-3.5 bg-orange-100/70 border border-orange-200 rounded-2xl space-y-1.5 backdrop-blur-sm">
                 <div className="font-bold text-[#c2410c] flex items-center gap-1.5">
                   <Building2 className="w-4 h-4 text-[#ea580c]" />
-                  <span>Food Court Stall Owner Portal</span>
+                  <span>Food Court &amp; Partner Restaurant Portal</span>
                 </div>
                 <p className="text-slate-800 leading-relaxed font-medium">
-                  Food court franchise operators can log in to update and control their stall menu, live rush meters, and view anonymous student reviews.
+                  Food court franchise operators and off-campus partner restaurants can log in to manage menus, update availability, and process student orders.
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <span className="font-black text-slate-900 text-xs block">
-                  Quick Select Food Court Stalls:
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="p-3 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
-                    <div>
-                      <div className="font-black text-slate-900">Rolls &amp; Frankie Hub</div>
-                      <div className="text-[11px] text-slate-600 font-mono font-bold">Stall #FC-01</div>
-                      <div className="text-[11px] text-slate-600 font-mono">ID: stall-rolls</div>
+              <div className="space-y-3">
+                {/* Food Court Stalls */}
+                <div>
+                  <span className="font-black text-slate-900 text-xs block mb-1.5">
+                    Campus Food Court Stalls:
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="p-2.5 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
+                      <div>
+                        <div className="font-black text-slate-900">Rolls &amp; Frankie Hub</div>
+                        <div className="text-[10px] text-slate-600 font-mono font-bold">Stall #FC-01 • ID: stall-rolls</div>
+                      </div>
+                      {onSelectDemoVendor && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectDemoVendor('stall-rolls', 'vendor123');
+                            onClose();
+                          }}
+                          className="mt-1.5 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
+                        >
+                          Sign in as Rolls Owner &rarr;
+                        </button>
+                      )}
                     </div>
-                    {onSelectDemoVendor && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onSelectDemoVendor('stall-rolls', 'vendor123');
-                          onClose();
-                        }}
-                        className="mt-2 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
-                      >
-                        Sign in as Rolls Owner &rarr;
-                      </button>
-                    )}
-                  </div>
 
-                  <div className="p-3 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
-                    <div>
-                      <div className="font-black text-slate-900">South Hub Express</div>
-                      <div className="text-[11px] text-slate-600 font-mono font-bold">Stall #FC-02</div>
-                      <div className="text-[11px] text-slate-600 font-mono">ID: stall-south</div>
+                    <div className="p-2.5 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
+                      <div>
+                        <div className="font-black text-slate-900">South Hub Express</div>
+                        <div className="text-[10px] text-slate-600 font-mono font-bold">Stall #FC-02 • ID: stall-south</div>
+                      </div>
+                      {onSelectDemoVendor && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectDemoVendor('stall-south', 'vendor123');
+                            onClose();
+                          }}
+                          className="mt-1.5 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
+                        >
+                          Sign in as South Hub Owner &rarr;
+                        </button>
+                      )}
                     </div>
-                    {onSelectDemoVendor && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onSelectDemoVendor('stall-south', 'vendor123');
-                          onClose();
-                        }}
-                        className="mt-2 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
-                      >
-                        Sign in as South Hub Owner &rarr;
-                      </button>
-                    )}
+                  </div>
+                </div>
+
+                {/* Nearby Partner Restaurants & Famous Franchises */}
+                <div>
+                  <span className="font-black text-slate-900 text-xs block mb-1.5">
+                    Nearby Famous Restaurants &amp; Franchises (Manager Login):
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="p-2.5 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
+                      <div>
+                        <div className="font-black text-slate-900">McDonald's</div>
+                        <div className="text-[10px] text-slate-600 font-mono font-bold">ID: resto-mcdonalds • GT Road</div>
+                      </div>
+                      {onSelectDemoVendor && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectDemoVendor('resto-mcdonalds', 'vendor123');
+                            onClose();
+                          }}
+                          className="mt-1.5 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
+                        >
+                          Sign in as McDonald's Manager &rarr;
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="p-2.5 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
+                      <div>
+                        <div className="font-black text-slate-900">Law Gate Kulcha Junction</div>
+                        <div className="text-[10px] text-slate-600 font-mono font-bold">ID: resto-kulcha-junction • Law Gate</div>
+                      </div>
+                      {onSelectDemoVendor && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectDemoVendor('resto-kulcha-junction', 'vendor123');
+                            onClose();
+                          }}
+                          className="mt-1.5 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
+                        >
+                          Sign in as Kulcha Junction Manager &rarr;
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="p-2.5 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
+                      <div>
+                        <div className="font-black text-slate-900">Subway</div>
+                        <div className="text-[10px] text-slate-600 font-mono font-bold">ID: resto-subway • UniMall &amp; GT Rd</div>
+                      </div>
+                      {onSelectDemoVendor && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectDemoVendor('resto-subway', 'vendor123');
+                            onClose();
+                          }}
+                          className="mt-1.5 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
+                        >
+                          Sign in as Subway Manager &rarr;
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="p-2.5 rounded-2xl bg-white/90 border border-orange-200/80 hover:border-orange-400 transition-all flex flex-col justify-between">
+                      <div>
+                        <div className="font-black text-slate-900">Domino's Pizza</div>
+                        <div className="text-[10px] text-slate-600 font-mono font-bold">ID: resto-dominos • Law Gate</div>
+                      </div>
+                      {onSelectDemoVendor && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onSelectDemoVendor('resto-dominos', 'vendor123');
+                            onClose();
+                          }}
+                          className="mt-1.5 text-left text-[11px] font-bold text-[#ea580c] hover:underline cursor-pointer"
+                        >
+                          Sign in as Domino's Manager &rarr;
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

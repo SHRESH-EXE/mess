@@ -20,6 +20,9 @@ import {
   FoodCourtOrderStatus,
   FoodCourtRushLevel,
   FoodCourtFeedback,
+  NearbyRestaurant,
+  NearbyRestaurantItem,
+  NearbyRestaurantOrder,
   TourStep
 } from '../types/mess';
 import {
@@ -36,11 +39,24 @@ import {
   INITIAL_FOOD_COURT_ORDERS,
   INITIAL_FOOD_COURT_FEEDBACK
 } from '../data/foodCourtData';
+import {
+  NEARBY_RESTAURANTS,
+  NEARBY_RESTO_ITEMS,
+  INITIAL_NEARBY_RESTO_ORDERS
+} from '../data/nearbyRestoData';
 import { CAMPUS_TOUR_STEPS } from '../data/tourData';
 import { soundEffects } from '../utils/audio';
 import { getCurrentDayOfWeek, getTodayDateString, formatTimeAmPm } from '../utils/time';
+import {
+  stripDangerousTags,
+  sanitizeObject,
+  validateRollNo,
+  validatePhoneNumber,
+  clientRateLimiter,
+  securityObservability
+} from '../lib/security';
 
-export type NavigationTab = 'menu' | 'pass' | 'foodcourt' | 'parcel' | 'dayscholar' | 'feedback' | 'admin' | 'vendor';
+export type NavigationTab = 'menu' | 'pass' | 'nearbyresto' | 'foodcourt' | 'parcel' | 'dayscholar' | 'feedback' | 'admin' | 'vendor';
 
 interface MessContextType {
   activeTab: NavigationTab;
@@ -61,6 +77,9 @@ interface MessContextType {
   foodCourtMenuItems: FoodCourtItem[];
   foodCourtOrders: FoodCourtOrder[];
   foodCourtFeedbacks: FoodCourtFeedback[];
+  nearbyRestaurants: NearbyRestaurant[];
+  nearbyRestoItems: NearbyRestaurantItem[];
+  nearbyRestoOrders: NearbyRestaurantOrder[];
   announcements: MessAnnouncement[];
   dishRatings: DishRating[];
   anonymousFeedbacks: AnonymousFeedback[];
@@ -79,7 +98,16 @@ interface MessContextType {
   toggleFoodCourtItemAvailability: (itemId: string) => void;
   submitFoodCourtFeedback: (feedback: Omit<FoodCourtFeedback, 'id' | 'timestamp' | 'date' | 'status'>) => void;
   updateFoodCourtFeedbackStatus: (id: string, status: FoodCourtFeedback['status'], ownerNote?: string) => void;
-  switchVendorStall: (stallId: string) => void;
+  switchVendorStall: (stallIdOrRestoId: string) => void;
+
+  // Nearby Restaurant Actions
+  createNearbyRestoOrder: (order: Omit<NearbyRestaurantOrder, 'id' | 'orderNumber' | 'placedAt' | 'status'>) => NearbyRestaurantOrder;
+  updateNearbyRestoOrderStatus: (orderId: string, status: NearbyRestaurantOrder['status']) => void;
+  updateNearbyRestaurantDetails: (restoId: string, updates: Partial<NearbyRestaurant>) => void;
+  addNearbyRestoItem: (item: Omit<NearbyRestaurantItem, 'id'>) => NearbyRestaurantItem;
+  updateNearbyRestoItem: (item: NearbyRestaurantItem) => void;
+  deleteNearbyRestoItem: (itemId: string) => void;
+  toggleNearbyRestoItemAvailability: (itemId: string) => void;
 
   // Guided Tour Actions
   isTourActive: boolean;
@@ -91,6 +119,8 @@ interface MessContextType {
   skipTour: () => void;
   isCheatSheetOpen: boolean;
   setIsCheatSheetOpen: (open: boolean) => void;
+  isSecurityModalOpen: boolean;
+  setIsSecurityModalOpen: (open: boolean) => void;
 
   // Actions
   markMealAttendance: (mealType: MealType, studentId?: string, method?: 'qr_scanner' | 'manual_admin' | 'pass_tap') => { success: boolean; message: string };
@@ -128,6 +158,9 @@ const STORAGE_KEYS = {
   FOOD_COURT_ITEMS: 'campusmess_foodcourt_items_v3',
   FOOD_COURT_ORDERS: 'campusmess_foodcourt_orders_v3',
   FOOD_COURT_FEEDBACK: 'campusmess_foodcourt_feedback_v3',
+  NEARBY_RESTAURANTS: 'campusmess_nearby_restaurants_v1',
+  NEARBY_RESTO_ITEMS: 'campusmess_nearby_resto_items_v1',
+  NEARBY_RESTO_ORDERS: 'campusmess_nearby_resto_orders_v1',
   ANNOUNCEMENTS: 'campusmess_announcements_v3',
   RATINGS: 'campusmess_ratings_v3',
   FEEDBACK: 'campusmess_anonymous_feedback_v3',
@@ -257,6 +290,33 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return INITIAL_FOOD_COURT_FEEDBACK;
   });
 
+  // 5g. Nearby Restaurants (NEW)
+  const [nearbyRestaurants, setNearbyRestaurants] = useState<NearbyRestaurant[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.NEARBY_RESTAURANTS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return NEARBY_RESTAURANTS;
+  });
+
+  // 5h. Nearby Restaurant Items (NEW)
+  const [nearbyRestoItems, setNearbyRestoItems] = useState<NearbyRestaurantItem[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.NEARBY_RESTO_ITEMS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return NEARBY_RESTO_ITEMS;
+  });
+
+  // 5i. Nearby Restaurant Orders (NEW)
+  const [nearbyRestoOrders, setNearbyRestoOrders] = useState<NearbyRestaurantOrder[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.NEARBY_RESTO_ORDERS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* ignore */ }
+    }
+    return INITIAL_NEARBY_RESTO_ORDERS;
+  });
+
   // 6. Announcements
   const [announcements] = useState<MessAnnouncement[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.ANNOUNCEMENTS);
@@ -298,10 +358,11 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   });
 
-  // 10. Guided Tour state
+  // 10. Guided Tour & Security Inspector state
   const [isTourActive, setIsTourActive] = useState<boolean>(false);
   const [currentTourStepIndex, setCurrentTourStepIndex] = useState<number>(0);
   const [isCheatSheetOpen, setIsCheatSheetOpen] = useState<boolean>(false);
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState<boolean>(false);
   const tourSteps = CAMPUS_TOUR_STEPS;
 
   // LocalStorage sync effects
@@ -344,6 +405,18 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.FOOD_COURT_FEEDBACK, JSON.stringify(foodCourtFeedbacks));
   }, [foodCourtFeedbacks]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.NEARBY_RESTAURANTS, JSON.stringify(nearbyRestaurants));
+  }, [nearbyRestaurants]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.NEARBY_RESTO_ITEMS, JSON.stringify(nearbyRestoItems));
+  }, [nearbyRestoItems]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.NEARBY_RESTO_ORDERS, JSON.stringify(nearbyRestoOrders));
+  }, [nearbyRestoOrders]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.RATINGS, JSON.stringify(dishRatings));
@@ -808,38 +881,103 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   }, []);
 
-  // Update Food Court Stall Details (Owner control)
+  // Update Food Court Stall Details (Owner control + IDOR check)
   const updateFoodCourtStallDetails = useCallback((stallId: string, updates: Partial<FoodCourtStall>) => {
+    // Zero-Trust IDOR check
+    if (currentSession?.role === 'vendor' && currentSession?.stallId && currentSession.stallId !== stallId) {
+      securityObservability.recordEvent({
+        action: 'IDOR_VIOLATION_BLOCKED',
+        actorRole: 'vendor',
+        actorId: currentSession.id,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'BLOCKED',
+        category: 'IDOR_GUARD',
+        details: `Vendor ${currentSession.name} attempted unauthorized update on stall ${stallId}`,
+        riskScore: 90
+      });
+      soundEffects.playError();
+      return;
+    }
+
+    const sanitizedUpdates = sanitizeObject(updates);
     setFoodCourtStalls(prev =>
-      prev.map(s => (s.id === stallId ? { ...s, ...updates } : s))
+      prev.map(s => (s.id === stallId ? { ...s, ...sanitizedUpdates } : s))
     );
     soundEffects.playSuccess();
-  }, []);
+  }, [currentSession]);
 
-  // Add Food Court Menu Item (Owner control)
+  // Add Food Court Menu Item (Owner control + IDOR & XSS sanitization)
   const addFoodCourtItem = useCallback((itemData: Omit<FoodCourtItem, 'id'>): FoodCourtItem => {
+    // Zero-Trust IDOR check
+    if (currentSession?.role === 'vendor' && currentSession?.stallId && currentSession.stallId !== itemData.stallId) {
+      securityObservability.recordEvent({
+        action: 'IDOR_ADD_ITEM_BLOCKED',
+        actorRole: 'vendor',
+        actorId: currentSession.id,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'BLOCKED',
+        category: 'IDOR_GUARD',
+        details: `Vendor ${currentSession.name} attempted to inject item into stall ${itemData.stallId}`,
+        riskScore: 85
+      });
+    }
+
+    const sanitized = sanitizeObject(itemData);
     const newItem: FoodCourtItem = {
-      ...itemData,
+      ...sanitized,
       id: `fc-item-${Date.now()}`
     };
     setFoodCourtMenuItems(prev => [...prev, newItem]);
     soundEffects.playSuccess();
     return newItem;
-  }, []);
+  }, [currentSession]);
 
-  // Update Food Court Menu Item (Owner control)
+  // Update Food Court Menu Item (Owner control + IDOR check)
   const updateFoodCourtItem = useCallback((itemData: FoodCourtItem) => {
+    // IDOR check
+    if (currentSession?.role === 'vendor' && currentSession?.stallId && currentSession.stallId !== itemData.stallId) {
+      securityObservability.recordEvent({
+        action: 'IDOR_UPDATE_ITEM_BLOCKED',
+        actorRole: 'vendor',
+        actorId: currentSession.id,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'BLOCKED',
+        category: 'IDOR_GUARD',
+        details: `Vendor attempted modifying cross-stall item ${itemData.id}`,
+        riskScore: 85
+      });
+      soundEffects.playError();
+      return;
+    }
+
+    const sanitized = sanitizeObject(itemData);
     setFoodCourtMenuItems(prev =>
-      prev.map(item => (item.id === itemData.id ? itemData : item))
+      prev.map(item => (item.id === sanitized.id ? sanitized : item))
     );
     soundEffects.playSuccess();
-  }, []);
+  }, [currentSession]);
 
   // Delete Food Court Menu Item (Owner control)
   const deleteFoodCourtItem = useCallback((itemId: string) => {
+    const existing = foodCourtMenuItems.find(i => i.id === itemId);
+    if (existing && currentSession?.role === 'vendor' && currentSession?.stallId && currentSession.stallId !== existing.stallId) {
+      securityObservability.recordEvent({
+        action: 'IDOR_DELETE_ITEM_BLOCKED',
+        actorRole: 'vendor',
+        actorId: currentSession.id,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'BLOCKED',
+        category: 'IDOR_GUARD',
+        details: `Unauthorized attempt to delete item ${itemId}`,
+        riskScore: 90
+      });
+      soundEffects.playError();
+      return;
+    }
+
     setFoodCourtMenuItems(prev => prev.filter(item => item.id !== itemId));
     soundEffects.playTrash();
-  }, []);
+  }, [currentSession, foodCourtMenuItems]);
 
   // Toggle Food Court Menu Item Availability (In stock / Sold out)
   const toggleFoodCourtItemAvailability = useCallback((itemId: string) => {
@@ -876,22 +1014,112 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundEffects.playSuccessBeep();
   }, []);
 
-  // Switch Active Stall for Vendor Session
-  const switchVendorStall = useCallback((stallId: string) => {
-    const stall = foodCourtStalls.find(s => s.id === stallId);
-    if (!stall) return;
-    setCurrentSession(prev => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        stallId: stall.id,
-        stallName: stall.name,
-        name: `${stall.name} Manager`,
-        designation: `${stall.stallNumber} Head Operator`
-      };
+  // Switch Active Partner (Stall or Nearby Restaurant) for Vendor Session
+  const switchVendorStall = useCallback((id: string) => {
+    const stall = foodCourtStalls.find(s => s.id === id);
+    if (stall) {
+      setCurrentSession(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          partnerType: 'food_court',
+          stallId: stall.id,
+          stallName: stall.name,
+          restoId: undefined,
+          restoName: undefined,
+          name: `${stall.name} Manager`,
+          designation: `${stall.stallNumber} Head Operator`
+        };
+      });
+      soundEffects.playTap();
+      return;
+    }
+
+    const resto = nearbyRestaurants.find(r => r.id === id);
+    if (resto) {
+      setCurrentSession(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          partnerType: 'nearby_resto',
+          restoId: resto.id,
+          restoName: resto.name,
+          stallId: undefined,
+          stallName: undefined,
+          name: `${resto.name} Manager`,
+          designation: 'Partner Restaurant Head'
+        };
+      });
+      soundEffects.playTap();
+    }
+  }, [foodCourtStalls, nearbyRestaurants]);
+
+  // =========================================================================
+  // NEARBY RESTAURANT ACTIONS
+  // =========================================================================
+  const createNearbyRestoOrder = useCallback((orderData: Omit<NearbyRestaurantOrder, 'id' | 'orderNumber' | 'placedAt' | 'status'>): NearbyRestaurantOrder => {
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    const newOrder: NearbyRestaurantOrder = {
+      ...orderData,
+      id: `nro-${Date.now()}-${randomNum}`,
+      orderNumber: `#RST-${randomNum}`,
+      placedAt: formatTimeAmPm(new Date()),
+      status: 'Received'
+    };
+
+    setNearbyRestoOrders(prev => [newOrder, ...prev]);
+    soundEffects.playSuccess();
+    confetti({
+      particleCount: 60,
+      spread: 75,
+      origin: { y: 0.7 },
+      colors: ['#ff7a30', '#10b981', '#6366f1']
     });
+    return newOrder;
+  }, []);
+
+  const updateNearbyRestoOrderStatus = useCallback((orderId: string, status: NearbyRestaurantOrder['status']) => {
+    setNearbyRestoOrders(prev =>
+      prev.map(ord => (ord.id === orderId ? { ...ord, status } : ord))
+    );
+    soundEffects.playSuccessBeep();
+  }, []);
+
+  const updateNearbyRestaurantDetails = useCallback((restoId: string, updates: Partial<NearbyRestaurant>) => {
+    setNearbyRestaurants(prev =>
+      prev.map(r => (r.id === restoId ? { ...r, ...updates } : r))
+    );
+    soundEffects.playSuccess();
+  }, []);
+
+  const addNearbyRestoItem = useCallback((itemData: Omit<NearbyRestaurantItem, 'id'>): NearbyRestaurantItem => {
+    const newItem: NearbyRestaurantItem = {
+      ...itemData,
+      id: `nri-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`
+    };
+    setNearbyRestoItems(prev => [newItem, ...prev]);
+    soundEffects.playSuccess();
+    return newItem;
+  }, []);
+
+  const updateNearbyRestoItem = useCallback((itemData: NearbyRestaurantItem) => {
+    setNearbyRestoItems(prev =>
+      prev.map(item => (item.id === itemData.id ? itemData : item))
+    );
+    soundEffects.playSuccess();
+  }, []);
+
+  const deleteNearbyRestoItem = useCallback((itemId: string) => {
+    setNearbyRestoItems(prev => prev.filter(item => item.id !== itemId));
+    soundEffects.playTrash();
+  }, []);
+
+  const toggleNearbyRestoItemAvailability = useCallback((itemId: string) => {
+    setNearbyRestoItems(prev =>
+      prev.map(item => (item.id === itemId ? { ...item, available: !item.available } : item))
+    );
     soundEffects.playTap();
-  }, [foodCourtStalls]);
+  }, []);
 
   // Guided Tour Actions
   const startTour = useCallback((stepIndex: number = 0) => {
@@ -976,14 +1204,44 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Authentication: Student Login
   const loginStudent = useCallback(async (rollNoInput: string, passOrRoomInput: string): Promise<{ success: boolean; error?: string }> => {
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    // Abuse & Rate Limiting Check
+    const rateLimitCheck = clientRateLimiter.checkLimit('AUTH_LOGIN_STUDENT', 5, 60000);
+    if (!rateLimitCheck.allowed) {
+      securityObservability.recordEvent({
+        action: 'RATE_LIMIT_LOGIN_EXCEEDED',
+        actorRole: 'anonymous',
+        actorId: rollNoInput.slice(0, 10),
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'BLOCKED',
+        category: 'RATE_LIMIT',
+        details: `Student login rate limit triggered. Retry in ${rateLimitCheck.waitSeconds}s`,
+        riskScore: 60
+      });
+      soundEffects.playError();
+      return {
+        success: false,
+        error: `Too many login attempts. Please wait ${rateLimitCheck.waitSeconds} seconds before trying again.`
+      };
+    }
 
-    const cleanRoll = rollNoInput.trim().toUpperCase();
-    const cleanPass = passOrRoomInput.trim().toUpperCase();
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    const cleanRoll = stripDangerousTags(rollNoInput.trim().toUpperCase());
+    const cleanPass = stripDangerousTags(passOrRoomInput.trim().toUpperCase());
 
     const foundStudent = students.find((s) => s.rollNo.toUpperCase() === cleanRoll);
 
     if (!foundStudent) {
+      securityObservability.recordEvent({
+        action: 'FAILED_STUDENT_LOGIN_NOT_FOUND',
+        actorRole: 'anonymous',
+        actorId: cleanRoll,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'WARNING',
+        category: 'AUTH',
+        details: `Unknown roll number: ${cleanRoll}`,
+        riskScore: 30
+      });
       soundEffects.playError();
       return {
         success: false,
@@ -998,6 +1256,16 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const isPasswordValid = validPasswords.includes(cleanPass) || enteredRoom === validRoom;
 
     if (!isPasswordValid) {
+      securityObservability.recordEvent({
+        action: 'FAILED_STUDENT_LOGIN_BAD_PASSWORD',
+        actorRole: 'student',
+        actorId: foundStudent.id,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'WARNING',
+        category: 'AUTH',
+        details: `Failed credentials for roll ${cleanRoll}`,
+        riskScore: 45
+      });
       soundEffects.playError();
       return {
         success: false,
@@ -1019,6 +1287,17 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       allergies: foundStudent.allergies || []
     };
 
+    securityObservability.recordEvent({
+      action: 'SUCCESSFUL_STUDENT_LOGIN',
+      actorRole: 'student',
+      actorId: foundStudent.id,
+      ipAddress: '10.0.0.1 (Local Client)',
+      status: 'SUCCESS',
+      category: 'AUTH',
+      details: `Student ${foundStudent.name} authenticated securely`,
+      riskScore: 0
+    });
+
     setCurrentSession(newSession);
     setActiveTab('menu');
     soundEffects.playSuccess();
@@ -1027,15 +1306,45 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Authentication: Admin Login
   const loginAdmin = useCallback(async (emailOrIdInput: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    // Abuse & Rate Limiting Check
+    const rateLimitCheck = clientRateLimiter.checkLimit('AUTH_LOGIN_ADMIN', 4, 60000);
+    if (!rateLimitCheck.allowed) {
+      securityObservability.recordEvent({
+        action: 'RATE_LIMIT_ADMIN_LOGIN_EXCEEDED',
+        actorRole: 'anonymous',
+        actorId: emailOrIdInput.slice(0, 15),
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'BLOCKED',
+        category: 'RATE_LIMIT',
+        details: `Brute force protection triggered on admin portal. Locked for ${rateLimitCheck.waitSeconds}s`,
+        riskScore: 80
+      });
+      soundEffects.playError();
+      return {
+        success: false,
+        error: `Brute force lock triggered. Please wait ${rateLimitCheck.waitSeconds} seconds.`
+      };
+    }
 
-    const cleanId = emailOrIdInput.trim().toLowerCase();
-    const cleanPass = passwordInput.trim();
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    const cleanId = stripDangerousTags(emailOrIdInput.trim().toLowerCase());
+    const cleanPass = stripDangerousTags(passwordInput.trim());
 
     const validAdminIds = ['admin@campus.edu', 'staff-101', 'admin', 'warden@campus.edu', 'chef@campus.edu', 'staff-202'];
     const validAdminPasswords = ['admin123', 'warden2026', 'chef123', 'admin', 'campus2026'];
 
     if (!validAdminIds.includes(cleanId) && !cleanId.includes('admin') && !cleanId.includes('staff')) {
+      securityObservability.recordEvent({
+        action: 'FAILED_ADMIN_LOGIN_BAD_ID',
+        actorRole: 'anonymous',
+        actorId: cleanId,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'WARNING',
+        category: 'AUTH',
+        details: `Unrecognized admin identifier: ${cleanId}`,
+        riskScore: 50
+      });
       soundEffects.playError();
       return {
         success: false,
@@ -1044,6 +1353,16 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     if (!validAdminPasswords.includes(cleanPass) && cleanPass !== 'admin123') {
+      securityObservability.recordEvent({
+        action: 'FAILED_ADMIN_LOGIN_BAD_PASS',
+        actorRole: 'admin',
+        actorId: cleanId,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'WARNING',
+        category: 'AUTH',
+        details: `Invalid password attempt on admin ID ${cleanId}`,
+        riskScore: 65
+      });
       soundEffects.playError();
       return {
         success: false,
@@ -1061,20 +1380,65 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       loginTime: formatTimeAmPm(new Date())
     };
 
+    securityObservability.recordEvent({
+      action: 'SUCCESSFUL_ADMIN_LOGIN',
+      actorRole: 'admin',
+      actorId: newSession.id,
+      ipAddress: '10.0.0.1 (Local Client)',
+      status: 'SUCCESS',
+      category: 'AUTH',
+      details: `Admin ${newSession.name} authorized with full executive role`,
+      riskScore: 0
+    });
+
     setCurrentSession(newSession);
     setActiveTab('admin');
     soundEffects.playSuccess();
     return { success: true };
   }, []);
 
-  // Authentication: Vendor / Food Court Owner Login
+  // Authentication: Vendor / Food Court & Nearby Restaurant Owner Login
   const loginVendor = useCallback(async (stallIdOrEmail: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    // Abuse & Rate Limiting Check
+    const rateLimitCheck = clientRateLimiter.checkLimit('AUTH_LOGIN_VENDOR', 5, 60000);
+    if (!rateLimitCheck.allowed) {
+      securityObservability.recordEvent({
+        action: 'RATE_LIMIT_VENDOR_LOGIN_EXCEEDED',
+        actorRole: 'anonymous',
+        actorId: stallIdOrEmail.slice(0, 15),
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'BLOCKED',
+        category: 'RATE_LIMIT',
+        details: `Vendor login rate limit exceeded. Retry in ${rateLimitCheck.waitSeconds}s`,
+        riskScore: 60
+      });
+      soundEffects.playError();
+      return {
+        success: false,
+        error: `Too many vendor login attempts. Please wait ${rateLimitCheck.waitSeconds} seconds.`
+      };
+    }
 
-    const cleanInput = stallIdOrEmail.trim().toLowerCase();
-    const cleanPass = passwordInput.trim();
+    await new Promise((resolve) => setTimeout(resolve, 600));
 
-    // Match by stallId, stallName, or email
+    const cleanInput = stripDangerousTags(stallIdOrEmail.trim().toLowerCase());
+    const cleanPass = stripDangerousTags(passwordInput.trim());
+
+    // Check if input matches a nearby restaurant
+    const matchedResto = nearbyRestaurants.find(r =>
+      r.id.toLowerCase() === cleanInput ||
+      r.adminEmail.toLowerCase() === cleanInput ||
+      r.name.toLowerCase().includes(cleanInput) ||
+      cleanInput.includes(r.id.replace('resto-', '')) ||
+      (cleanInput.includes('royal') && r.id === 'resto-royal-spice') ||
+      (cleanInput.includes('green') && r.id === 'resto-green-leaf') ||
+      (cleanInput.includes('midnight') && r.id === 'resto-midnight-craver') ||
+      (cleanInput.includes('dragon') && r.id === 'resto-dragon-wok') ||
+      (cleanInput.includes('woodfire') && r.id === 'resto-woodfire-crust') ||
+      (cleanInput.includes('paratha') && r.id === 'resto-paratha-junction')
+    );
+
+    // Check if input matches a food court stall
     const matchedStall = foodCourtStalls.find(s =>
       s.id.toLowerCase() === cleanInput ||
       s.stallNumber.toLowerCase() === cleanInput ||
@@ -1086,35 +1450,88 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       (cleanInput.includes('pizza') && s.id === 'stall-pizza') ||
       (cleanInput.includes('wok') && s.id === 'stall-wok') ||
       (cleanInput.includes('nutri') && s.id === 'stall-nutrifit')
-    ) || foodCourtStalls[0];
+    );
 
-    const validPasswords = ['vendor123', 'foodcourt123', 'owner123', 'fc123', '123456', 'admin123', 'campus2026'];
+    const validPasswords = ['vendor123', 'resto123', 'partner123', 'foodcourt123', 'owner123', 'fc123', '123456', 'admin123', 'campus2026'];
     const isPassValid = validPasswords.includes(cleanPass.toLowerCase()) || cleanPass === 'password';
 
     if (!isPassValid) {
+      securityObservability.recordEvent({
+        action: 'FAILED_VENDOR_LOGIN_BAD_PASS',
+        actorRole: 'vendor',
+        actorId: cleanInput,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'WARNING',
+        category: 'AUTH',
+        details: `Invalid password for vendor entity ${cleanInput}`,
+        riskScore: 50
+      });
       soundEffects.playError();
       return {
         success: false,
-        error: 'Invalid Food Court Stall Owner password. Use demo password "vendor123".'
+        error: 'Invalid Partner credentials. Use demo password "vendor123" or "resto123".'
       };
     }
 
+    if (matchedResto) {
+      const newSession: UserSession = {
+        role: 'vendor',
+        partnerType: 'nearby_resto',
+        name: `${matchedResto.name} Owner / Manager`,
+        id: `RESTO-${matchedResto.id.replace('resto-', '').toUpperCase()}`,
+        email: matchedResto.adminEmail,
+        restoId: matchedResto.id,
+        restoName: matchedResto.name,
+        designation: 'Campus Partner Restaurant Manager',
+        loginTime: formatTimeAmPm(new Date())
+      };
+
+      securityObservability.recordEvent({
+        action: 'SUCCESSFUL_RESTO_PARTNER_LOGIN',
+        actorRole: 'vendor',
+        actorId: newSession.id,
+        ipAddress: '10.0.0.1 (Local Client)',
+        status: 'SUCCESS',
+        category: 'AUTH',
+        details: `Restaurant owner ${matchedResto.name} logged in`,
+        riskScore: 0
+      });
+
+      setCurrentSession(newSession);
+      setActiveTab('vendor');
+      soundEffects.playSuccess();
+      return { success: true };
+    }
+
+    const activeStall = matchedStall || foodCourtStalls[0];
     const newSession: UserSession = {
       role: 'vendor',
-      name: `${matchedStall.name} Owner / Manager`,
-      id: `VENDOR-${matchedStall.stallNumber.replace('#', '')}`,
-      email: `${matchedStall.id.replace('stall-', '')}@foodcourt.campus.edu`,
-      stallId: matchedStall.id,
-      stallName: matchedStall.name,
-      designation: `${matchedStall.stallNumber} Head Franchise Owner`,
+      partnerType: 'food_court',
+      name: `${activeStall.name} Owner / Manager`,
+      id: `VENDOR-${activeStall.stallNumber.replace('#', '')}`,
+      email: `${activeStall.id.replace('stall-', '')}@foodcourt.campus.edu`,
+      stallId: activeStall.id,
+      stallName: activeStall.name,
+      designation: `${activeStall.stallNumber} Head Franchise Owner`,
       loginTime: formatTimeAmPm(new Date())
     };
+
+    securityObservability.recordEvent({
+      action: 'SUCCESSFUL_FOODCOURT_VENDOR_LOGIN',
+      actorRole: 'vendor',
+      actorId: newSession.id,
+      ipAddress: '10.0.0.1 (Local Client)',
+      status: 'SUCCESS',
+      category: 'AUTH',
+      details: `Stall operator for ${activeStall.name} logged in`,
+      riskScore: 0
+    });
 
     setCurrentSession(newSession);
     setActiveTab('vendor');
     soundEffects.playSuccess();
     return { success: true };
-  }, [foodCourtStalls]);
+  }, [foodCourtStalls, nearbyRestaurants]);
 
   // Authentication: Logout
   const logout = useCallback(() => {
@@ -1144,6 +1561,9 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         foodCourtMenuItems,
         foodCourtOrders,
         foodCourtFeedbacks,
+        nearbyRestaurants,
+        nearbyRestoItems,
+        nearbyRestoOrders,
         announcements,
         dishRatings,
         anonymousFeedbacks,
@@ -1161,6 +1581,13 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         submitFoodCourtFeedback,
         updateFoodCourtFeedbackStatus,
         switchVendorStall,
+        createNearbyRestoOrder,
+        updateNearbyRestoOrderStatus,
+        updateNearbyRestaurantDetails,
+        addNearbyRestoItem,
+        updateNearbyRestoItem,
+        deleteNearbyRestoItem,
+        toggleNearbyRestoItemAvailability,
         isTourActive,
         currentTourStepIndex,
         tourSteps,
@@ -1170,6 +1597,8 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         skipTour,
         isCheatSheetOpen,
         setIsCheatSheetOpen,
+        isSecurityModalOpen,
+        setIsSecurityModalOpen,
         markMealAttendance,
         skipMealForRebate,
         createAcademicOrder,
