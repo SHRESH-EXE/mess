@@ -246,7 +246,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         studentId: 'stu-1',
         studentName: 'Aarav Sharma',
         rollNo: '22CS0142',
-        hostel: 'Aryabhatta Hostel (Block-B)',
+        hostel: 'studio 12',
         roomNo: 'B-312',
         date: todayDateStr,
         mealType: 'breakfast',
@@ -1339,9 +1339,17 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [foodCourtStalls, nearbyRestaurants]);
 
-  // =========================================================================
-  // NEARBY RESTAURANT ACTIONS
-  // =========================================================================
+
+
+
+
+
+
+
+
+
+  
+  // NEARBY RESTAURANT 
   const createNearbyRestoOrder = useCallback((orderData: Omit<NearbyRestaurantOrder, 'id' | 'orderNumber' | 'placedAt' | 'status'>): NearbyRestaurantOrder => {
     const randomNum = Math.floor(100 + Math.random() * 900);
     const newOrder: NearbyRestaurantOrder = {
@@ -1421,6 +1429,15 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundEffects.playTap();
   }, []);
 
+
+
+
+
+
+
+
+  
+
   // Guided Tour Actions
   const startTour = useCallback((stepIndex: number = 0) => {
     const validIndex = Math.max(0, Math.min(stepIndex, CAMPUS_TOUR_STEPS.length - 1));
@@ -1473,6 +1490,22 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundEffects.playTap();
   }, []);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
   // Reset to default
   const resetToDefaultData = useCallback(() => {
     localStorage.removeItem(STORAGE_KEYS.MENU);
@@ -1501,6 +1534,12 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTodayCounts({ breakfast: 412, lunch: 485, snacks: 198, dinner: 0 });
     setCurrentSession(null);
   }, []);
+
+
+
+
+
+  
 
   // Authentication: Student Login
   const loginStudent = useCallback(async (rollNoInput: string, passOrRoomInput: string): Promise<{ success: boolean; error?: string }> => {
@@ -1604,6 +1643,13 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   }, [students]);
 
+
+
+
+
+
+  
+
   // Authentication: Admin Login (Firebase Auth with Demo Fallback)
   const loginAdmin = useCallback(async (emailOrIdInput: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
     // Abuse & Rate Limiting Check
@@ -1628,6 +1674,13 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const cleanId = stripDangerousTags(emailOrIdInput.trim().toLowerCase());
     const cleanPass = stripDangerousTags(passwordInput.trim());
+
+
+
+
+
+
+    
 
     // Try Real Firebase Authentication first if email format is provided
     if (cleanId.includes('@')) {
@@ -1658,6 +1711,10 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         soundEffects.playSuccess();
         return { success: true };
       } catch (fbErr: any) {
+
+
+
+        
         // If it's not a demo fallback account, report error
         const isDemoId = ['admin@campus.edu', 'warden@campus.edu', 'chef@campus.edu'].includes(cleanId);
         if (!isDemoId) {
@@ -1735,6 +1792,14 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   }, []);
 
+
+
+
+
+
+
+
+  
   // Authentication: Vendor / Food Court & Nearby Restaurant Owner Login
   const loginVendor = useCallback(async (stallIdOrEmail: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
     // Abuse & Rate Limiting Check
@@ -1900,6 +1965,15 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     soundEffects.playSuccess();
     return { success: true };
   }, [foodCourtStalls, nearbyRestaurants]);
+
+
+
+
+
+
+
+
+  
 
   // Authentication: Dedicated Restaurant Partner Login
   const loginRestaurant = useCallback(async (restoIdOrEmail: string, passwordInput: string): Promise<{ success: boolean; error?: string }> => {
