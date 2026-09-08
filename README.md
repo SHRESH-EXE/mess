@@ -1,4 +1,4 @@
-# CampusMess Hub 🌿
+# CampusMess Hub 
 
 **CampusMess Hub** is a 100% Pure Vegetarian Hostel Mess Management web application built with React, TypeScript, Tailwind CSS, and Lucide icons.
 
