@@ -1,12 +1,9 @@
-{
-  "projectId": "YOUR_PROJECT_ID",
-  "appId": "YOUR_APP_ID",
-  "apiKey": "YOUR_API_KEY",
-  "authDomain": "YOUR_PROJECT_ID.firebaseapp.com",
-  "firestoreDatabaseId": "(default)",
-  "storageBucket": "YOUR_PROJECT_ID.firebasestorage.app",
-  "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
-  "measurementId": "",
-  "oAuthClientId": "YOUR_OAUTH_CLIENT_ID",
-  "recaptchaSiteKey": ""
-}
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "iron-lightning-p8chg.firebaseapp.com",
+  projectId: "iron-lightning-p8chg",
+  storageBucket: "iron-lightning-p8chg.firebasestorage.app",
+  messagingSenderId: "784127085398",
+  appId: "1:784127085398:web:43aca4b2e7a4054f7",
+  measurementId: ""
+};
