@@ -207,12 +207,15 @@ app.use(
   })
 );
 
-// Permissions-Policy & Legacy Fallback Headers
+// Permissions-Policy & Cross-Origin Defensive Headers
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader(
     'Permissions-Policy',
     'camera=(self), microphone=(), geolocation=(), payment=(), usb=(), screen-wake-lock=(self)'
   );
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
   next();
 });
 

@@ -1,3 +1,9 @@
+import crypto from 'node:crypto';
+if (!globalThis.crypto) {
+  // @ts-ignore
+  globalThis.crypto = crypto.webcrypto;
+}
+
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
