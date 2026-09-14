@@ -11,7 +11,7 @@ import {defineConfig} from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: '/mess/',
+  base: process.env.VERCEL ? '/' : (process.env.VITE_BASE || '/mess/'),
   plugins: [
     react(),
     tailwindcss(),
