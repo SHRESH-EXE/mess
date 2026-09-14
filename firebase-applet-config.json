@@ -1,9 +1,10 @@
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "iron-lightning-p8chg.firebaseapp.com",
-  projectId: "iron-lightning-p8chg",
-  storageBucket: "iron-lightning-p8chg.firebasestorage.app",
-  messagingSenderId: "784127085398",
-  appId: "1:784127085398:web:43aca4b2e7a4054f7",
-  measurementId: ""
-};
+{
+  "apiKey": "YOUR_API_KEY",
+  "authDomain": "iron-lightning-p8chg.firebaseapp.com",
+  "projectId": "iron-lightning-p8chg",
+  "storageBucket": "iron-lightning-p8chg.firebasestorage.app",
+  "messagingSenderId": "784127085398",
+  "appId": "1:784127085398:web:43aca4b2e7a4054f7",
+  "measurementId": "",
+  "firestoreDatabaseId": ""
+}

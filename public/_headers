@@ -1,0 +1,25 @@
+# Production-Grade Defensive Security Headers
+# Compatible with Cloudflare Pages, Netlify, and Reverse Proxies
+
+/*
+  # 1. Transport Security (HTTPS only, HSTS 1 year with subdomains and preload)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+  # 2. Content Security Policy (Strict origin & resource boundary)
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com https://*.googleusercontent.com https://*.firebasestorage.app https://firebasestorage.googleapis.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://identitytoolkit.googleapis.com https://securetoken.googleapis.com wss://*.firebaseio.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;
+
+  # 3. Prevent MIME type sniffing
+  X-Content-Type-Options: nosniff
+
+  # 12. Anti-Clickjacking Frame Defense
+  X-Frame-Options: SAMEORIGIN
+
+  # Referrer Policy
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Permissions Policy (Principle of least privilege)
+  Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=(), usb=(), screen-wake-lock=(self)
+
+  # Cross-Origin Policies
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin

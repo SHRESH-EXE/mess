@@ -10,11 +10,13 @@ import {
   Store,
   UtensilsCrossed,
   ShieldCheck,
+  ShieldAlert,
   Sparkles,
   Clock,
   ShoppingBag,
   HeartHandshake
 } from 'lucide-react';
+import { purifyText, isHoneypotTriggered, clientRateLimiter, securityObservability } from '../lib/security';
 
 interface AnonymousFeedbackFormProps {
   initialSlot?: MealType;
@@ -76,6 +78,10 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
     currentSession?.role === 'vendor' && currentSession?.stallId ? currentSession.stallId : 'all'
   );
 
+  // 8 & 14. Anti-Spam Honeypot and Rate Limiting State
+  const [honeypotValue, setHoneypotValue] = useState<string>('');
+  const [rateLimitError, setRateLimitError] = useState<string | null>(null);
+
   const dayMenu = weeklyMenu[selectedDay] || weeklyMenu['Monday'];
   const currentSlotDishes = dayMenu?.meals[selectedSlot]?.dishes || [];
 
@@ -118,17 +124,56 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
 
   const handleMessSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const finalDishName =
+    setRateLimitError(null);
+
+    // 8. Honeypot Anti-Spam Check
+    if (isHoneypotTriggered(honeypotValue)) {
+      securityObservability.recordEvent({
+        action: 'HONEYPOT_SPAM_BLOCKED',
+        actorRole: 'anonymous',
+        actorId: 'BOT_TRAPPED',
+        ipAddress: 'Client Honeypot Guard',
+        status: 'BLOCKED',
+        category: 'HONEYPOT_SPAM',
+        details: 'Automated spam bot triggered invisible honeypot field on Mess Feedback.',
+        riskScore: 90
+      });
+      setSubmitted(true); // Silently neutralize bot without storing garbage
+      return;
+    }
+
+    // 14. Client-Side Submission Rate Limiting
+    const rateCheck = clientRateLimiter.checkLimit('feedback_submit', 3, 60000);
+    if (!rateCheck.allowed) {
+      securityObservability.recordEvent({
+        action: 'FEEDBACK_RATE_LIMIT_TRIGGERED',
+        actorRole: 'student',
+        actorId: currentStudent.id || 'ANONYMOUS_STUDENT',
+        ipAddress: 'Client Rate Throttler',
+        status: 'BLOCKED',
+        category: 'RATE_LIMIT',
+        details: `Exceeded 3 submissions/min limit. Blocked for ${rateCheck.waitSeconds}s.`,
+        riskScore: 50
+      });
+      setRateLimitError(`Submission throttled for anti-spam safety. Please wait ${rateCheck.waitSeconds}s before submitting again.`);
+      return;
+    }
+
+    const rawDish =
       selectedDish === '__other__'
         ? customDish.trim()
         : selectedDish || currentSlotDishes[0]?.name || 'Meal General';
-    if (!finalDishName) return;
+    if (!rawDish) return;
+
+    // 4 & 10. Cure53 DOMPurify Sanitization
+    const cleanDishName = purifyText(rawDish);
+    const cleanComment = comment ? purifyText(comment) : undefined;
 
     submitAnonymousFeedback({
       mealSlot: selectedSlot,
-      dishName: finalDishName,
+      dishName: cleanDishName,
       rating,
-      comment: comment.trim() || undefined
+      comment: cleanComment
     });
 
     setSubmitted(true);
@@ -139,22 +184,60 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
 
   const handleFoodCourtSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setRateLimitError(null);
+
+    // 8. Honeypot Anti-Spam Check
+    if (isHoneypotTriggered(honeypotValue)) {
+      securityObservability.recordEvent({
+        action: 'HONEYPOT_SPAM_BLOCKED',
+        actorRole: 'anonymous',
+        actorId: 'BOT_TRAPPED',
+        ipAddress: 'Client Honeypot Guard',
+        status: 'BLOCKED',
+        category: 'HONEYPOT_SPAM',
+        details: 'Automated spam bot triggered invisible honeypot field on Food Court Feedback.',
+        riskScore: 90
+      });
+      setFcSubmitted(true);
+      return;
+    }
+
+    // 14. Client-Side Submission Rate Limiting
+    const rateCheck = clientRateLimiter.checkLimit('feedback_submit', 3, 60000);
+    if (!rateCheck.allowed) {
+      securityObservability.recordEvent({
+        action: 'FEEDBACK_RATE_LIMIT_TRIGGERED',
+        actorRole: 'student',
+        actorId: currentStudent.id || 'ANONYMOUS_STUDENT',
+        ipAddress: 'Client Rate Throttler',
+        status: 'BLOCKED',
+        category: 'RATE_LIMIT',
+        details: `Exceeded 3 submissions/min limit. Blocked for ${rateCheck.waitSeconds}s.`,
+        riskScore: 50
+      });
+      setRateLimitError(`Submission throttled for anti-spam safety. Please wait ${rateCheck.waitSeconds}s before submitting again.`);
+      return;
+    }
+
     const matchedStall = foodCourtStalls.find(s => s.id === fcStallId) || foodCourtStalls[0];
     if (!matchedStall) return;
 
-    const finalDish =
+    const rawDish =
       fcDishName === '__other__'
         ? fcCustomDish.trim()
         : fcDishName || (selectedStallMenuItems[0]?.name || 'Food from Stall');
 
+    const cleanDish = purifyText(rawDish);
+    const cleanComment = purifyText(fcComment);
+
     submitFoodCourtFeedback({
       stallId: matchedStall.id,
       stallName: matchedStall.name,
-      dishName: finalDish.trim() || undefined,
+      dishName: cleanDish || undefined,
       rating: fcOverallRating,
       hygieneRating: fcHygieneRating,
       speedRating: fcSpeedRating,
-      comment: fcComment.trim(),
+      comment: cleanComment,
       category: fcCategory,
       sentiment: fcOverallRating >= 4 ? 'positive' : fcOverallRating === 3 ? 'neutral' : 'negative'
     });
@@ -277,6 +360,26 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                 </div>
               ) : (
                 <form onSubmit={handleMessSubmit} className="space-y-6">
+                  {/* 8. Invisible Honeypot Spam Trap (Catches automated bots) */}
+                  <div className="opacity-0 absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+                    <label htmlFor="mess_website_url">Leave this field blank</label>
+                    <input
+                      type="text"
+                      id="mess_website_url"
+                      name="website_url_hp"
+                      value={honeypotValue}
+                      onChange={(e) => setHoneypotValue(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  {rateLimitError && (
+                    <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center space-x-2">
+                      <ShieldAlert className="w-4 h-4 shrink-0 text-rose-600" />
+                      <span>{rateLimitError}</span>
+                    </div>
+                  )}
                   {/* 1. Meal Slot */}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
@@ -499,7 +602,27 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleFoodCourtSubmit} className="space-y-5">
+                <form onSubmit={handleFoodCourtSubmit} className="space-y-6">
+                  {/* 8. Invisible Honeypot Spam Trap (Catches automated bots) */}
+                  <div className="opacity-0 absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+                    <label htmlFor="fc_website_url">Leave this field blank</label>
+                    <input
+                      type="text"
+                      id="fc_website_url"
+                      name="website_url_hp"
+                      value={honeypotValue}
+                      onChange={(e) => setHoneypotValue(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  {rateLimitError && (
+                    <div className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center space-x-2">
+                      <ShieldAlert className="w-4 h-4 shrink-0 text-rose-600" />
+                      <span>{rateLimitError}</span>
+                    </div>
+                  )}
                   {/* Quick Pill for Recently Purchased Food */}
                   {recentPurchasedItems.length > 0 && (
                     <div className="p-3.5 rounded-2xl bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 border border-orange-200/80 space-y-2">
