@@ -13,10 +13,18 @@ import {
   ArrowRight,
   ShieldCheck,
   Store,
-  GraduationCap
+  GraduationCap,
+  X
 } from 'lucide-react';
 
 export type LoginPortalRole = 'student' | 'admin' | 'vendor' | 'restaurant';
+
+export interface LoginErrorDetails {
+  title: string;
+  message: string;
+  type: 'not_found' | 'wrong_password' | 'invalid_credentials';
+  field?: 'id' | 'password' | 'both';
+}
 
 /**
  * LoginPage with Dedicated 4-Way Portal Selector:
@@ -39,12 +47,58 @@ export const LoginPage: React.FC = () => {
   const [isForgotModalOpen, setIsForgotModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Status & Error state
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Status & Error state (Professional Structured Error)
+  const [loginError, setLoginError] = useState<LoginErrorDetails | null>(null);
   const [isShaking, setIsShaking] = useState<boolean>(false);
 
-  const triggerShake = (msg: string) => {
-    setErrorMessage(msg);
+  const triggerShake = (rawError: string) => {
+    const lower = rawError.toLowerCase();
+    let details: LoginErrorDetails;
+
+    if (
+      lower.includes('user not found') ||
+      lower.includes('no registered') ||
+      lower.includes('not recognized') ||
+      lower.includes('unrecognized') ||
+      lower.includes('student registration id') ||
+      lower.includes('admin email') ||
+      lower.includes('stall id') ||
+      lower.includes('restaurant id')
+    ) {
+      details = {
+        title: 'User Not Found',
+        message:
+          rawError.replace(/^user not found\.?\s*/i, '') ||
+          'No account found matching this ID. Please check your credentials or register.',
+        type: 'not_found',
+        field: 'id'
+      };
+    } else if (
+      lower.includes('wrong password') ||
+      lower.includes('incorrect password') ||
+      lower.includes('password entered') ||
+      lower.includes('enter your password')
+    ) {
+      details = {
+        title: 'Wrong Password',
+        message:
+          rawError.replace(/^wrong password\.?\s*/i, '') ||
+          'The password you entered is incorrect. Please check your credentials and try again.',
+        type: 'wrong_password',
+        field: 'password'
+      };
+    } else {
+      details = {
+        title: 'Invalid Credentials',
+        message:
+          rawError.replace(/^invalid credentials\.?\s*/i, '') ||
+          'The credentials provided do not match our records. Please try again.',
+        type: 'invalid_credentials',
+        field: 'both'
+      };
+    }
+
+    setLoginError(details);
     setIsShaking(true);
     setTimeout(() => setIsShaking(false), 500);
   };
@@ -53,7 +107,7 @@ export const LoginPage: React.FC = () => {
   const handleRoleChange = (role: LoginPortalRole) => {
     soundEffects.playClick();
     setSelectedRole(role);
-    setErrorMessage(null);
+    setLoginError(null);
 
     if (role === 'student') {
       setRegistrationId('22CS0142');
@@ -94,7 +148,7 @@ export const LoginPage: React.FC = () => {
       return;
     }
 
-    setErrorMessage(null);
+    setLoginError(null);
     setIsLoading(true);
 
     try {
@@ -144,7 +198,7 @@ export const LoginPage: React.FC = () => {
     soundEffects.playClick();
     setRegistrationId(id);
     setPassword(pass);
-    setErrorMessage(null);
+    setLoginError(null);
   };
 
   return (
@@ -298,11 +352,82 @@ export const LoginPage: React.FC = () => {
                 </button>
               </div>
 
-              {/* Error Message */}
-              {errorMessage && (
-                <div className="p-2.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-center space-x-2 text-left shadow-xs">
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                  <span className="font-bold">{errorMessage}</span>
+              {/* Professional Enterprise-Grade Error Banner */}
+              {loginError && (
+                <div
+                  role="alert"
+                  className={`w-full p-3 sm:p-3.5 rounded-2xl border backdrop-blur-md text-left transition-all duration-300 shadow-md ${
+                    loginError.type === 'not_found'
+                      ? 'bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/5 border-amber-400/40 shadow-amber-500/5'
+                      : loginError.type === 'wrong_password'
+                      ? 'bg-gradient-to-r from-rose-500/10 via-red-500/10 to-rose-500/5 border-rose-400/40 shadow-rose-500/5'
+                      : 'bg-gradient-to-r from-red-500/10 via-rose-500/10 to-red-500/5 border-red-400/40 shadow-red-500/5'
+                  }`}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 border ${
+                        loginError.type === 'not_found'
+                          ? 'bg-amber-100/90 border-amber-300 text-amber-700'
+                          : loginError.type === 'wrong_password'
+                          ? 'bg-rose-100/90 border-rose-300 text-rose-700'
+                          : 'bg-red-100/90 border-red-300 text-red-700'
+                      }`}
+                    >
+                      {loginError.type === 'wrong_password' ? (
+                        <Lock className="w-4 h-4" strokeWidth={2.2} />
+                      ) : loginError.type === 'not_found' ? (
+                        <User className="w-4 h-4" strokeWidth={2.2} />
+                      ) : (
+                        <AlertCircle className="w-4 h-4" strokeWidth={2.2} />
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[12px] font-black text-slate-900 tracking-tight">
+                            {loginError.title}
+                          </span>
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              loginError.type === 'not_found'
+                                ? 'bg-amber-500'
+                                : loginError.type === 'wrong_password'
+                                ? 'bg-rose-500'
+                                : 'bg-red-500'
+                            }`}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setLoginError(null)}
+                          className="text-slate-400 hover:text-slate-700 p-0.5 rounded-lg hover:bg-slate-200/50 transition-colors cursor-pointer"
+                          aria-label="Dismiss error"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      <p className="text-[11px] text-slate-700 font-medium leading-relaxed mt-0.5">
+                        {loginError.message}
+                      </p>
+
+                      <div className="mt-2 pt-1.5 border-t border-slate-200/60 flex items-center justify-between text-[10px]">
+                        <span className="text-slate-500">Need demo login credentials?</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLoginError(null);
+                            setIsForgotModalOpen(true);
+                          }}
+                          className="font-bold text-[#ea580c] hover:underline cursor-pointer transition-colors"
+                        >
+                          View Demo Accounts &rarr;
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -327,7 +452,7 @@ export const LoginPage: React.FC = () => {
                     value={registrationId}
                     onChange={(e) => {
                       setRegistrationId(e.target.value);
-                      setErrorMessage(null);
+                      if (loginError) setLoginError(null);
                     }}
                     placeholder={
                       selectedRole === 'restaurant'
@@ -339,7 +464,11 @@ export const LoginPage: React.FC = () => {
                         : 'Registration ID (e.g. 22CS0142)'
                     }
                     required
-                    className="w-full neumorphic-inset-input pl-11 pr-4 py-3 text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold"
+                    className={`w-full neumorphic-inset-input pl-11 pr-4 py-3 text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold ${
+                      loginError && (loginError.field === 'id' || loginError.field === 'both')
+                        ? 'ring-2 ring-red-400/50 border-red-400 bg-red-50/20'
+                        : ''
+                    }`}
                   />
                 </div>
 
@@ -354,7 +483,7 @@ export const LoginPage: React.FC = () => {
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
-                      setErrorMessage(null);
+                      if (loginError) setLoginError(null);
                     }}
                     placeholder={
                       selectedRole === 'student'
@@ -364,7 +493,11 @@ export const LoginPage: React.FC = () => {
                         : 'Password (e.g. vendor123)'
                     }
                     required
-                    className="w-full neumorphic-inset-input pl-11 pr-11 py-3 text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold"
+                    className={`w-full neumorphic-inset-input pl-11 pr-11 py-3 text-xs sm:text-sm placeholder-slate-400 focus:outline-none transition-all font-sans font-semibold ${
+                      loginError && (loginError.field === 'password' || loginError.field === 'both')
+                        ? 'ring-2 ring-red-400/50 border-red-400 bg-red-50/20'
+                        : ''
+                    }`}
                   />
                   <button
                     type="button"
