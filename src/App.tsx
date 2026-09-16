@@ -16,6 +16,8 @@ import { SecurityDefenseModal } from './components/SecurityDefenseModal';
 import { CampusWalletModal } from './components/CampusWalletModal';
 import { VoiceSearchModal } from './components/VoiceSearchModal';
 import { PWAInstallButton } from './components/PWAInstallButton';
+import { DeviceSpecBadge } from './components/DeviceSpecBadge';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { translations } from './utils/translations';
 import ChromeButton from './components/ui/chrome-button';
@@ -157,8 +159,11 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Controls: QR Scanner, Security, Helpline & Logout */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          {/* Controls: QR Scanner, Security, Helpline, Device Specs & Logout */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5">
+            {/* Device Hardware Spec & Performance Badge */}
+            <DeviceSpecBadge compact />
+
             {/* PWA Install */}
             <PWAInstallButton compact />
 
@@ -262,7 +267,10 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="flex items-center space-x-1.5 sm:space-x-2.5">
+            {/* Device Hardware Spec & Performance Badge */}
+            <DeviceSpecBadge compact />
+
             {/* PWA Install */}
             <PWAInstallButton compact />
 
@@ -360,19 +368,22 @@ const MainAppContent: React.FC = () => {
       <header className="sticky top-0 z-40 bg-white/75 backdrop-blur-2xl border-b border-white/80 px-4 sm:px-6 py-3 shadow-[0_10px_30px_rgba(249,115,22,0.06)]">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-md shadow-orange-500/25 border border-white/40">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-md shadow-orange-500/25 border border-white/40 shrink-0">
               <UtensilsCrossed className="w-5 h-5 text-white" />
             </div>
-            <div>
-              <span className="font-['Outfit'] font-black text-xl sm:text-2xl text-slate-900 tracking-wider leading-none">
-                CAMPUS MESS AND FOOD COURT
+            <div className="min-w-0">
+              <span className="font-['Outfit'] font-black text-sm sm:text-xl md:text-2xl text-slate-900 tracking-wider leading-none block truncate">
+                CAMPUS DINING
               </span>
             </div>
           </div>
 
-          {/* Right: Controls, Wallet, Voice, Language & Profile */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2.5">
+          {/* Right: Controls, Wallet, Voice, Language, Device Specs & Profile */}
+          <div className="flex items-center space-x-1 sm:space-x-2">
+            {/* Device Spec Adaptive Hardware Badge */}
+            <DeviceSpecBadge compact />
+
             {/* PWA Install */}
             <PWAInstallButton compact />
 
@@ -501,7 +512,7 @@ const MainAppContent: React.FC = () => {
       </header>
 
       {/* Main Tab Content */}
-      <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto relative z-10">
+      <main className="flex-1 p-3 sm:p-6 pb-24 md:pb-6 max-w-7xl w-full mx-auto relative z-10">
         {activeTab === 'menu' && <MenuDisplay />}
         {activeTab === 'pass' && (
           <StudentPassView
@@ -515,6 +526,14 @@ const MainAppContent: React.FC = () => {
         {activeTab === 'dayscholar' && <DayScholarOrder />}
         {activeTab === 'feedback' && <AnonymousFeedbackForm />}
       </main>
+
+      {/* Mobile Bottom Navigation Bar (Handheld Phone Safe-Area Navigation) */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        walletBalance={walletBalance}
+        onOpenWallet={() => setIsWalletModalOpen(true)}
+      />
 
       {/* Modals & Overlays */}
       {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}

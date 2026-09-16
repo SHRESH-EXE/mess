@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
 import { ForgotPasswordModal } from './ForgotPasswordModal';
+import { DeviceSpecBadge } from './DeviceSpecBadge';
 import { soundEffects } from '../utils/soundEffects';
 import ChromeButton from './ui/chrome-button';
 import {
@@ -238,46 +239,58 @@ export const LoginPage: React.FC = () => {
         />
       </div>
 
-      {/* Spacer for top padding */}
-      <div className="py-4" />
+      {/* Top Header Bar with Brand & Adaptive Device Spec Badge */}
+      <header className="relative z-20 w-full px-4 sm:px-8 pt-3 pb-1 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-xs">
+            <UtensilsCrossed className="w-4 h-4" />
+          </div>
+          <span className="font-['Outfit'] font-black text-sm sm:text-base text-slate-900 tracking-wider">
+            LPU CAMPUS DINING
+          </span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <DeviceSpecBadge />
+        </div>
+      </header>
 
       {/* =========================================================
-          2. CENTRAL 3D NEUMORPHIC CIRCULAR DISC LOGIN CARD
+          2. CENTRAL 3D NEUMORPHIC DISC LOGIN CARD (PHONE & TABLET ADAPTIVE)
           ========================================================= */}
-      <main className="relative z-10 flex-1 flex items-center justify-center p-3 sm:p-6 my-auto">
-        <div className="neumorphic-circle-wrapper w-full max-w-[500px] sm:max-w-[530px]">
+      <main className="relative z-10 flex-1 flex items-center justify-center p-3 sm:p-6 my-auto max-w-full">
+        <div className="neumorphic-circle-wrapper w-full max-w-[460px] sm:max-w-[500px]">
           {/* THE 3D CONVEX CIRCULAR NEUMORPHIC DISC CARD */}
           <div
             id="login-card"
-            className={`neumorphic-circle-card w-full aspect-auto sm:aspect-square rounded-[42px] sm:rounded-full p-6 sm:p-10 flex flex-col items-center justify-center text-center overflow-hidden transition-all duration-300 ${
+            className={`neumorphic-circle-card w-full rounded-[32px] sm:rounded-[48px] md:rounded-full p-5 sm:p-8 md:p-10 flex flex-col items-center justify-center text-center overflow-hidden transition-all duration-300 ${
               isShaking ? 'animate-[shake_0.4s_ease-in-out]' : ''
             }`}
           >
             {/* Ambient specular highlight on circular face */}
             <div
-              className="absolute inset-0 pointer-events-none rounded-[42px] sm:rounded-full"
+              className="absolute inset-0 pointer-events-none rounded-[32px] sm:rounded-[48px] md:rounded-full"
               style={{
                 background:
                   'radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 65%)'
               }}
             />
 
-            <div className="relative z-10 w-full max-w-[370px] mx-auto space-y-4">
+            <div className="relative z-10 w-full max-w-[370px] mx-auto space-y-3.5 sm:space-y-4">
               {/* Header */}
               <div className="space-y-1">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] mx-auto flex items-center justify-center mb-2 shadow-md shadow-orange-500/25 border border-white/60 text-white">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#ff7a30] to-[#ff9248] mx-auto flex items-center justify-center mb-1.5 sm:mb-2 shadow-md shadow-orange-500/25 border border-white/60 text-white">
                   {selectedRole === 'restaurant' ? (
-                    <UtensilsCrossed className="w-6 h-6" strokeWidth={2.2} />
+                    <UtensilsCrossed className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.2} />
                   ) : selectedRole === 'vendor' ? (
-                    <Store className="w-6 h-6" strokeWidth={2.2} />
+                    <Store className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.2} />
                   ) : selectedRole === 'admin' ? (
-                    <ShieldCheck className="w-6 h-6" strokeWidth={2.2} />
+                    <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.2} />
                   ) : (
-                    <GraduationCap className="w-6 h-6" strokeWidth={2.2} />
+                    <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.2} />
                   )}
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-sans">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight font-sans">
                   {selectedRole === 'restaurant'
                     ? 'Restro Partner'
                     : selectedRole === 'vendor'
@@ -286,7 +299,7 @@ export const LoginPage: React.FC = () => {
                     ? 'Mess Warden'
                     : 'Student Login'}
                 </h1>
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-[11px] sm:text-xs text-slate-500 font-medium">
                   {selectedRole === 'restaurant'
                     ? 'Sign in to manage delivery & menu'
                     : selectedRole === 'vendor'
@@ -298,11 +311,11 @@ export const LoginPage: React.FC = () => {
               </div>
 
               {/* 4-Way Role Selector Tabs (Neumorphic Inset Capsule) */}
-              <div className="neumorphic-inset-container grid grid-cols-4 gap-1 p-1">
+              <div className="neumorphic-inset-container grid grid-cols-4 gap-0.5 sm:gap-1 p-1">
                 <button
                   type="button"
                   onClick={() => handleRoleChange('student')}
-                  className={`py-1.5 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                  className={`py-1.5 sm:py-2 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                     selectedRole === 'student'
                       ? 'neumorphic-active-pill text-[#ea580c] font-black'
                       : 'text-slate-600 hover:text-slate-900'
@@ -315,7 +328,7 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleRoleChange('admin')}
-                  className={`py-1.5 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                  className={`py-1.5 sm:py-2 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                     selectedRole === 'admin'
                       ? 'neumorphic-active-pill text-[#ea580c] font-black'
                       : 'text-slate-600 hover:text-slate-900'
@@ -328,20 +341,20 @@ export const LoginPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleRoleChange('vendor')}
-                  className={`py-1.5 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                  className={`py-1.5 sm:py-2 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                     selectedRole === 'vendor'
                       ? 'neumorphic-active-pill text-[#ea580c] font-black'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <Store className="w-3 h-3 shrink-0" />
-                  <span className="truncate">Food Court</span>
+                  <span className="truncate">Stalls</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleRoleChange('restaurant')}
-                  className={`py-1.5 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
+                  className={`py-1.5 sm:py-2 px-1 rounded-full text-[10px] sm:text-[11px] font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer ${
                     selectedRole === 'restaurant'
                       ? 'neumorphic-active-pill text-[#ea580c] font-black'
                       : 'text-slate-600 hover:text-slate-900'
