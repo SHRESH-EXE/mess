@@ -64,7 +64,6 @@ export const MenuDisplay: React.FC = () => {
   });
 
   const hiddenCount = dishes.length - displayedDishes.length;
-  const checkStatus = isMealTakenToday(selectedMealTab, currentStudent.id);
 
   const toggleIngredients = (dishId: string) => {
     setExpandedIngredientsDishId(prev => prev === dishId ? null : dishId);
@@ -212,26 +211,6 @@ export const MenuDisplay: React.FC = () => {
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 font-serif tracking-tight">
                 {currentSlot.name} Spread
               </h2>
-            </div>
-
-            {/* Quick Metrics in Airy Floating Glass Badges */}
-            <div className="flex items-center flex-wrap gap-2.5">
-              <div className="px-3.5 py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/90 text-xs text-slate-700 flex items-center gap-1.5 shadow-xs">
-                <span className="text-slate-400 font-medium">Energy:</span>
-                <span className="font-bold text-slate-900 font-mono">~{currentSlot.caloriesTotal} kcal</span>
-              </div>
-
-              <div className="px-3.5 py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/90 text-xs text-slate-700 flex items-center gap-1.5 shadow-xs">
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                <span className="font-bold text-slate-900">{currentSlot.ratingAvg || 4.7} / 5.0</span>
-              </div>
-
-              <div className="px-3.5 py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/90 text-xs text-slate-700 flex items-center gap-1.5 shadow-xs">
-                <span className="text-slate-400 font-medium">Status:</span>
-                <span className={`font-bold ${checkStatus.isTaken ? 'text-emerald-700' : 'text-orange-600'}`}>
-                  {checkStatus.isTaken ? 'Attended' : 'Pending'}
-                </span>
-              </div>
             </div>
           </div>
         </div>

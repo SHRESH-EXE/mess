@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   Store,
   UtensilsCrossed,
-  ShieldCheck,
   ShieldAlert,
   Sparkles,
   Clock,
@@ -289,10 +288,6 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
           <div className="flex items-center space-x-2.5 mb-2">
             <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-xs">
               Student Anonymous Voice
-            </span>
-            <span className="flex items-center space-x-1 text-xs text-emerald-800 font-bold bg-emerald-500/15 border border-emerald-300 px-2.5 py-0.5 rounded-full">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>100% Identity Protected</span>
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-serif">
