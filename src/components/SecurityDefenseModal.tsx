@@ -723,7 +723,7 @@ export const SecurityDefenseModal: React.FC<SecurityDefenseModalProps> = ({ onCl
                 <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                   <div className="text-slate-500 text-[10px]">Content-Security-Policy (CSP)</div>
                   <div className="font-bold text-slate-900 break-all text-[11px]">
-                    default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;
+                    default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests;
                   </div>
                 </div>
 
