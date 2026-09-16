@@ -212,6 +212,13 @@ export const MenuDisplay: React.FC = () => {
                 {currentSlot.name} Spread
               </h2>
             </div>
+
+            <div className="flex items-center">
+              <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-emerald-800 text-xs font-bold shadow-xs flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Hostel Resident Pass • 100% Free &amp; Covered</span>
+              </span>
+            </div>
           </div>
         </div>
 

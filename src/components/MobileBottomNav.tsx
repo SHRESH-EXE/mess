@@ -5,22 +5,20 @@ import {
   UtensilsCrossed,
   QrCode,
   Store,
-  Wallet,
+  User,
   ShoppingBag
 } from 'lucide-react';
 
 interface MobileBottomNavProps {
   activeTab: NavigationTab;
   onSelectTab: (tab: NavigationTab) => void;
-  walletBalance: number;
-  onOpenWallet: () => void;
+  onOpenProfile?: () => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   activeTab,
   onSelectTab,
-  walletBalance,
-  onOpenWallet
+  onOpenProfile
 }) => {
   const handleTabClick = (tab: NavigationTab) => {
     soundEffects.playClick();
@@ -70,20 +68,21 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           );
         })}
 
-        {/* 5th Button: Quick Wallet Pill */}
+        {/* 5th Button: Profile & Edit Info */}
         <button
           type="button"
           onClick={() => {
             soundEffects.playClick();
-            onOpenWallet();
+            if (onOpenProfile) onOpenProfile();
           }}
+          title="Edit Profile & Info"
           className="flex flex-col items-center justify-center py-1 rounded-2xl transition-all cursor-pointer select-none active:scale-90 text-slate-500 hover:text-slate-800"
         >
-          <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-400/40 text-amber-700 flex items-center justify-center shadow-xs">
-            <Wallet className="w-4 h-4" />
+          <div className="w-9 h-9 rounded-xl bg-orange-500/15 border border-orange-300/60 text-orange-600 flex items-center justify-center shadow-xs">
+            <User className="w-4 h-4" />
           </div>
-          <span className="text-[10px] tracking-tight mt-0.5 font-bold font-mono text-amber-800 truncate">
-            ₹{walletBalance.toFixed(0)}
+          <span className="text-[10px] tracking-tight mt-0.5 font-bold text-orange-700 truncate">
+            Profile
           </span>
         </button>
       </div>

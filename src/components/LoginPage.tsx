@@ -541,9 +541,9 @@ export const LoginPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsForgotModalOpen(true)}
-                    className="text-[11px] font-bold text-slate-600 hover:text-[#ea580c] transition-colors cursor-pointer"
+                    className="text-[11px] font-bold text-[#ea580c] hover:underline transition-colors cursor-pointer"
                   >
-                    Quick Demo Logins &rarr;
+                    Forgot Password?
                   </button>
                 </div>
 

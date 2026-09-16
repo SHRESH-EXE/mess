@@ -100,7 +100,7 @@ export const FoodCourtOrder: React.FC = () => {
   const [studentName, setStudentName] = useState<string>(currentStudent.name || '');
   const [phoneNumber, setPhoneNumber] = useState<string>(currentStudent.phone || DEFAULT_MESS_WHATSAPP_NUMBER);
   const [pickupMethod, setPickupMethod] = useState<'counter_pickup' | 'dine_in' | 'express_takeaway'>('counter_pickup');
-  const [paymentMethod, setPaymentMethod] = useState<'UPI / Hostel Pay' | 'Mess Wallet' | 'Cash at Counter'>('UPI / Hostel Pay');
+  const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'UPI / Hostel Pay'>('UPI');
   const [checkoutNotes, setCheckoutNotes] = useState<string>('');
 
   // Active Token Modal State
@@ -1292,26 +1292,31 @@ export const FoodCourtOrder: React.FC = () => {
                 </div>
               </div>
 
-              {/* Payment Method */}
+              {/* Payment Method - UPI Exclusive */}
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                  Payment Mode
+                  Payment Method
                 </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['UPI / Hostel Pay', 'Mess Wallet', 'Cash at Counter'].map(p => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => setPaymentMethod(p as any)}
-                      className={`py-2 px-2 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
-                        paymentMethod === p
-                          ? 'bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white border-orange-500 shadow-xs'
-                          : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
+                <div className="p-3 rounded-2xl bg-orange-50/90 border border-orange-200 flex items-center justify-between shadow-xs">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#ff7a30] to-[#ff9248] text-white flex items-center justify-center font-black text-[11px] shadow-xs">
+                      UPI
+                    </div>
+                    <div>
+                      <div className="text-xs font-black text-slate-900 leading-tight">
+                        Instant UPI Payment
+                      </div>
+                      <div className="text-[10px] text-slate-500 leading-tight">
+                        GPay • PhonePe • Paytm • BHIM • UPI QR
+                      </div>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold uppercase font-mono">
+                    Instant
+                  </span>
+                </div>
+                <div className="p-2.5 mt-2 rounded-xl bg-amber-50/80 border border-amber-200/70 text-[10px] text-amber-900 leading-relaxed font-medium">
+                  ℹ️ <strong>Hostel Notice:</strong> Daily hostel mess meals are 100% free and covered by your hostel accommodation. Only external Food Court and Restaurant orders require direct UPI payment.
                 </div>
               </div>
 
@@ -1378,8 +1383,8 @@ export const FoodCourtOrder: React.FC = () => {
               </div>
             </div>
 
-            {/* UPI Payment Live QR Code & Deep Link if UPI payment was chosen */}
-            {receiptOrder.paymentMethod === 'UPI / Hostel Pay' && (
+            {/* UPI Payment Live QR Code & Deep Link */}
+            {(receiptOrder.paymentMethod === 'UPI' || receiptOrder.paymentMethod === 'UPI / Hostel Pay') && (
               <div className="p-4 rounded-2xl bg-orange-50/70 border border-orange-200/80 text-center space-y-3">
                 <div className="flex items-center justify-center space-x-1.5 text-xs font-bold text-orange-800">
                   <QrCode className="w-4 h-4 text-orange-600" />

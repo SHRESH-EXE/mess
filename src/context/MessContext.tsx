@@ -171,6 +171,7 @@ interface MessContextType {
   switchStudentById: (studentId: string) => void;
   addNewStudent: (profile: Omit<StudentProfile, 'id' | 'barcode' | 'mealsConsumedMonth'>) => void;
   updateStudentProfile: (profile: StudentProfile) => void;
+  resetStudentPassword: (rollOrPhone: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
   resetToDefaultData: () => void;
   todayDateStr: string;
   isMealTakenToday: (mealType: MealType, studentId?: string) => { isTaken: boolean; status?: 'attended' | 'skipped' | 'rebate_applied'; record?: MealAttendanceRecord };
@@ -1025,6 +1026,35 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setStudents(prev => prev.map(s => s.id === updated.id ? updated : s));
   }, []);
 
+  // Reset Student Password (via Mobile OTP verification)
+  const resetStudentPassword = useCallback(async (rollOrPhone: string, newPassword: string): Promise<{ success: boolean; error?: string }> => {
+    const cleanSearch = rollOrPhone.trim().toUpperCase();
+    const cleanDigits = rollOrPhone.replace(/\D/g, '');
+
+    const targetStudent = students.find(s => {
+      const sRoll = (s.rollNo || '').toUpperCase();
+      const sPhone = (s.phone || '').replace(/\D/g, '');
+      return (
+        sRoll === cleanSearch ||
+        (cleanDigits.length >= 8 && sPhone.endsWith(cleanDigits)) ||
+        (cleanSearch === '22CS0142' && s.id === 'stu-1') ||
+        (cleanSearch === '22EC0089' && s.id === 'stu-2')
+      );
+    });
+
+    if (!targetStudent) {
+      return { success: false, error: `No student found matching "${rollOrPhone}". Please verify your Roll Number or Mobile Number.` };
+    }
+
+    const updatedStudent: StudentProfile = {
+      ...targetStudent,
+      password: newPassword.trim()
+    };
+
+    setStudents(prev => prev.map(s => s.id === targetStudent.id ? updatedStudent : s));
+    return { success: true };
+  }, [students]);
+
   // Food Court Actions
   const createFoodCourtOrder = useCallback((orderData: Omit<FoodCourtOrder, 'id' | 'tokenNumber' | 'placedAt' | 'status'>): FoodCourtOrder => {
     const tokenNum = `#FC-${Math.floor(100 + Math.random() * 900)}`;
@@ -1600,6 +1630,9 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const validRoom = foundStudent.roomNo.toUpperCase().replace(/\s+/g, '');
     const enteredRoom = cleanPass.replace(/\s+/g, '');
     const validPasswords = ['STUDENT123', 'PASS123', 'CAMPUS2026', '123456', validRoom];
+    if (foundStudent.password) {
+      validPasswords.push(foundStudent.password.trim().toUpperCase());
+    }
     if (foundStudent.id === 'stu-1') {
       validPasswords.push('B-312', 'B312');
     }
@@ -1607,7 +1640,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
       validPasswords.push('G-104', 'G104', 'G-204', 'G204');
     }
 
-    const isPasswordValid = validPasswords.includes(cleanPass) || enteredRoom === validRoom;
+    const isPasswordValid = validPasswords.includes(cleanPass) || enteredRoom === validRoom || (foundStudent.password && passOrRoomInput.trim() === foundStudent.password);
 
     if (!isPasswordValid) {
       securityObservability.recordEvent({
@@ -2098,6 +2131,7 @@ export const MessProvider: React.FC<{ children: React.ReactNode }> = ({ children
         switchStudentById,
         addNewStudent,
         updateStudentProfile,
+        resetStudentPassword,
         resetToDefaultData,
         todayDateStr,
         isMealTakenToday

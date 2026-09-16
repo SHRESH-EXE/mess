@@ -242,6 +242,7 @@ export interface StudentProfile {
   department: string;
   semester: string;
   allergies: string[];
+  password?: string;
 }
 
 export interface MealAttendanceRecord {

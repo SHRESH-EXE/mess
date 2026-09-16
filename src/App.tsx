@@ -12,8 +12,7 @@ import { FoodCourtOwnerDashboard } from './components/FoodCourtOwnerDashboard';
 import { NearbyRestaurantsView } from './components/NearbyRestaurantsView';
 import { QRScannerModal } from './components/QRScannerModal';
 import { SwitchStudentModal } from './components/SwitchStudentModal';
-import { SecurityDefenseModal } from './components/SecurityDefenseModal';
-import { CampusWalletModal } from './components/CampusWalletModal';
+import { EditProfileModal } from './components/EditProfileModal';
 import { VoiceSearchModal } from './components/VoiceSearchModal';
 import { PWAInstallButton } from './components/PWAInstallButton';
 import { MobileBottomNav } from './components/MobileBottomNav';
@@ -34,10 +33,7 @@ import {
   Building2,
   ChefHat,
   Sparkles,
-  ShieldCheck,
-  Wallet,
-  Mic,
-  Languages
+  Mic
 } from 'lucide-react';
 
 const LiquidGlassBackdrop: React.FC = () => (
@@ -83,13 +79,6 @@ const MainAppContent: React.FC = () => {
     loginVendor,
     loginAdmin,
     loginStudent,
-    isSecurityModalOpen,
-    setIsSecurityModalOpen,
-    walletBalance,
-    walletTransactions,
-    topUpWallet,
-    isWalletModalOpen,
-    setIsWalletModalOpen,
     currentLanguage,
     setLanguage,
     isVoiceSearchOpen,
@@ -98,6 +87,7 @@ const MainAppContent: React.FC = () => {
 
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
   const [isSwitchStudentOpen, setIsSwitchStudentOpen] = useState<boolean>(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState<boolean>(false);
 
   const t = translations[currentLanguage] || translations.en;
@@ -108,12 +98,6 @@ const MainAppContent: React.FC = () => {
     return (
       <>
         <LoginPage />
-        {isSecurityModalOpen && (
-          <SecurityDefenseModal
-            isOpen={isSecurityModalOpen}
-            onClose={() => setIsSecurityModalOpen(false)}
-          />
-        )}
         <OfflineIndicator />
       </>
     );
@@ -158,38 +142,10 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Controls: QR Scanner, Security, Helpline & Logout */}
+          {/* Controls: PWA & Helpline & Logout */}
           <div className="flex items-center space-x-1.5 sm:space-x-2.5">
             {/* PWA Install */}
             <PWAInstallButton compact />
-
-            {/* Language Switcher */}
-            <div className="flex items-center bg-white/80 border border-orange-200/80 rounded-full p-0.5 text-[11px] font-bold">
-              {(['en', 'hi', 'pa'] as const).map((l) => (
-                <button
-                  key={l}
-                  onClick={() => setLanguage(l)}
-                  className={`px-2 py-1 rounded-full uppercase transition ${
-                    currentLanguage === l
-                      ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-950'
-                  }`}
-                >
-                  {l === 'en' ? 'EN' : l === 'hi' ? 'हिं' : 'ਪੰ'}
-                </button>
-              ))}
-            </div>
-
-            {/* Security Defense Inspector */}
-            <button
-              type="button"
-              onClick={() => setIsSecurityModalOpen(true)}
-              title="Inspect Full-Stack Security & Defensive Architecture"
-              className="flex items-center space-x-1.5 px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
-            >
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span className="hidden md:inline">Security</span>
-            </button>
 
             {/* Helpline */}
             <a
@@ -229,12 +185,6 @@ const MainAppContent: React.FC = () => {
 
         {/* Modals */}
         {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
-        {isSecurityModalOpen && (
-          <SecurityDefenseModal
-            isOpen={isSecurityModalOpen}
-            onClose={() => setIsSecurityModalOpen(false)}
-          />
-        )}
       </div>
     );
   }
@@ -266,34 +216,6 @@ const MainAppContent: React.FC = () => {
           <div className="flex items-center space-x-1.5 sm:space-x-2.5">
             {/* PWA Install */}
             <PWAInstallButton compact />
-
-            {/* Language Switcher */}
-            <div className="flex items-center bg-white/80 border border-orange-200/80 rounded-full p-0.5 text-[11px] font-bold">
-              {(['en', 'hi', 'pa'] as const).map((l) => (
-                <button
-                  key={l}
-                  onClick={() => setLanguage(l)}
-                  className={`px-2 py-1 rounded-full uppercase transition ${
-                    currentLanguage === l
-                      ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-950'
-                  }`}
-                >
-                  {l === 'en' ? 'EN' : l === 'hi' ? 'हिं' : 'ਪੰ'}
-                </button>
-              ))}
-            </div>
-
-            {/* Security Defense Inspector */}
-            <button
-              type="button"
-              onClick={() => setIsSecurityModalOpen(true)}
-              title="Inspect Full-Stack Security & Defensive Architecture"
-              className="flex items-center space-x-1.5 px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
-            >
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span className="hidden md:inline">Security</span>
-            </button>
 
             {/* 24x7 Helpline Support */}
             <a
@@ -330,12 +252,6 @@ const MainAppContent: React.FC = () => {
 
         {/* Modals */}
         {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
-        {isSecurityModalOpen && (
-          <SecurityDefenseModal
-            isOpen={isSecurityModalOpen}
-            onClose={() => setIsSecurityModalOpen(false)}
-          />
-        )}
       </div>
     );
   }
@@ -372,27 +288,10 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Controls, Wallet, Voice, Language & Profile */}
+          {/* Right: Controls, Voice & Interactive Tap Profile */}
           <div className="flex items-center space-x-1 sm:space-x-2">
             {/* PWA Install */}
             <PWAInstallButton compact />
-
-            {/* Language Switcher */}
-            <div className="flex items-center bg-white/80 border border-orange-200/80 rounded-full p-0.5 text-[11px] font-bold">
-              {(['en', 'hi', 'pa'] as const).map((l) => (
-                <button
-                  key={l}
-                  onClick={() => setLanguage(l)}
-                  className={`px-2 py-1 rounded-full uppercase transition ${
-                    currentLanguage === l
-                      ? 'bg-amber-500 text-slate-950 font-extrabold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-950'
-                  }`}
-                >
-                  {l === 'en' ? 'EN' : l === 'hi' ? 'हिं' : 'ਪੰ'}
-                </button>
-              ))}
-            </div>
 
             {/* Voice Search Button */}
             <button
@@ -402,17 +301,6 @@ const MainAppContent: React.FC = () => {
               className="p-2 rounded-full bg-white/80 hover:bg-amber-50 text-slate-700 hover:text-amber-600 border border-orange-200/70 shadow-xs transition active:scale-95 cursor-pointer"
             >
               <Mic className="w-4 h-4 text-amber-600" />
-            </button>
-
-            {/* Digital Campus Wallet Pill Button */}
-            <button
-              type="button"
-              onClick={() => setIsWalletModalOpen(true)}
-              title="Open Digital Campus Meal Wallet"
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs shadow-md shadow-amber-500/20 transition active:scale-95 cursor-pointer border border-amber-400/40"
-            >
-              <Wallet className="w-3.5 h-3.5" />
-              <span className="font-mono">₹{walletBalance.toFixed(0)}</span>
             </button>
 
             {/* Allergen Warning Pill if any */}
@@ -426,29 +314,31 @@ const MainAppContent: React.FC = () => {
               </div>
             )}
 
-            {/* Student Info Oval Pill */}
-            <div className="flex items-center space-x-2.5 bg-white/80 backdrop-blur-xl px-3 py-1.5 rounded-full border border-white/90 shadow-sm">
-              <img
-                src={currentStudent.photoUrl}
-                alt={currentStudent.name}
-                className="w-7 h-7 rounded-full object-cover border-2 border-[#ff7a30]"
-              />
-              <div className="hidden sm:block text-left pr-1">
-                <div className="text-xs font-bold text-slate-900 leading-tight">
-                  {currentStudent.name}
-                </div>
-              </div>
-            </div>
-
-            {/* Security Architecture Inspector */}
+            {/* Tap Student Profile Pill to Edit Information */}
             <button
               type="button"
-              onClick={() => setIsSecurityModalOpen(true)}
-              title="Inspect Full-Stack Security & Defensive Architecture"
-              className="flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 border border-emerald-500/30 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+              onClick={() => setIsEditProfileOpen(true)}
+              title="Tap to Edit Profile & Personal Details"
+              className="flex items-center space-x-2 bg-white/90 hover:bg-orange-50/90 active:scale-95 backdrop-blur-xl px-3 py-1.5 rounded-full border border-orange-200/90 shadow-xs transition cursor-pointer group"
             >
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span className="hidden sm:inline">Security</span>
+              <div className="relative">
+                <img
+                  src={currentStudent.photoUrl}
+                  alt={currentStudent.name}
+                  className="w-7 h-7 rounded-full object-cover border-2 border-[#ff7a30]"
+                />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#ff7a30] text-white rounded-full flex items-center justify-center text-[8px] font-bold shadow-xs">
+                  ✎
+                </span>
+              </div>
+              <div className="text-left pr-0.5">
+                <div className="text-xs font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-tight truncate max-w-[110px] sm:max-w-[140px]">
+                  {currentStudent.name}
+                </div>
+                <div className="text-[10px] text-orange-600 font-bold leading-none">
+                  Edit Profile
+                </div>
+              </div>
             </button>
 
             {/* Switch Student (Demo Helper) */}
@@ -521,27 +411,15 @@ const MainAppContent: React.FC = () => {
       <MobileBottomNav
         activeTab={activeTab}
         onSelectTab={setActiveTab}
-        walletBalance={walletBalance}
-        onOpenWallet={() => setIsWalletModalOpen(true)}
+        onOpenProfile={() => setIsEditProfileOpen(true)}
       />
 
       {/* Modals & Overlays */}
       {isScannerOpen && <QRScannerModal onClose={() => setIsScannerOpen(false)} />}
       {isSwitchStudentOpen && <SwitchStudentModal onClose={() => setIsSwitchStudentOpen(false)} />}
-      {isSecurityModalOpen && (
-        <SecurityDefenseModal
-          isOpen={isSecurityModalOpen}
-          onClose={() => setIsSecurityModalOpen(false)}
-        />
-      )}
-      <CampusWalletModal
-        isOpen={isWalletModalOpen}
-        onClose={() => setIsWalletModalOpen(false)}
-        walletBalance={walletBalance}
-        transactions={walletTransactions}
-        onTopUp={topUpWallet}
-        studentName={currentStudent.name}
-        studentRollNo={currentStudent.rollNo}
+      <EditProfileModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
       />
       <VoiceSearchModal
         isOpen={isVoiceSearchOpen}
