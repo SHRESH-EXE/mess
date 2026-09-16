@@ -16,7 +16,6 @@ import { SecurityDefenseModal } from './components/SecurityDefenseModal';
 import { CampusWalletModal } from './components/CampusWalletModal';
 import { VoiceSearchModal } from './components/VoiceSearchModal';
 import { PWAInstallButton } from './components/PWAInstallButton';
-import { DeviceSpecBadge } from './components/DeviceSpecBadge';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { translations } from './utils/translations';
@@ -159,11 +158,8 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Controls: QR Scanner, Security, Helpline, Device Specs & Logout */}
+          {/* Controls: QR Scanner, Security, Helpline & Logout */}
           <div className="flex items-center space-x-1.5 sm:space-x-2.5">
-            {/* Device Hardware Spec & Performance Badge */}
-            <DeviceSpecBadge compact />
-
             {/* PWA Install */}
             <PWAInstallButton compact />
 
@@ -268,9 +264,6 @@ const MainAppContent: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-1.5 sm:space-x-2.5">
-            {/* Device Hardware Spec & Performance Badge */}
-            <DeviceSpecBadge compact />
-
             {/* PWA Install */}
             <PWAInstallButton compact />
 
@@ -379,11 +372,8 @@ const MainAppContent: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Controls, Wallet, Voice, Language, Device Specs & Profile */}
+          {/* Right: Controls, Wallet, Voice, Language & Profile */}
           <div className="flex items-center space-x-1 sm:space-x-2">
-            {/* Device Spec Adaptive Hardware Badge */}
-            <DeviceSpecBadge compact />
-
             {/* PWA Install */}
             <PWAInstallButton compact />
 

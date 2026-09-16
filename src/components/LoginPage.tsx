@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useMess } from '../context/MessContext';
 import { ForgotPasswordModal } from './ForgotPasswordModal';
-import { DeviceSpecBadge } from './DeviceSpecBadge';
 import { soundEffects } from '../utils/soundEffects';
 import ChromeButton from './ui/chrome-button';
 import {
@@ -239,7 +238,7 @@ export const LoginPage: React.FC = () => {
         />
       </div>
 
-      {/* Top Header Bar with Brand & Adaptive Device Spec Badge */}
+      {/* Top Header Bar with Brand */}
       <header className="relative z-20 w-full px-4 sm:px-8 pt-3 pb-1 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#ff7a30] to-[#ff9248] flex items-center justify-center text-white shadow-xs">
@@ -248,9 +247,6 @@ export const LoginPage: React.FC = () => {
           <span className="font-['Outfit'] font-black text-sm sm:text-base text-slate-900 tracking-wider">
             LPU CAMPUS DINING
           </span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <DeviceSpecBadge />
         </div>
       </header>
 

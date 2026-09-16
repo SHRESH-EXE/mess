@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { deviceAdapter, DeviceSpecs, PerformanceMode } from '../utils/deviceAdapter';
+import { deviceAdapter, DeviceSpecs } from '../utils/deviceAdapter';
 
 export function useDeviceSpecs(): {
   specs: DeviceSpecs;
-  setPerformanceMode: (mode: PerformanceMode) => void;
   isPhone: boolean;
   isTablet: boolean;
   isDesktop: boolean;
@@ -20,7 +19,6 @@ export function useDeviceSpecs(): {
 
   return {
     specs,
-    setPerformanceMode: (mode: PerformanceMode) => deviceAdapter.setMode(mode),
     isPhone: specs.screenType === 'phone',
     isTablet: specs.screenType === 'tablet',
     isDesktop: specs.screenType === 'desktop',
