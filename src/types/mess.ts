@@ -426,7 +426,7 @@ export interface FoodCourtOrder {
   estimatedPrepMins: number;
   estimatedReadyTime: string;
   placedAt: string;
-  paymentMethod: 'UPI / Hostel Pay' | 'Mess Wallet' | 'Cash at Counter';
+  paymentMethod: 'UPI / Hostel Pay' | 'Mess Wallet' | 'Cash at Counter' | 'UPI';
   targetWhatsAppNumber: string;
   specialInstructions?: string;
 }

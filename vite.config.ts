@@ -11,8 +11,17 @@ import {defineConfig} from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: process.env.VERCEL ? '/' : (process.env.VITE_BASE || '/mess/'),
+  base: process.env.NODE_ENV === 'production' && !process.env.VERCEL ? (process.env.VITE_BASE || '/mess/') : '/',
   plugins: [
+    {
+      name: 'dev-csp-relax',
+      transformIndexHtml(html, ctx) {
+        if (ctx.server) {
+          return html.replace(/<meta http-equiv="Content-Security-Policy"[^>]*>\s*/i, '');
+        }
+        return html;
+      }
+    },
     react(),
     tailwindcss(),
     VitePWA({

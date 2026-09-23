@@ -369,9 +369,6 @@ export const NearbyRestaurantsView: React.FC = () => {
                 <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-['Outfit'] tracking-tight">
                   LPU Off-Campus Partner Eateries
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 border border-emerald-500/30 text-[11px] font-bold">
-                  100% Veg Menus Displayed
-                </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
                 Verified student favorites in Law Gate, Maheru &amp; GT Road Phagwara with direct delivery to BH-1 to BH-8 and GH-1 to GH-6.

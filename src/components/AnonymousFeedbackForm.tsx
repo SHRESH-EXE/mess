@@ -285,11 +285,7 @@ export const AnonymousFeedbackForm: React.FC<AnonymousFeedbackFormProps> = ({
       {/* Header Banner */}
       <div className="relative overflow-hidden rounded-[36px] bg-white/60 backdrop-blur-3xl border border-white/80 p-6 sm:p-8 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)]">
         <div className="relative z-10 max-w-3xl">
-          <div className="flex items-center space-x-2.5 mb-2">
-            <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white text-[10px] font-extrabold uppercase tracking-wider shadow-xs">
-              Student Anonymous Voice
-            </span>
-          </div>
+
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-serif">
             Rate Campus Dining &amp; Food Court
           </h1>

@@ -7,8 +7,11 @@ import { AcademicBlockOrder } from './components/AcademicBlockOrder';
 import { DayScholarOrder } from './components/DayScholarOrder';
 import { FoodCourtOrder } from './components/FoodCourtOrder';
 import { AnonymousFeedbackForm } from './components/AnonymousFeedbackForm';
-import { AdminDashboard } from './components/AdminDashboard';
-import { FoodCourtOwnerDashboard } from './components/FoodCourtOwnerDashboard';
+import { SkeletonLoader } from './components/SkeletonLoader';
+
+// Lazy loaded heavy components
+const AdminDashboard = React.lazy(() => import('./components/AdminDashboard').then(module => ({ default: module.AdminDashboard })));
+const FoodCourtOwnerDashboard = React.lazy(() => import('./components/FoodCourtOwnerDashboard').then(module => ({ default: module.FoodCourtOwnerDashboard })));
 import { NearbyRestaurantsView } from './components/NearbyRestaurantsView';
 import { QRScannerModal } from './components/QRScannerModal';
 import { SwitchStudentModal } from './components/SwitchStudentModal';
@@ -180,7 +183,9 @@ const MainAppContent: React.FC = () => {
 
         {/* Main Food Court Owner Dashboard Content */}
         <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto relative z-10">
-          <FoodCourtOwnerDashboard onOpenScanner={() => setIsScannerOpen(true)} />
+          <React.Suspense fallback={<SkeletonLoader />}>
+            <FoodCourtOwnerDashboard onOpenScanner={() => setIsScannerOpen(true)} />
+          </React.Suspense>
         </main>
 
         {/* Modals */}
@@ -247,7 +252,9 @@ const MainAppContent: React.FC = () => {
 
         {/* Admin Content */}
         <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto relative z-10">
-          <AdminDashboard onOpenScanner={() => setIsScannerOpen(true)} />
+          <React.Suspense fallback={<SkeletonLoader />}>
+            <AdminDashboard onOpenScanner={() => setIsScannerOpen(true)} />
+          </React.Suspense>
         </main>
 
         {/* Modals */}

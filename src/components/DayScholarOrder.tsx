@@ -271,12 +271,7 @@ export const DayScholarOrder: React.FC = () => {
       {/* Top Banner / Hero Header */}
       <div className="rounded-[36px] bg-white/50 backdrop-blur-3xl border border-white/80 p-6 sm:p-8 shadow-[0_24px_60px_-15px_rgba(249,115,22,0.1)] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1.5">
-          <div className="flex items-center space-x-2">
-            <span className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#ff7a30] to-[#ff9248] text-white font-bold text-[10px] uppercase tracking-wider shadow-xs">
-              Campus Dining Direct
-            </span>
-            <span className="text-xs text-orange-600 font-semibold font-mono">À La Carte Pay & Eat</span>
-          </div>
+
           <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-serif tracking-tight">
             Day Scholar Dining & Express Delivery
           </h1>

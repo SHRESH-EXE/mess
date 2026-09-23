@@ -3,6 +3,7 @@ import { useMess } from '../context/MessContext';
 import { ForgotPasswordModal } from './ForgotPasswordModal';
 import { soundEffects } from '../utils/soundEffects';
 import ChromeButton from './ui/chrome-button';
+import toast from 'react-hot-toast';
 import {
   UtensilsCrossed,
   Eye,
@@ -98,7 +99,9 @@ export const LoginPage: React.FC = () => {
       };
     }
 
+    soundEffects.playError();
     setLoginError(details);
+    toast.error(details);
     setIsShaking(true);
     setTimeout(() => setIsShaking(false), 500);
   };

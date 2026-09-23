@@ -174,6 +174,83 @@ class RealisticSoundEngine {
       // Ignore
     }
   }
+
+  public playTap() {
+    this.playClick();
+  }
+
+  public playSuccess() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.15);
+    } catch {
+      // Ignore
+    }
+  }
+
+  public playError() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.frequency.setValueAtTime(180, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.25);
+    } catch {
+      // Ignore
+    }
+  }
+
+  public playMealTap() {
+    this.playSuccess();
+  }
+
+  public playChime() {
+    this.playSuccess();
+  }
+
+  public playOrderReadyChime() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    try {
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc1.type = 'sine';
+      osc2.type = 'triangle';
+      osc1.frequency.setValueAtTime(523.25, ctx.currentTime);
+      osc1.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+      osc1.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2);
+      osc1.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.3);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+      osc1.start(ctx.currentTime);
+      osc1.stop(ctx.currentTime + 0.6);
+    } catch {
+      // Ignore
+    }
+  }
 }
 
 export const soundEffects = new RealisticSoundEngine();

@@ -446,16 +446,7 @@ export const FoodCourtOwnerDashboard: React.FC<FoodCourtOwnerDashboardProps> = (
                   )
                 )}
 
-                {/* Pure Veg or Portal Veg Tag */}
-                {isNearbyRestoPartner && (
-                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                    currentResto.isPureVeg
-                      ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
-                      : 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                  }`}>
-                    {currentResto.isPureVeg ? '100% Pure Veg Kitchen' : 'Strict Veg-Only Portal Menu'}
-                  </span>
-                )}
+
               </div>
 
               <div className="flex flex-wrap items-center gap-3 mt-1.5">

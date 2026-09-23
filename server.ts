@@ -159,6 +159,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Defense-CSRF']
 }));
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 // =========================================================================
 // 2 & 3 & 12. OWASP DEFENSIVE HEADERS VIA HELMET (CSP, HSTS, CLICKJACKING)
 // =========================================================================
@@ -167,7 +169,9 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+        scriptSrc: isDev
+          ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"]
+          : ["'self'", "https://cdn.jsdelivr.net"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
         imgSrc: [
@@ -187,17 +191,18 @@ app.use(
           "https://*.cloudfunctions.net",
           "https://identitytoolkit.googleapis.com",
           "https://securetoken.googleapis.com",
-          "wss://*.firebaseio.com"
+          "wss://*.firebaseio.com",
+          ...(isDev ? ["ws:", "wss:"] : [])
         ],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         formAction: ["'self'"],
-        upgradeInsecureRequests: []
+        upgradeInsecureRequests: isDev ? null : []
       }
     },
     crossOriginEmbedderPolicy: false,
-    frameguard: { action: 'sameorigin' },
-    hsts: {
+    frameguard: isDev ? false : { action: 'sameorigin' },
+    hsts: isDev ? false : {
       maxAge: 31536000,
       includeSubDomains: true,
       preload: true
@@ -206,6 +211,16 @@ app.use(
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
   })
 );
+
+if (isDev) {
+  app.get('/mess', (req: Request, res: Response) => {
+    res.redirect('/');
+  });
+  app.get('/mess/*', (req: Request, res: Response) => {
+    const target = req.url.replace(/^\/mess\/?/, '/') || '/';
+    res.redirect(target);
+  });
+}
 
 // Permissions-Policy & Cross-Origin Defensive Headers
 app.use((req: Request, res: Response, next: NextFunction) => {

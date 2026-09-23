@@ -391,11 +391,7 @@ export const FoodCourtOrder: React.FC = () => {
       <div className="rounded-3xl p-5 sm:p-7 relative overflow-hidden bg-gradient-to-br from-white/90 via-orange-50/70 to-amber-50/60 backdrop-blur-xl border border-white/90 shadow-xl shadow-orange-500/5">
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
           <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-800 text-xs font-bold shadow-xs">
-              <Store className="w-3.5 h-3.5 text-orange-600" />
-              <span>Campus Food Court & Live Rush Monitor</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-            </div>
+
             <h1 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-slate-900 tracking-tight">
               Order from 6+ Stalls with Real-Time Queue & Wait Predictions
             </h1>

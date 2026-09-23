@@ -217,15 +217,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenScanner })
             <ShieldCheck className="w-7 h-7 text-white" strokeWidth={2.2} />
           </div>
           <div>
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded-full bg-orange-500/15 text-[#ea580c] text-[11px] font-extrabold border border-orange-300">
-                HOSTEL & DINING OPERATIONS
-              </span>
-              <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 text-[11px] font-extrabold border border-emerald-300">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>LIVE SYNC ACTIVE</span>
-              </span>
-            </div>
+
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-sans">
               Mess Authority & Warden Console
             </h2>
